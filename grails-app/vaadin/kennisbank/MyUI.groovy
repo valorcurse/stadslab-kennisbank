@@ -28,20 +28,18 @@ import kennisbank.project.ProjectView
  */
 
 //Theme being used, default is Reindeer
-//@Theme("runo")
+@Theme("reindeer")
 
 class MyUI extends UI {
-
-	Member members = new Member()
 
 	@Override
 	public void init(VaadinRequest request) {
 
-		Navigator navigator = new Navigator(this, this)
+		Navigator navigator = new Navigator(this, this) // Create a navigator used to handle URI fragments
 
-		navigator.addView("", new MainView())
+		navigator.addView("", new MainView()) // Add the main view
 
-		navigator.navigateTo("")
+		navigator.navigateTo("") // Go to the main view
 
 	}
 }
