@@ -2,9 +2,8 @@ package kennisbank
 
 class User {
 
-	String username
-	String password
+	static belongsTo = [projectmember:ProjectMember]
 	
-    static constraints = {
+	static constraints = {
     }
 }
