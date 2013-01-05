@@ -52,9 +52,6 @@ class Member extends VerticalLayout {
 			panels.add(grid)
 		}
 		
-		//for (Lay)
-		//layout.addComponent(memberPanel)
-		
 		return layout
 	}
 	

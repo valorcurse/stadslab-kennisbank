@@ -17,6 +17,12 @@ class ProjectsOverview extends CssLayout {
 		Label titleLabel = new Label("<h1><b>Projects</b></h1>", Label.CONTENT_XHTML)
 		titleLabel.setWidth("100%")
 
+		CustomLayout createNewProjectLayout = new CustomLayout("projectsoverview")
+		
+		Button createNewProjectButton = new Button("New project")
+		
+		createNewProjectLayout.addComponent(createNewProjectButton, "searchField")
+		
 		CustomLayout existingProjectsLayout = new CustomLayout(
 			"projectsoverview");
 		
@@ -40,9 +46,11 @@ class ProjectsOverview extends CssLayout {
 		TextField searchProjects = new TextField()
 		searchProjects.setInputPrompt("Search for projects...")
 		
-		layout.addComponent(titleLabel)
 		existingProjectsLayout.addComponent(searchProjects, "searchField")
 		existingProjectsLayout.addComponent(projectsTable, "projectsTable")
+		
+		layout.addComponent(titleLabel)
+		layout.addComponent(createNewProjectLayout)
 		layout.addComponent(existingProjectsLayout)
 
 		layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
