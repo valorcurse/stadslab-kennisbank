@@ -28,7 +28,7 @@ import kennisbank.project.ProjectView
  */
 
 //Theme being used, default is Reindeer
-@Theme("reindeer")
+//@Theme("hogeschool")
 
 class MyUI extends UI {
 
