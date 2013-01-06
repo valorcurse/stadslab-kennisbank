@@ -1,9 +1,12 @@
 package kennisbank.project
 
+import java.rmi.server.UID;
+
 import com.vaadin.server.ExternalResource
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.Reindeer
 import com.vaadin.ui.*
+import kennisbank.*
 
 class ProjectsOverview extends CssLayout {
 
@@ -22,6 +25,32 @@ class ProjectsOverview extends CssLayout {
 
 		Button createNewProjectButton = new Button("new project", new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
+						Window window = new Window("Create a new project")
+						window.setModal(true)
+						VerticalLayout windowLayout = new VerticalLayout()
+						windowLayout.setSpacing(true)
+						windowLayout.setMargin(true)
+						TextField projectNameTextField = new TextField("Project name")
+						windowLayout.addComponent(projectNameTextField)
+						Button okButton = new Button("Ok", new Button.ClickListener() {
+									public void buttonClick(ClickEvent event2) {
+										//def project = new Project(title: "Kennisbank", course: "Technische Informatica", summary:"")
+										//project.save(flush: true, failOnError: true)
+										//new Project(title: projectNameTextField.getValue(), course: "", summary: "").save(failOnError: true)
+										
+										def projectService = new ProjectService()
+										Project.withTransaction {
+											//new Project(title: projectNameTextField, course: "", summary:"").save(flush: true, ErrorOnFail: true)
+											projectService.createProject(projectNameTextField.getValue())
+										}
+										UI.getCurrent().getPage().getCurrent().setLocation("http://localhost:8080/kennisbank/#!/project/" + projectNameTextField)
+										window.close()
+									}
+								})
+						windowLayout.addComponent(okButton)
+						windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
+						window.setContent(windowLayout)
+						UI.getCurrent().addWindow(window)
 					}
 				})
 
@@ -41,10 +70,14 @@ class ProjectsOverview extends CssLayout {
 
 		projectsTable.setColumnWidth("Project name", 200)
 
-		for (i in 1..10) {
-			projectsTable.addItem(	[new Link("Kennisbank", new ExternalResource("http://localhost:8080/kennisbank/#!/project/kennisbank")),
-				"Technische Informatica", "15/9/2012"] as Object[],
-			new Integer(i));
+		List<Project> projects = Project.list()
+
+		Notification.show(projects.size().toString())
+		
+		for (Project project : projects) {
+			projectsTable.addItem(	[new Link(project.getTitle(), new ExternalResource("http://localhost:8080/kennisbank/#!/project/" + project.getTitle())),
+				project.getCourse(), project.getDateCreated().toString()] as Object[],
+			new Integer(projectsTable.size()+1));
 		}
 
 		TextField searchProjects = new TextField()

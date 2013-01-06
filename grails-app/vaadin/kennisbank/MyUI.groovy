@@ -32,14 +32,27 @@ import kennisbank.project.ProjectView
 
 class MyUI extends UI {
 
+	def projects
+	
+	public boolean addProject(String title, String course) {
+		projects.add(new Project(title, course))
+		return true
+	}
+	
+	public getProjects() {
+		return projects
+	}
+	
 	@Override
 	public void init(VaadinRequest request) {
 
+		projects = [] as Project[]
+		
 		Navigator navigator = new Navigator(this, this) // Create a navigator used to handle URI fragments
 
 		navigator.addView("", new MainView()) // Add the main view
 
 		navigator.navigateTo("") // Go to the main view
-
+		
 	}
 }

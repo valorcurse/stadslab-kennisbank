@@ -1,16 +1,23 @@
 package kennisbank
 
 class Project {
+
+	String title, summary, course
+	Date dateCreated
+
+	static hasMany = [document:Document, tags:Tag, projectmember:ProjectMember, information:Information]
+
+	static constraints = {}
+
+	String getTitle() {
+		return title
+	}
+
+	String getCourse() {
+		return course
+	}
 	
-	static hasMany = [document:Document,tags:Tag,projectmember:ProjectMember,information:Information]
-	
-	String name
-	Date startDate
-	String city
-	String state
-	BigDecimal distance
-	BigDecimal cost
-	Integer maxRunners = 100000
-	
-	static constraints = {} 
+	Date getDateCreated() {
+		return dateCreated
+	}
 }
