@@ -18,8 +18,8 @@ import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
 import com.vaadin.server.Page
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
-import kennisbank.project.Member
-import kennisbank.project.ProjectView
+import kennisbank.projects.Member
+import kennisbank.projects.ProjectView
 
 /**
  *

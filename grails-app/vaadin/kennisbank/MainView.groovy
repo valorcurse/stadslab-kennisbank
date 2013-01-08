@@ -9,7 +9,7 @@ import com.vaadin.ui.TabSheet.Tab
 import com.vaadin.navigator.Navigator
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
-import kennisbank.project.*
+import kennisbank.projects.*
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.themes.Reindeer
 
@@ -84,13 +84,13 @@ class MainView extends Panel implements View {
 		leftMenuLayout.setStyleName("sidebar-menu")
 		leftMenuLayout.setSizeFull()
 		leftMenuLayout.setSpacing(true)
-		
-		
+
+
 		Button projectButton = new Button("Projects")
 		projectButton.setWidth("100%")
 		projectButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
-						
+
 						Tab tab = topTabs.addTab(new ProjectsOverview(), "Projects")
 						tab.setClosable(true)
 						topTabs.setSelectedTab(tab)
@@ -146,10 +146,14 @@ class MainView extends Panel implements View {
 			String[] msgs = event.getParameters().split("/")
 
 			if (msgs[0] == "project") {
-				ProjectView projectTab = new ProjectView(msgs[1])
-				Tab tab = topTabs.addTab(projectTab, "Project: "+ msgs[1])
-				tab.setClosable(true)
-				topTabs.setSelectedTab(tab)
+				Project currentProject = Project.findByTitle(msgs[1])
+
+				if (currentProject != null) {
+					ProjectView projectTab = new ProjectView(currentProject)
+					Tab tab = topTabs.addTab(projectTab, "Project: "+ currentProject.getTitle())
+					tab.setClosable(true)
+					topTabs.setSelectedTab(tab)
+				}
 			}
 		}
 	}
