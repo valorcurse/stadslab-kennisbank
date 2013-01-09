@@ -5,6 +5,8 @@ class Project {
 	String title, summary, course
 	Date dateCreated
 
+	static searchable = true
+	
 	static hasMany = [document:Document, tags:Tag, projectmember:ProjectMember, information:Information]
 
 	static constraints = {}
