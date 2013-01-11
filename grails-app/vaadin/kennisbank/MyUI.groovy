@@ -18,8 +18,6 @@ import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
 import com.vaadin.server.Page
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
-import kennisbank.projects.Member
-import kennisbank.projects.ProjectView
 
 /**
  *
@@ -28,31 +26,25 @@ import kennisbank.projects.ProjectView
  */
 
 //Theme being used, default is Reindeer
-//@Theme("hogeschool")
+@Theme("HRO")
 
 class MyUI extends UI {
 
-	def projects
-	
-	public boolean addProject(String title, String course) {
-		projects.add(new Project(title, course))
-		return true
-	}
-	
-	public getProjects() {
-		return projects
-	}
-	
 	@Override
 	public void init(VaadinRequest request) {
 
-		projects = [] as Project[]
+		//VerticalLayout content = new VerticalLayout()
+		//content.setSizeFull()
 		
 		Navigator navigator = new Navigator(this, this) // Create a navigator used to handle URI fragments
 
 		navigator.addView("", new MainView()) // Add the main view
 
 		navigator.navigateTo("") // Go to the main view
+		
+		//setContent(content)
+		
+		//setSizeFull()
 		
 	}
 }

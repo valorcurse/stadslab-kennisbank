@@ -7,18 +7,26 @@ import com.vaadin.server.ExternalResource
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Field.ValueChangeEvent
 import com.vaadin.ui.themes.Reindeer
+import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.*
 import kennisbank.*
 
-class ProjectsOverview extends CssLayout {
+class ProjectsOverview extends VerticalLayout {
 
 	ProjectsOverview() {
 
-		setSizeFull()
+		setMargin(true)
+
+		Panel panel = new Panel()
+		panel.setPrimaryStyleName("island-panel")
+		panel.addStyleName(Runo.PANEL_LIGHT)
 
 		VerticalLayout layout = new VerticalLayout()
 		layout.setSpacing(true)
 		layout.setMargin(true)
+		layout.setSizeFull()
+
+		panel.setContent(layout)
 
 		Label titleLabel = new Label("<h1><b>Projects</b></h1>", Label.CONTENT_XHTML)
 		titleLabel.setWidth("100%")
@@ -102,7 +110,7 @@ class ProjectsOverview extends CssLayout {
 		layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
 		layout.setComponentAlignment(existingProjectsLayout, Alignment.TOP_CENTER)
 
-		addComponent(layout)
+		addComponent(panel)
 	}
 
 }

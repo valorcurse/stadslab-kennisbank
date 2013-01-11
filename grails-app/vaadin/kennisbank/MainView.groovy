@@ -25,11 +25,7 @@ class MainView extends Panel implements View {
 		VerticalLayout view = new VerticalLayout()
 		view.setSizeFull() // Set layout to cover the whole screen
 
-		VerticalLayout centerView = new VerticalLayout()
-		centerView.setWidth("70%")
-		centerView.setHeight("100%")
-		view.addComponent(centerView)
-		view.setComponentAlignment(centerView, Alignment.TOP_CENTER)
+		//view.setComponentAlignment(view, Alignment.TOP_CENTER)
 
 		// Tabs on the right panel
 		topTabs = new TabSheet()
@@ -40,34 +36,56 @@ class MainView extends Panel implements View {
 		//Home tab
 		VerticalLayout homeVerticalLayout = new VerticalLayout()
 		homeVerticalLayout.setSizeFull()
-		homeVerticalLayout.addComponent(new Label("Home tab"))
 		topTabs.addTab(homeVerticalLayout, "Home")
 
 		// Layout for the left panel
 		VerticalLayout left = new VerticalLayout()
+		//left.setPrimaryStyleName("island-layout")
 		left.setSpacing(true)
+		left.setMargin(true)
+		left.setWidth("100%")
 
 		// Split panel dividing the left panel from the right
 		HorizontalSplitPanel horizontalSplitPanel = new HorizontalSplitPanel()
-		horizontalSplitPanel.setSplitPosition(13)
-		horizontalSplitPanel.setLocked(true)
+		horizontalSplitPanel.setSplitPosition(12)
+		horizontalSplitPanel.setLocked(false)
 		horizontalSplitPanel.setHeight("100%")
 		horizontalSplitPanel.setWidth("100%")
 		horizontalSplitPanel.addComponent(left)
 		horizontalSplitPanel.addComponent(topTabs)
 		horizontalSplitPanel.setStyleName(Runo.SPLITPANEL_SMALL)
-		centerView.addComponent(horizontalSplitPanel)
+		view.addComponent(horizontalSplitPanel)
 
 		// Logo on the top-left
-		Embedded logo = new Embedded("", new ThemeResource("hr.gif"))
-		logo.setWidth("95%")
+		Panel logoPanel = new Panel()
+		logoPanel.setPrimaryStyleName("island-panel")
+		logoPanel.setStyleName(Runo.PANEL_LIGHT)
+		
+		HorizontalLayout logoLayout = new HorizontalLayout()
+		logoLayout.setSpacing(true)
+		logoPanel.setContent(logoLayout)
+		
+		Embedded logo = new Embedded(null, new ThemeResource("hr.gif"))
+		//logo.setWidth("95%")
+		logo.setHeight("32px")
+		logoLayout.addComponent(logo)
+		logoLayout.setComponentAlignment(logo, Alignment.MIDDLE_CENTER)
+		
+		Label logoLabel = new Label ("<b>Kennisbank</b>", Label.CONTENT_XHTML)
+		logoLayout.addComponent(logoLabel)
+		logoLayout.setComponentAlignment(logoLabel, Alignment.MIDDLE_CENTER)
+		logoLayout.setMargin(true)
 
 		// Search field on the left
 		Panel searchPanel = new Panel("Search")
-		searchPanel.setHeight("80px")
+
+		searchPanel.setHeight("70px")
+		searchPanel.setWidth("100%")
+
 		searchPanel.setStyleName(Runo.PANEL_LIGHT)
+		searchPanel.setPrimaryStyleName("island-panel")
+
 		TextField searchField = new TextField()
-		searchPanel.setWidth("95%")
 		searchField.addStyleName("search")
 		searchField.setInputPrompt("Search...")
 		VerticalLayout searchLayout = new VerticalLayout()
@@ -77,9 +95,13 @@ class MainView extends Panel implements View {
 		searchLayout.setComponentAlignment(searchField, Alignment.MIDDLE_CENTER)
 
 		// Menu on the left
-		Panel leftMenu = new Panel("Menu")
-		leftMenu.setStyleName(Runo.PANEL_LIGHT)
-		leftMenu.setWidth("95%")
+		Panel leftMenuPanel = new Panel("Menu")
+
+		leftMenuPanel.setStyleName(Runo.PANEL_LIGHT)
+		leftMenuPanel.setPrimaryStyleName("island-panel")
+
+		leftMenuPanel.setWidth("100%")
+		leftMenuPanel.setHeight("70px")
 		VerticalLayout leftMenuLayout = new VerticalLayout()
 		leftMenuLayout.setStyleName("sidebar-menu")
 		leftMenuLayout.setSizeFull()
@@ -87,28 +109,32 @@ class MainView extends Panel implements View {
 
 
 		Button projectButton = new Button("Projects")
-		projectButton.setWidth("100%")
+		projectButton.setWidth("90%")
 		projectButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
-
 						Tab tab = topTabs.addTab(new ProjectsOverview(), "Projects")
 						tab.setClosable(true)
 						topTabs.setSelectedTab(tab)
 					}
 				})
 
-		leftMenu.setContent(leftMenuLayout)
+		leftMenuPanel.setContent(leftMenuLayout)
 		leftMenuLayout.addComponent(projectButton)
 		leftMenuLayout.setComponentAlignment(projectButton, Alignment.MIDDLE_CENTER)
 
 		// Login Panel
 		Panel loginPanel = new Panel("Login")
-		loginPanel.setHeight("150px")
+
+		loginPanel.setPrimaryStyleName("island-panel")
+
+		loginPanel.setHeight("130px")
+		loginPanel.setWidth("100%")
+
 		loginPanel.setStyleName(Runo.PANEL_LIGHT)
 		VerticalLayout loginPanelLayout = new VerticalLayout()
 		loginPanelLayout.setSizeFull()
+		loginPanelLayout.setSpacing(true)
 		loginPanel.setContent(loginPanelLayout)
-		loginPanel.setWidth("95%")
 		TextField usernameField = new TextField()
 		PasswordField passwordField = new PasswordField()
 		usernameField.setInputPrompt("Username")
@@ -118,7 +144,7 @@ class MainView extends Panel implements View {
 		Button loginButton = new Button("Login")
 		loginButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
-						//authenticate...
+						Notification.show("Login: " + usernameField.getValue() + " Password: " + passwordField.getValue())
 					}
 				})
 		loginPanelLayout.addComponent(loginButton)
@@ -127,16 +153,16 @@ class MainView extends Panel implements View {
 		loginPanelLayout.setComponentAlignment(loginButton, Alignment.TOP_CENTER)
 
 		//Add components to the left panel
-		left.addComponent(logo)
+		left.addComponent(logoPanel)
 		left.addComponent(loginPanel)
 		left.addComponent(searchPanel)
-		left.addComponent(leftMenu)
+		left.addComponent(leftMenuPanel)
 
 		//Align components in the left panel
 		left.setComponentAlignment(loginPanel, Alignment.TOP_CENTER)
-		left.setComponentAlignment(leftMenu, Alignment.TOP_CENTER)
+		left.setComponentAlignment(leftMenuPanel, Alignment.TOP_CENTER)
 		left.setComponentAlignment(searchPanel, Alignment.TOP_CENTER)
-		left.setComponentAlignment(logo, Alignment.TOP_CENTER)
+		left.setComponentAlignment(logoPanel, Alignment.TOP_CENTER)
 
 		setContent(view)
 	}
