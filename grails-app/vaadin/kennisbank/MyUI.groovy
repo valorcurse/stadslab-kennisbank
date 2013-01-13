@@ -33,18 +33,11 @@ class MyUI extends UI {
 	@Override
 	public void init(VaadinRequest request) {
 
-		//VerticalLayout content = new VerticalLayout()
-		//content.setSizeFull()
-		
 		Navigator navigator = new Navigator(this, this) // Create a navigator used to handle URI fragments
 
 		navigator.addView("", new MainView()) // Add the main view
 
 		navigator.navigateTo("") // Go to the main view
-		
-		//setContent(content)
-		
-		//setSizeFull()
 		
 	}
 }

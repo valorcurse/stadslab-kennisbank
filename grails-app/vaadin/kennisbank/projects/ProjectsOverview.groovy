@@ -31,7 +31,12 @@ class ProjectsOverview extends VerticalLayout {
 		Label titleLabel = new Label("<h1><b>Projects</b></h1>", Label.CONTENT_XHTML)
 		titleLabel.setWidth("100%")
 
-		CustomLayout createNewProjectLayout = new CustomLayout("newprojectsoverview")
+		Panel createNewProjectPanel = new Panel("New project")
+		createNewProjectPanel.setPrimaryStyleName("island-panel")
+		createNewProjectPanel.addStyleName(Runo.PANEL_LIGHT)
+		
+		HorizontalLayout createNewProjectLayout = new HorizontalLayout()
+		createNewProjectPanel.setContent(createNewProjectLayout)
 
 		Button createNewProjectButton = new Button("new project", new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
@@ -60,7 +65,7 @@ class ProjectsOverview extends VerticalLayout {
 					}
 				})
 
-		createNewProjectLayout.addComponent(createNewProjectButton, "newProjectButton")
+		createNewProjectLayout.addComponent(createNewProjectButton)
 
 		CustomLayout existingProjectsLayout = new CustomLayout(
 				"existingprojectsoverview");
@@ -104,7 +109,7 @@ class ProjectsOverview extends VerticalLayout {
 		existingProjectsLayout.addComponent(projectsTable, "projectsTable")
 
 		layout.addComponent(titleLabel)
-		layout.addComponent(createNewProjectLayout)
+		layout.addComponent(createNewProjectPanel)
 		layout.addComponent(existingProjectsLayout)
 
 		layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
