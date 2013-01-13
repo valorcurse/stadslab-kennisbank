@@ -30,6 +30,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 
 class MyUI extends UI {
 
+	boolean loggedIn;
 	@Override
 	public void init(VaadinRequest request) {
 
@@ -39,5 +40,13 @@ class MyUI extends UI {
 
 		navigator.navigateTo("") // Go to the main view
 		
+	}
+	
+	public void setLogged(loggedIn) {
+		this.loggedIn = loggedIn;
+	}
+	
+	public boolean getLogged(){
+		return loggedIn;
 	}
 }

@@ -78,9 +78,10 @@ class ProjectView extends CssLayout {
 				})
 
 		summaryLayout.addComponent(summaryText)
-		summaryLayout.addComponent(editButton)
-		summaryLayout.setComponentAlignment(editButton, Alignment.TOP_RIGHT)
-
+		if(UI.getCurrent().getLogged()){
+			summaryLayout.addComponent(editButton)
+			summaryLayout.setComponentAlignment(editButton, Alignment.TOP_RIGHT)
+		}
 		Panel membersPanel = new Panel("Members")
 		membersPanel.setPrimaryStyleName("island-panel")
 		membersPanel.setStyleName(Runo.PANEL_LIGHT)
@@ -120,8 +121,9 @@ class ProjectView extends CssLayout {
 		filesLayout.addComponent(filesLabel)
 		filesLayout.addComponent(filesPanel)
 		filesPanel.setContent(filesPanelLayout)
-		filesPanelLayout.addComponent(upload)
-
+		if(UI.getCurrent().getLogged()){
+			filesPanelLayout.addComponent(upload)
+		}
 		layout.addComponent(titleLabel, 0, 0, 1, 0)
 		layout.addComponent(menu, 0, 1, 1, 1)
 		layout.addComponent(summaryPanel, 0, 2, 1, 2)

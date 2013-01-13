@@ -6,6 +6,37 @@
 	border-radius: $radius;
 }
 
+@mixin page-curl($shadow-color:rgba(0,0,0,0.3), $skew:15deg, $rotate:5deg, $hoff:8px, $voff:12px, $blur:10px){
+	position: relative;                            
+	 @include box-shadow($shadow-color, 0px, 0px,3px);
+
+	&:after {
+		z-index: -1;
+		position: absolute;
+		background: transparent;
+		width: 70%;
+		height: 55%;
+		content: '';
+		right: 10px;
+		bottom: 10px; 
+		@include box-shadow($shadow-color, 8px, 12px, 10px);  
+		@include transform(1, 5deg, 0, 0, 15deg);
+	}        
+	
+	&:before {
+		z-index: -2;
+		position: absolute;
+		background: transparent;
+		width: 70%;
+		height: 55%;
+		content: '';
+		left: 10px;
+		bottom: 10px;  
+		@include box-shadow($shadow-color, -8px, 12px, 10px);  
+		@include transform(1, -5deg, 0, 0, -15deg);
+	} 
+} 
+
 .my-style {
   @include border-radius(4px);
 }
@@ -15,8 +46,9 @@
 	background: whiteSmoke;
 }
 
-.v-splitpanel-horizontal {
-	background: #DDD;
+.v-splitpanel-first-container {
+	background: #ddd;
+	/*background-image: -webkit-linear-gradient(left, #ffffff 60%,#ddd 100%);*/
 }
 
 .v-tabsheet-tabsheetpanel {
@@ -29,6 +61,22 @@
 
 .v-app .v-splitpanel-hsplitter-invisible div{
 	display: none;
+}
+
+.embedded-panel {
+	-webkit-border-radius: 10px;
+	-webkit-border-top-left-radius: 0;
+	-moz-border-radius: 10px;
+	-moz-border-radius-topleft: 0;
+	border-radius: 10px;
+	border-top-left-radius: 0;
+	
+	background: #F8F8F8;
+	padding-top: 18px;
+	padding-bottom: 8px;
+	margin: 5px;	
+	box-shadow: 1px 1px 3px #000000;
+	
 }
 
 .island-panel {
@@ -45,9 +93,6 @@
 	margin: 5px;	
 	box-shadow: 1px 1px 3px RGBA(0,0,0,0.15);
 	
-	.v-panel-caption .v-panel-caption-light {
-	}
-	
 	.v-panel-caption-light {
 		padding: 8px;
 	}
@@ -60,5 +105,6 @@
     	overflow-y: hidden !important;
     	overflow-x: hidden !important;
 	}
+	
 }
 

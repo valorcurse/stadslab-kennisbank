@@ -40,7 +40,7 @@ class ProjectsOverview extends VerticalLayout {
 		createNewProjectLayout.setMargin(true)
 		createNewProjectPanel.setContent(createNewProjectLayout)
 
-		Button createNewProjectButton = new Button("new project", new Button.ClickListener() {
+		Button createNewProjectButton = new Button("Create a new project", new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
 						Window window = new Window("Create a new project")
 						window.setModal(true)
