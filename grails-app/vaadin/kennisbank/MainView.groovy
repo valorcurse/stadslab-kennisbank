@@ -5,6 +5,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
+import com.vaadin.ui.TabSheet.SelectedTabChangeEvent
 import com.vaadin.ui.TabSheet.Tab
 import com.vaadin.navigator.Navigator
 import com.vaadin.navigator.View;
@@ -16,6 +17,7 @@ import com.vaadin.ui.themes.Reindeer
 class MainView extends Panel implements View {
 
 	TabSheet topTabs
+	Tab lastActiveTab
 
 	public MainView() {
 
@@ -37,6 +39,20 @@ class MainView extends Panel implements View {
 		VerticalLayout homeVerticalLayout = new VerticalLayout()
 		homeVerticalLayout.setSizeFull()
 		topTabs.addTab(homeVerticalLayout, "Home")
+		topTabs.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
+					public void selectedTabChange(SelectedTabChangeEvent event) {
+						String[] uriParameters = UI.getCurrent().getPage().getUriFragment().split("/")
+
+						Tab tab = topTabs.getTab(event.getTabSheet().getSelectedTab())
+						//String tabName = topTabs.getTab(event.getTabSheet().getSelectedTab()).getComponent().tabName()
+						UI.getCurrent().getPage().getCurrent().setLocation(tab.getComponent().tabName())
+						
+						lastActiveTab = tab
+												//UI.getCurrent().getPage().getUriFragment()
+						//UI.getCurrent().getPage().getCurrent().setLocation("http://localhost:8080/kennisbank/#!/project/" + tabName)
+						//Notification.show(topTabs.getTab(event.getTabSheet().getSelectedTab()).getComponent())
+					}
+				});
 
 		// Layout for the left panel
 		VerticalLayout left = new VerticalLayout()
@@ -61,17 +77,17 @@ class MainView extends Panel implements View {
 		Panel logoPanel = new Panel()
 		logoPanel.setPrimaryStyleName("island-panel")
 		logoPanel.setStyleName(Runo.PANEL_LIGHT)
-		
+
 		HorizontalLayout logoLayout = new HorizontalLayout()
 		logoLayout.setSpacing(true)
 		logoPanel.setContent(logoLayout)
-		
+
 		Embedded logo = new Embedded(null, new ThemeResource("hr.gif"))
 		//logo.setWidth("95%")
 		logo.setHeight("32px")
 		logoLayout.addComponent(logo)
 		logoLayout.setComponentAlignment(logo, Alignment.MIDDLE_CENTER)
-		
+
 		Label logoLabel = new Label ("<b>Kennisbank</b>", Label.CONTENT_XHTML)
 		logoLayout.addComponent(logoLabel)
 		logoLayout.setComponentAlignment(logoLabel, Alignment.MIDDLE_CENTER)
@@ -138,11 +154,11 @@ class MainView extends Panel implements View {
 		passwordField.setInputPrompt("Password")
 		loginPanelLayout.addComponent(usernameField)
 		loginPanelLayout.addComponent(passwordField)
-		
+
 		Button loginButton = new Button("Login")
-		
+
 		//Loggedin Panel
-		
+
 		Panel loggedinPanel = new Panel ("Welcome")
 		loggedinPanel.setPrimaryStyleName("island-panel")
 		loggedinPanel.setHeight("130px")
@@ -154,12 +170,12 @@ class MainView extends Panel implements View {
 		Label welcome = new Label()
 		loggedinPanelLayout.addComponent(welcome)
 		loggedinPanel.setVisible(false);
-		
+
 		Button logoutButton = new Button("Log out")
-		
+
 		loginButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
-						
+
 						println(usernameField.getValue());
 						println(passwordField.getValue());
 						if(usernameField.getValue() == "admin" && passwordField.getValue() == "password"){
@@ -170,7 +186,7 @@ class MainView extends Panel implements View {
 							left.replaceComponent(loginPanel, loggedinPanel)
 							loggedinPanel.setVisible(true);
 							loginPanel.setVisible(false);
-							
+
 						}
 						else{
 							Notification.show("Nope, chucktesta!")
@@ -178,22 +194,22 @@ class MainView extends Panel implements View {
 					}
 				})
 		logoutButton.addClickListener(new Button.ClickListener() {
-			public void buttonClick(ClickEvent event) {
-				UI.getCurrent().setLogged(false);
-				left.replaceComponent(loggedinPanel, loginPanel)
-				loggedinPanel.setVisible(false);
-				loginPanel.setVisible(true);
-				Notification.show("You're now logged out")
-			}
-			
-		})
+					public void buttonClick(ClickEvent event) {
+						UI.getCurrent().setLogged(false);
+						left.replaceComponent(loggedinPanel, loginPanel)
+						loggedinPanel.setVisible(false);
+						loginPanel.setVisible(true);
+						Notification.show("You're now logged out")
+					}
+
+				})
 		loginPanelLayout.addComponent(loginButton)
 		loggedinPanelLayout.addComponent(logoutButton)
 		loginPanelLayout.setComponentAlignment(usernameField, Alignment.MIDDLE_CENTER)
 		loginPanelLayout.setComponentAlignment(passwordField, Alignment.TOP_CENTER)
 		loginPanelLayout.setComponentAlignment(loginButton, Alignment.TOP_CENTER)
 		loggedinPanelLayout.setComponentAlignment(logoutButton, Alignment.TOP_CENTER)
-		
+
 		//Add components to the left panel
 		left.addComponent(logoPanel)
 		left.addComponent(loginPanel)
@@ -213,19 +229,35 @@ class MainView extends Panel implements View {
 
 	public void enter(ViewChangeEvent event) {
 		if(event.getParameters() != null){
-			String[] msgs = event.getParameters().split("/")
 
-			if (msgs[0] == "project") {
-				Project currentProject = Project.findByTitle(msgs[1])
+			for (int t = 1; t < topTabs.getComponentCount(); t++) {
+				println(topTabs.getTab(t).getComponent().tabName().replace("#!/", "") + " - " + event.getParameters())
+				if (topTabs.getTab(t).getComponent().tabName().replace("#!/", "").equals(event.getParameters())) {
+					return
+				}
+			}
+			
+			//Notification.show(event.getParameters())
+			String[] urlParameters = event.getParameters().split("/")
+			if (urlParameters[0] == "project") {
+				if (urlParameters.size() == 2) {
+					Project currentProject = Project.findByTitle(urlParameters[1])
 
-				if (currentProject != null) {
-					ProjectView projectTab = new ProjectView(currentProject)
-					Tab tab = topTabs.addTab(projectTab, "Project: "+ currentProject.getTitle())
+					if (currentProject != null) {
+						ProjectView projectTab = new ProjectView(currentProject)
+						Tab tab = topTabs.addTab(projectTab, "Project: "+ currentProject.getTitle())
+						tab.setClosable(true)
+						topTabs.setSelectedTab(tab)
+					}
+				}
+				else {
+					ProjectsOverview projectTab = new ProjectsOverview()
+					Tab tab = topTabs.addTab(projectTab, "Projects")
 					tab.setClosable(true)
 					topTabs.setSelectedTab(tab)
 				}
 			}
+
 		}
 	}
-
 }

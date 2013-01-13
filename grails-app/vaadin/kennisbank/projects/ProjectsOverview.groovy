@@ -11,11 +11,20 @@ import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.*
 import kennisbank.*
 
+
 class ProjectsOverview extends VerticalLayout {
 
+	String tabName
+	
+	String tabName() {
+		return tabName
+	}	
+	
 	ProjectsOverview() {
 
 		setMargin(true)
+		
+		tabName = "#!/project"
 
 		Panel panel = new Panel()
 		panel.setPrimaryStyleName("island-panel")
@@ -55,7 +64,7 @@ class ProjectsOverview extends VerticalLayout {
 										Project.withTransaction {
 											projectService.createProject(projectNameTextField.getValue())
 										}
-										UI.getCurrent().getPage().getCurrent().setLocation("http://localhost:8080/kennisbank/#!/project/" + projectNameTextField)
+										UI.getCurrent().getPage().getCurrent().setLocation("#!/project/" + projectNameTextField)
 										window.close()
 									}
 								})
