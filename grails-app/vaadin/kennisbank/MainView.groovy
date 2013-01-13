@@ -48,13 +48,13 @@ class MainView extends Panel implements View {
 		// Split panel dividing the left panel from the right
 		HorizontalSplitPanel horizontalSplitPanel = new HorizontalSplitPanel()
 		horizontalSplitPanel.setSplitPosition(12)
-		//horizontalSplitPanel.setLocked(true)
+		horizontalSplitPanel.setLocked(true)
 		horizontalSplitPanel.addStyleName("invisible")
 		horizontalSplitPanel.setHeight("100%")
 		horizontalSplitPanel.setWidth("100%")
 		horizontalSplitPanel.addComponent(left)
 		horizontalSplitPanel.addComponent(topTabs)
-		//horizontalSplitPanel.setStyleName(Runo.SPLITPANEL_SMALL)
+		horizontalSplitPanel.setStyleName(Runo.SPLITPANEL_SMALL)
 		view.addComponent(horizontalSplitPanel)
 
 		// Logo on the top-left

@@ -32,10 +32,12 @@ class ProjectsOverview extends VerticalLayout {
 		titleLabel.setWidth("100%")
 
 		Panel createNewProjectPanel = new Panel("New project")
-		createNewProjectPanel.setPrimaryStyleName("island-panel")
+		createNewProjectPanel.setPrimaryStyleName("embedded-panel")
 		createNewProjectPanel.addStyleName(Runo.PANEL_LIGHT)
 		
 		HorizontalLayout createNewProjectLayout = new HorizontalLayout()
+		createNewProjectLayout.setSpacing(true)
+		createNewProjectLayout.setMargin(true)
 		createNewProjectPanel.setContent(createNewProjectLayout)
 
 		Button createNewProjectButton = new Button("new project", new Button.ClickListener() {
@@ -70,6 +72,8 @@ class ProjectsOverview extends VerticalLayout {
 		CustomLayout existingProjectsLayout = new CustomLayout(
 				"existingprojectsoverview");
 
+			
+			
 		Table projectsTable = new Table()
 		projectsTable.addStyleName(Reindeer.TABLE_BORDERLESS)
 		projectsTable.setHeight("350px")
