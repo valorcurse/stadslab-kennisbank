@@ -124,45 +124,88 @@ class MainView extends Panel implements View {
 
 		// Login Panel
 		Panel loginPanel = new Panel("Login")
-
 		loginPanel.setPrimaryStyleName("island-panel")
-
 		loginPanel.setHeight("130px")
-		loginPanel.setWidth("100%")
-
 		loginPanel.setStyleName(Runo.PANEL_LIGHT)
 		VerticalLayout loginPanelLayout = new VerticalLayout()
 		loginPanelLayout.setSizeFull()
-		loginPanelLayout.setSpacing(true)
 		loginPanel.setContent(loginPanelLayout)
+		loginPanel.setWidth("100%")
 		TextField usernameField = new TextField()
 		PasswordField passwordField = new PasswordField()
 		usernameField.setInputPrompt("Username")
 		passwordField.setInputPrompt("Password")
 		loginPanelLayout.addComponent(usernameField)
 		loginPanelLayout.addComponent(passwordField)
+		
 		Button loginButton = new Button("Login")
+		
+		//Loggedin Panel
+		
+		Panel loggedinPanel = new Panel ("Welcome")
+		loggedinPanel.setPrimaryStyleName("island-panel")
+		loggedinPanel.setHeight("130px")
+		loggedinPanel.setStyleName(Runo.PANEL_LIGHT)
+		VerticalLayout loggedinPanelLayout = new VerticalLayout()
+		loggedinPanel.setSizeFull()
+		loggedinPanel.setContent(loggedinPanelLayout)
+		loggedinPanel.setWidth("100%")
+		Label welcome = new Label()
+		loggedinPanelLayout.addComponent(welcome)
+		loggedinPanel.setVisible(false);
+		
+		Button logoutButton = new Button("Log out")
+		
 		loginButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
-						Notification.show("Login: " + usernameField.getValue() + " Password: " + passwordField.getValue())
+						
+						println(usernameField.getValue());
+						println(passwordField.getValue());
+						if(usernameField.getValue() == "admin" && passwordField.getValue() == "password"){
+							UI.getCurrent().setLogged(true);
+							println(UI.getCurrent().getLogged());
+							Notification.show("Login succesful!");
+							welcome.setValue("You're now logged in, "+usernameField.getValue()+".")
+							left.replaceComponent(loginPanel, loggedinPanel)
+							loggedinPanel.setVisible(true);
+							loginPanel.setVisible(false);
+							
+						}
+						else{
+							Notification.show("Nope, chucktesta!")
+						}
 					}
 				})
+		logoutButton.addClickListener(new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				UI.getCurrent().setLogged(false);
+				left.replaceComponent(loggedinPanel, loginPanel)
+				loggedinPanel.setVisible(false);
+				loginPanel.setVisible(true);
+				Notification.show("You're now logged out")
+			}
+			
+		})
 		loginPanelLayout.addComponent(loginButton)
+		loggedinPanelLayout.addComponent(logoutButton)
 		loginPanelLayout.setComponentAlignment(usernameField, Alignment.MIDDLE_CENTER)
 		loginPanelLayout.setComponentAlignment(passwordField, Alignment.TOP_CENTER)
 		loginPanelLayout.setComponentAlignment(loginButton, Alignment.TOP_CENTER)
-
+		loggedinPanelLayout.setComponentAlignment(logoutButton, Alignment.TOP_CENTER)
+		
 		//Add components to the left panel
 		left.addComponent(logoPanel)
 		left.addComponent(loginPanel)
 		left.addComponent(searchPanel)
 		left.addComponent(leftMenuPanel)
+		left.addComponent(loggedinPanel)
 
 		//Align components in the left panel
 		left.setComponentAlignment(loginPanel, Alignment.TOP_CENTER)
 		left.setComponentAlignment(leftMenuPanel, Alignment.TOP_CENTER)
 		left.setComponentAlignment(searchPanel, Alignment.TOP_CENTER)
 		left.setComponentAlignment(logoPanel, Alignment.TOP_CENTER)
+		left.setComponentAlignment(loggedinPanel, Alignment.TOP_CENTER)
 
 		setContent(view)
 	}

@@ -32,7 +32,7 @@ class ProjectsOverview extends VerticalLayout {
 		titleLabel.setWidth("100%")
 
 		CustomLayout createNewProjectLayout = new CustomLayout("newprojectsoverview")
-
+		if(UI.getCurrent().getLogged()){
 		Button createNewProjectButton = new Button("new project", new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
 						Window window = new Window("Create a new project")
@@ -61,7 +61,7 @@ class ProjectsOverview extends VerticalLayout {
 				})
 
 		createNewProjectLayout.addComponent(createNewProjectButton, "newProjectButton")
-
+		}
 		CustomLayout existingProjectsLayout = new CustomLayout(
 				"existingprojectsoverview");
 
