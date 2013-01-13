@@ -146,6 +146,7 @@ class MainView extends Panel implements View {
 		loginPanel.setStyleName(Runo.PANEL_LIGHT)
 		VerticalLayout loginPanelLayout = new VerticalLayout()
 		loginPanelLayout.setSizeFull()
+		loginPanelLayout.setSpacing(true)
 		loginPanel.setContent(loginPanelLayout)
 		loginPanel.setWidth("100%")
 		TextField usernameField = new TextField()
@@ -164,6 +165,9 @@ class MainView extends Panel implements View {
 		loggedinPanel.setHeight("130px")
 		loggedinPanel.setStyleName(Runo.PANEL_LIGHT)
 		VerticalLayout loggedinPanelLayout = new VerticalLayout()
+		loggedinPanelLayout.setSizeFull()
+		loggedinPanelLayout.setMargin(true)
+		loggedinPanelLayout.setSpacing(true)
 		loggedinPanel.setSizeFull()
 		loggedinPanel.setContent(loggedinPanelLayout)
 		loggedinPanel.setWidth("100%")
@@ -209,6 +213,7 @@ class MainView extends Panel implements View {
 		loginPanelLayout.setComponentAlignment(passwordField, Alignment.TOP_CENTER)
 		loginPanelLayout.setComponentAlignment(loginButton, Alignment.TOP_CENTER)
 		loggedinPanelLayout.setComponentAlignment(logoutButton, Alignment.TOP_CENTER)
+		loggedinPanelLayout.setComponentAlignment(welcome, Alignment.MIDDLE_CENTER)
 
 		//Add components to the left panel
 		left.addComponent(logoPanel)
@@ -231,13 +236,11 @@ class MainView extends Panel implements View {
 		if(event.getParameters() != null){
 
 			for (int t = 1; t < topTabs.getComponentCount(); t++) {
-				println(topTabs.getTab(t).getComponent().tabName().replace("#!/", "") + " - " + event.getParameters())
 				if (topTabs.getTab(t).getComponent().tabName().replace("#!/", "").equals(event.getParameters())) {
 					return
 				}
 			}
 			
-			//Notification.show(event.getParameters())
 			String[] urlParameters = event.getParameters().split("/")
 			if (urlParameters[0] == "project") {
 				if (urlParameters.size() == 2) {
