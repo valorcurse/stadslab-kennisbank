@@ -78,13 +78,17 @@ class ProjectsOverview extends VerticalLayout {
 
 		createNewProjectLayout.addComponent(createNewProjectButton)
 
-		CustomLayout existingProjectsLayout = new CustomLayout(
-				"existingprojectsoverview");
-
-			
+		Panel existingProjectsPanel = new Panel("Existing project")
+		existingProjectsPanel.setPrimaryStyleName("embedded-panel")
+		existingProjectsPanel.addStyleName(Runo.PANEL_LIGHT)
+		
+		VerticalLayout existingProjectsLayout = new VerticalLayout()
+		existingProjectsPanel.setContent(existingProjectsLayout)
+		existingProjectsLayout.setMargin(true)
+		existingProjectsLayout.setSpacing(true)
 			
 		Table projectsTable = new Table()
-		projectsTable.addStyleName(Reindeer.TABLE_BORDERLESS)
+		//projectsTable.addStyleName(Reindeer.TABLE_BORDERLESS)
 		projectsTable.setHeight("350px")
 		projectsTable.setWidth("100%")
 
@@ -118,15 +122,15 @@ class ProjectsOverview extends VerticalLayout {
 					}
 				})
 
-		existingProjectsLayout.addComponent(searchProjectsTextField, "searchField")
-		existingProjectsLayout.addComponent(projectsTable, "projectsTable")
+		existingProjectsLayout.addComponent(searchProjectsTextField)
+		existingProjectsLayout.addComponent(projectsTable)
 
 		layout.addComponent(titleLabel)
 		layout.addComponent(createNewProjectPanel)
-		layout.addComponent(existingProjectsLayout)
+		layout.addComponent(existingProjectsPanel)
 
 		layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
-		layout.setComponentAlignment(existingProjectsLayout, Alignment.TOP_CENTER)
+		layout.setComponentAlignment(existingProjectsPanel, Alignment.TOP_CENTER)
 
 		addComponent(panel)
 	}

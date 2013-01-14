@@ -17,7 +17,6 @@ import com.vaadin.ui.themes.Reindeer
 class MainView extends Panel implements View {
 
 	TabSheet topTabs
-	Tab lastActiveTab
 
 	public MainView() {
 
@@ -41,22 +40,18 @@ class MainView extends Panel implements View {
 		topTabs.addTab(homeVerticalLayout, "Home")
 		topTabs.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
 					public void selectedTabChange(SelectedTabChangeEvent event) {
-						String[] uriParameters = UI.getCurrent().getPage().getUriFragment().split("/")
+						String uri = UI.getCurrent().getPage().getUriFragment()
+						if (uri != null) {
+							String[] uriParameters = uri.split("/")
 
-						Tab tab = topTabs.getTab(event.getTabSheet().getSelectedTab())
-						//String tabName = topTabs.getTab(event.getTabSheet().getSelectedTab()).getComponent().tabName()
-						UI.getCurrent().getPage().getCurrent().setLocation(tab.getComponent().tabName())
-						
-						lastActiveTab = tab
-												//UI.getCurrent().getPage().getUriFragment()
-						//UI.getCurrent().getPage().getCurrent().setLocation("http://localhost:8080/kennisbank/#!/project/" + tabName)
-						//Notification.show(topTabs.getTab(event.getTabSheet().getSelectedTab()).getComponent())
+							Tab tab = topTabs.getTab(event.getTabSheet().getSelectedTab())
+							UI.getCurrent().getPage().getCurrent().setLocation(tab.getComponent().tabName())
+						}
 					}
 				});
 
 		// Layout for the left panel
 		VerticalLayout left = new VerticalLayout()
-		//left.setPrimaryStyleName("island-layout")
 		left.setSpacing(true)
 		left.setMargin(true)
 		left.setWidth("100%")
@@ -83,7 +78,6 @@ class MainView extends Panel implements View {
 		logoPanel.setContent(logoLayout)
 
 		Embedded logo = new Embedded(null, new ThemeResource("hr.gif"))
-		//logo.setWidth("95%")
 		logo.setHeight("32px")
 		logoLayout.addComponent(logo)
 		logoLayout.setComponentAlignment(logo, Alignment.MIDDLE_CENTER)
@@ -240,24 +234,26 @@ class MainView extends Panel implements View {
 					return
 				}
 			}
-			
-			String[] urlParameters = event.getParameters().split("/")
-			if (urlParameters[0] == "project") {
-				if (urlParameters.size() == 2) {
-					Project currentProject = Project.findByTitle(urlParameters[1])
 
-					if (currentProject != null) {
-						ProjectView projectTab = new ProjectView(currentProject)
-						Tab tab = topTabs.addTab(projectTab, "Project: "+ currentProject.getTitle())
+			if (event.getParameters() != null) {
+				String[] urlParameters = event.getParameters().split("/")
+				if (urlParameters[0] == "project") {
+					if (urlParameters.size() == 2) {
+						Project currentProject = Project.findByTitle(urlParameters[1])
+
+						if (currentProject != null) {
+							ProjectView projectTab = new ProjectView(currentProject)
+							Tab tab = topTabs.addTab(projectTab, "Project: "+ currentProject.getTitle())
+							tab.setClosable(true)
+							topTabs.setSelectedTab(tab)
+						}
+					}
+					else {
+						ProjectsOverview projectTab = new ProjectsOverview()
+						Tab tab = topTabs.addTab(projectTab, "Projects")
 						tab.setClosable(true)
 						topTabs.setSelectedTab(tab)
 					}
-				}
-				else {
-					ProjectsOverview projectTab = new ProjectsOverview()
-					Tab tab = topTabs.addTab(projectTab, "Projects")
-					tab.setClosable(true)
-					topTabs.setSelectedTab(tab)
 				}
 			}
 
