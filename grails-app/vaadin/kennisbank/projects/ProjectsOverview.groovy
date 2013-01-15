@@ -14,17 +14,18 @@ import kennisbank.*
 
 class ProjectsOverview extends VerticalLayout {
 
-	String tabName
+	String uriFragment
 	
 	String tabName() {
-		return tabName
+		return uriFragment
 	}	
 	
 	ProjectsOverview() {
 
 		setMargin(true)
 		
-		tabName = "#!/project"
+		uriFragment = "#!/project"
+		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
 		Panel panel = new Panel()
 		panel.setPrimaryStyleName("island-panel")
@@ -64,7 +65,8 @@ class ProjectsOverview extends VerticalLayout {
 										Project.withTransaction {
 											projectService.createProject(projectNameTextField.getValue())
 										}
-										UI.getCurrent().getPage().getCurrent().setLocation("#!/project/" + projectNameTextField)
+										
+										//UI.getCurrent().getPage().getCurrent().setLocation("#!/project/" + projectNameTextField)
 										window.close()
 									}
 								})
@@ -92,7 +94,7 @@ class ProjectsOverview extends VerticalLayout {
 		projectsTable.setHeight("350px")
 		projectsTable.setWidth("100%")
 
-		projectsTable.addContainerProperty("Project name", Link.class, null)
+		projectsTable.addContainerProperty("Project name", ProjectLink.class, null)
 		projectsTable.addContainerProperty("Course", String.class, null)
 		projectsTable.addContainerProperty("Date created", String.class, null)
 
@@ -101,7 +103,7 @@ class ProjectsOverview extends VerticalLayout {
 		List<Project> projects = Project.list()
 
 		for (Project project : projects) {
-			projectsTable.addItem(	[new Link(project.getTitle(), new ExternalResource("http://localhost:8080/kennisbank/#!/project/" + project.getTitle())),
+			projectsTable.addItem(	[new ProjectLink(project.getTitle()),
 				project.getCourse(), project.getDateCreated().toString()] as Object[],
 			new Integer(projectsTable.size()+1));
 		}

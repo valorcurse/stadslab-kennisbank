@@ -28,15 +28,20 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 //Theme being used, default is Reindeer
 @Theme("HRO")
 
+
 class MyUI extends UI {
 
-	boolean loggedIn;
+	boolean loggedIn
+	MainView mainView
+	
 	@Override
 	public void init(VaadinRequest request) {
 
+		mainView = new MainView()
+		
 		Navigator navigator = new Navigator(this, this) // Create a navigator used to handle URI fragments
 
-		navigator.addView("", new MainView()) // Add the main view
+		navigator.addView("", mainView) // Add the main view
 
 		navigator.navigateTo("") // Go to the main view
 		

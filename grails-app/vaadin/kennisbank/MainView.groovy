@@ -227,36 +227,5 @@ class MainView extends Panel implements View {
 	}
 
 	public void enter(ViewChangeEvent event) {
-		if(event.getParameters() != null){
-
-			for (int t = 1; t < topTabs.getComponentCount(); t++) {
-				if (topTabs.getTab(t).getComponent().tabName().replace("#!/", "").equals(event.getParameters())) {
-					return
-				}
-			}
-
-			if (event.getParameters() != null) {
-				String[] urlParameters = event.getParameters().split("/")
-				if (urlParameters[0] == "project") {
-					if (urlParameters.size() == 2) {
-						Project currentProject = Project.findByTitle(urlParameters[1])
-
-						if (currentProject != null) {
-							ProjectView projectTab = new ProjectView(currentProject)
-							Tab tab = topTabs.addTab(projectTab, "Project: "+ currentProject.getTitle())
-							tab.setClosable(true)
-							topTabs.setSelectedTab(tab)
-						}
-					}
-					else {
-						ProjectsOverview projectTab = new ProjectsOverview()
-						Tab tab = topTabs.addTab(projectTab, "Projects")
-						tab.setClosable(true)
-						topTabs.setSelectedTab(tab)
-					}
-				}
-			}
-
-		}
 	}
 }
