@@ -5,6 +5,10 @@ import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.MenuBar.Command
 import com.vaadin.ui.MenuBar.MenuItem
 import kennisbank.Project
+import kennisbank.ProjectMemberService
+import kennisbank.ProjectService
+import kennisbank.SummaryService
+import kennisbank.Summary
 import kennisbank.projects.Member
 import com.vaadin.ui.TabSheet.Tab
 import com.vaadin.ui.themes.Runo
@@ -60,13 +64,14 @@ class ProjectView extends CssLayout {
 		summaryLayout.setSpacing(true)
 		summaryLayout.setMargin(true)
 		summaryLayout.setWidth("100%")
-		summaryPanel.setContent(summaryLayout)
+		
 
-		RichTextArea editor = new RichTextArea()
-		editor.setWidth("100%")
+		/*RichTextArea editor = new RichTextArea()
+		 editor.setWidth("100%")
 
 		Label summaryText = new Label()
 		summaryText.setWidth("100%")
+<<<<<<< HEAD
 		summaryText.setContentMode(Label.CONTENT_XHTML)
 		summaryLayout.addComponent(summaryText)
 
@@ -87,6 +92,77 @@ class ProjectView extends CssLayout {
 				})
 
 		summaryLayout.addComponent(summaryText)
+=======
+		summaryText.setContentMode(Label.CONTENT_XHTML)*/
+		
+		String placeholder;
+
+		Button editButton = new Button("Edit", new Button.ClickListener() {
+					public void buttonClick(ClickEvent event) {
+						Window window = new Window("Edit Summary")
+						window.setModal(true)
+						VerticalLayout windowLayout = new VerticalLayout()
+						windowLayout.setSpacing(true)
+						windowLayout.setMargin(true)
+						TextField summaryTextField = new TextField("Summary")
+						windowLayout.addComponent(summaryTextField)
+						Button okButton = new Button("Apply", new Button.ClickListener() {
+									public void buttonClick(ClickEvent event2) {
+										def summaryService = new SummaryService()
+										Summary.withTransaction {
+											summaryService.createSummary(summaryTextField.getValue())
+										}
+
+										//UI.getCurrent().getPage().getCurrent().setLocation("#!/project/" + projectNameTextField)
+										placeholder = summaryTextField.getvalue()
+										window.close()
+									}
+								})
+						windowLayout.addComponent(okButton)
+						windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
+						windowLayout.setComponentAlignment(summaryTextField, Alignment.MIDDLE_CENTER)
+						window.setContent(windowLayout)
+						UI.getCurrent().addWindow(window)
+					}
+				})
+
+
+		/*Button editButton = new Button("Edit")
+		 editButton.addClickListener(new Button.ClickListener() {
+		 public void buttonClick(ClickEvent event) {
+		 if (editButton.getCaption() == "Apply") {
+		 if(Summary.getSummary() != null){
+		 summaryText.setValue(summary.getSummary())
+		 }
+		 else{
+		 summaryText.setValue("N/A")
+		 }
+		 summaryLayout.replaceComponent(editor, summaryText)
+		 def summaryService = new SummaryService()
+		 Summary.withTransaction {
+		 summaryService.createSummary(editor.getValue())
+		 }
+		 editButton.setCaption("Edit")
+		 }
+		 else if (editButton.getCaption() == "Edit") {
+		 if(Summary.getSummary() != null){
+		 editor.setValue(Summary.getSummary())
+		 }
+		 else{
+		 editor.setValue("N/A")
+		 }
+		 summaryLayout.replaceComponent(summaryText, editor)
+		 editButton.setCaption("Apply")
+		 }
+		 }
+		 })*/
+		//summaryPanel.addComponent(new Label(placeholder))
+		summaryPanel.setContent(summaryLayout)
+		
+		
+		//summaryLayout.addComponent(summaryText)
+
+>>>>>>> 9eef6506ab530da4d8749c3573d535cc2ea6f92e
 		if(UI.getCurrent().getLogged()){
 			summaryLayout.addComponent(editButton)
 			summaryLayout.setComponentAlignment(editButton, Alignment.TOP_RIGHT)
@@ -125,7 +201,10 @@ class ProjectView extends CssLayout {
 										window.close()
 									}
 								})
+<<<<<<< HEAD
 						okButton.setClickShortcut(KeyCode.ENTER);
+=======
+>>>>>>> 9eef6506ab530da4d8749c3573d535cc2ea6f92e
 						windowLayout.addComponent(okButton)
 						windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
 						windowLayout.setComponentAlignment(memberNameTextField, Alignment.MIDDLE_CENTER)
