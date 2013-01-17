@@ -71,7 +71,7 @@ class ProjectView extends CssLayout {
 
 		Label summaryText = new Label()
 		summaryText.setWidth("100%")
-<<<<<<< HEAD
+
 		summaryText.setContentMode(Label.CONTENT_XHTML)
 		summaryLayout.addComponent(summaryText)
 
@@ -92,7 +92,7 @@ class ProjectView extends CssLayout {
 				})
 
 		summaryLayout.addComponent(summaryText)
-=======
+
 		summaryText.setContentMode(Label.CONTENT_XHTML)*/
 		
 		String placeholder;
@@ -161,8 +161,7 @@ class ProjectView extends CssLayout {
 		
 		
 		//summaryLayout.addComponent(summaryText)
-
->>>>>>> 9eef6506ab530da4d8749c3573d535cc2ea6f92e
+		
 		if(UI.getCurrent().getLogged()){
 			summaryLayout.addComponent(editButton)
 			summaryLayout.setComponentAlignment(editButton, Alignment.TOP_RIGHT)
@@ -201,10 +200,9 @@ class ProjectView extends CssLayout {
 										window.close()
 									}
 								})
-<<<<<<< HEAD
+
 						okButton.setClickShortcut(KeyCode.ENTER);
-=======
->>>>>>> 9eef6506ab530da4d8749c3573d535cc2ea6f92e
+
 						windowLayout.addComponent(okButton)
 						windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
 						windowLayout.setComponentAlignment(memberNameTextField, Alignment.MIDDLE_CENTER)
