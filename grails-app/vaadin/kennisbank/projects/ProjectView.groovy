@@ -9,12 +9,13 @@ import kennisbank.projects.Member
 import com.vaadin.ui.TabSheet.Tab
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.themes.Reindeer
+import kennisbank.*
 
 
 class ProjectView extends CssLayout {
 
 	String uriFragment
-	
+
 	String tabName() {
 		return uriFragment
 	}
@@ -23,7 +24,7 @@ class ProjectView extends CssLayout {
 
 		uriFragment = "#!/project/" + project.getTitle()
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
-		
+
 		VerticalLayout mainLayout = new VerticalLayout()
 		mainLayout.setWidth("100%")
 		GridLayout layout = new GridLayout(2, 5)
@@ -45,16 +46,16 @@ class ProjectView extends CssLayout {
 						showNotification("Edit this project!")
 					}
 				})
-		
+
 		Label titleLabel = new Label("<h1><b>"+project.getTitle()+"</b></h1>", Label.CONTENT_XHTML)
 		titleLabel.setWidth("100%")
 		layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
-		
-		
+
+
 		Panel summaryPanel = new Panel("Summary")
 		summaryPanel.setPrimaryStyleName("island-panel")
 		summaryPanel.setStyleName(Runo.PANEL_LIGHT)
-		
+
 		VerticalLayout summaryLayout = new VerticalLayout()
 		summaryLayout.setSpacing(true)
 		summaryLayout.setMargin(true)
@@ -93,30 +94,87 @@ class ProjectView extends CssLayout {
 		Panel membersPanel = new Panel("Members")
 		membersPanel.setPrimaryStyleName("island-panel")
 		membersPanel.setStyleName(Runo.PANEL_LIGHT)
+		membersPanel.setWidth("450px")
 
-		
 		VerticalLayout membersLayout = new VerticalLayout()
-		membersLayout.setWidth("150px")
+		membersLayout.setWidth("450px")
 		membersPanel.setContent(membersLayout)
-		
-		/*VerticalLayout popupLayout = new VerticalLayout()
-		Button addMemberButton = new Button("Add")
-		TextField usernameField = new TextField()
-		popupLayout.addComponent(usernameField)
-		popupLayout.addComponent(addMemberButton)
-		addMemberButton.addClickListener(new Button.ClickListener() {
+
+		Button createNewMemberButton = new Button("Add Member", new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
+						Window window = new Window("Add a new member")
+						window.setModal(true)
+						VerticalLayout windowLayout = new VerticalLayout()
+						windowLayout.setSpacing(true)
+						windowLayout.setMargin(true)
+						TextField memberNameTextField = new TextField("Name")
+						TextField memberEmailTextField = new TextField("Email")
+						DateField memberBirthTextField = new DateField("Birth date")
+						windowLayout.addComponent(memberNameTextField)
+						windowLayout.addComponent(memberEmailTextField)
+						windowLayout.addComponent(memberBirthTextField)
+						Button okButton = new Button("Add", new Button.ClickListener() {
+									public void buttonClick(ClickEvent event2) {
+										def projectMemberService = new ProjectMemberService()
+										ProjectMember.withTransaction {
+											projectMemberService.createMember(memberNameTextField.getValue(),
+													memberEmailTextField.getValue(), memberBirthTextField.getValue())
+										}
+
+										//UI.getCurrent().getPage().getCurrent().setLocation("#!/project/" + projectNameTextField)
+										window.close()
+									}
+								})
+						windowLayout.addComponent(okButton)
+						windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
+						windowLayout.setComponentAlignment(memberNameTextField, Alignment.MIDDLE_CENTER)
+						windowLayout.setComponentAlignment(memberEmailTextField, Alignment.MIDDLE_CENTER)
+						windowLayout.setComponentAlignment(memberBirthTextField, Alignment.MIDDLE_CENTER)
+						window.setContent(windowLayout)
+						UI.getCurrent().addWindow(window)
 					}
 				})
 
-		PopupView popup = new PopupView("Add Member", popupLayout)
-		membersLayout.addComponent(popup)*/
+		membersLayout.setMargin(true)
+		membersLayout.setSpacing(true)
+
+		Table membersTable = new Table()
+		//projectsTable.addStyleName(Reindeer.TABLE_BORDERLESS)
+		membersTable.setHeight("150px")
+		membersTable.setWidth("100%")
+
+		membersTable.addContainerProperty("Name", String.class, null)
+		membersTable.addContainerProperty("Email", String.class, null)
+		membersTable.addContainerProperty("Birth Date", String.class, null)
+
+		List<ProjectMember> members = ProjectMember.list()
+
+		for (ProjectMember member : members) {
+			membersTable.addItem(	[member.getName(), member.getEmail(),
+				member.getDateOfBirth().toString()] as Object[],
+			new Integer(membersTable.size()+1));
+		}
+		
+		membersLayout.addComponent(membersTable)
+		membersLayout.addComponent(createNewMemberButton)
+
+		/*VerticalLayout popupLayout = new VerticalLayout()
+		 Button addMemberButton = new Button("Add")
+		 TextField usernameField = new TextField()
+		 popupLayout.addComponent(usernameField)
+		 popupLayout.addComponent(addMemberButton)
+		 addMemberButton.addClickListener(new Button.ClickListener() {
+		 public void buttonClick(ClickEvent event) {
+		 }
+		 })
+		 PopupView popup = new PopupView("Add Member", popupLayout)
+		 membersLayout.addComponent(popup)*/
 
 		Panel updatesPanel = new Panel("Panel")
 		VerticalLayout updatesLayout = new VerticalLayout()
 		updatesLayout.setWidth("100%")
 		updatesPanel.setContent(updatesLayout)
-		
+
 		VerticalLayout filesLayout = new VerticalLayout()
 		filesLayout.setWidth("150px")
 		Panel filesPanel =  new Panel()

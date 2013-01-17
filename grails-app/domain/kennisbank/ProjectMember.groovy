@@ -7,11 +7,38 @@ class ProjectMember {
 	String gender
 	String address
 	String city
-	String state
 	String zipcode
 	String email
-	Date dateCreated
 	
     static constraints = {
     }
+	
+	String getName() {
+		return name
+	}
+	
+	Date getDateOfBirth() {
+		return dateOfBirth
+	}
+	
+	String getGender() {
+		return gender
+	}
+	
+	String getAddress() {
+		return address
+	}
+	
+	String getCity() {
+		return city
+	}
+	
+	String getZipCode() {
+		return zipcode
+	}
+	
+	String getEmail() {
+		return email
+	}
+	
 }
