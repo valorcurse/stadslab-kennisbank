@@ -11,11 +11,21 @@ import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.*
 import kennisbank.*
 
+
 class ProjectsOverview extends VerticalLayout {
 
+	String uriFragment
+	
+	String tabName() {
+		return uriFragment
+	}	
+	
 	ProjectsOverview() {
 
 		setMargin(true)
+		
+		uriFragment = "#!/project"
+		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
 		Panel panel = new Panel()
 		panel.setPrimaryStyleName("island-panel")
@@ -55,7 +65,8 @@ class ProjectsOverview extends VerticalLayout {
 										Project.withTransaction {
 											projectService.createProject(projectNameTextField.getValue())
 										}
-										UI.getCurrent().getPage().getCurrent().setLocation("http://localhost:8080/kennisbank/#!/project/" + projectNameTextField)
+										
+										//UI.getCurrent().getPage().getCurrent().setLocation("#!/project/" + projectNameTextField)
 										window.close()
 									}
 								})
@@ -69,17 +80,21 @@ class ProjectsOverview extends VerticalLayout {
 
 		createNewProjectLayout.addComponent(createNewProjectButton)
 
-		CustomLayout existingProjectsLayout = new CustomLayout(
-				"existingprojectsoverview");
-
-			
+		Panel existingProjectsPanel = new Panel("Existing project")
+		existingProjectsPanel.setPrimaryStyleName("embedded-panel")
+		existingProjectsPanel.addStyleName(Runo.PANEL_LIGHT)
+		
+		VerticalLayout existingProjectsLayout = new VerticalLayout()
+		existingProjectsPanel.setContent(existingProjectsLayout)
+		existingProjectsLayout.setMargin(true)
+		existingProjectsLayout.setSpacing(true)
 			
 		Table projectsTable = new Table()
-		projectsTable.addStyleName(Reindeer.TABLE_BORDERLESS)
+		//projectsTable.addStyleName(Reindeer.TABLE_BORDERLESS)
 		projectsTable.setHeight("350px")
 		projectsTable.setWidth("100%")
 
-		projectsTable.addContainerProperty("Project name", Link.class, null)
+		projectsTable.addContainerProperty("Project name", ProjectLink.class, null)
 		projectsTable.addContainerProperty("Course", String.class, null)
 		projectsTable.addContainerProperty("Date created", String.class, null)
 
@@ -88,7 +103,7 @@ class ProjectsOverview extends VerticalLayout {
 		List<Project> projects = Project.list()
 
 		for (Project project : projects) {
-			projectsTable.addItem(	[new Link(project.getTitle(), new ExternalResource("http://localhost:8080/kennisbank/#!/project/" + project.getTitle())),
+			projectsTable.addItem(	[new ProjectLink(project.getTitle()),
 				project.getCourse(), project.getDateCreated().toString()] as Object[],
 			new Integer(projectsTable.size()+1));
 		}
@@ -109,15 +124,15 @@ class ProjectsOverview extends VerticalLayout {
 					}
 				})
 
-		existingProjectsLayout.addComponent(searchProjectsTextField, "searchField")
-		existingProjectsLayout.addComponent(projectsTable, "projectsTable")
+		existingProjectsLayout.addComponent(searchProjectsTextField)
+		existingProjectsLayout.addComponent(projectsTable)
 
 		layout.addComponent(titleLabel)
 		layout.addComponent(createNewProjectPanel)
-		layout.addComponent(existingProjectsLayout)
+		layout.addComponent(existingProjectsPanel)
 
 		layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
-		layout.setComponentAlignment(existingProjectsLayout, Alignment.TOP_CENTER)
+		layout.setComponentAlignment(existingProjectsPanel, Alignment.TOP_CENTER)
 
 		addComponent(panel)
 	}

@@ -13,9 +13,17 @@ import com.vaadin.ui.themes.Reindeer
 
 class ProjectView extends CssLayout {
 
+	String uriFragment
+	
+	String tabName() {
+		return uriFragment
+	}
 
 	public ProjectView(Project project) {
 
+		uriFragment = "#!/project/" + project.getTitle()
+		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
+		
 		VerticalLayout mainLayout = new VerticalLayout()
 		mainLayout.setWidth("100%")
 		GridLayout layout = new GridLayout(2, 5)

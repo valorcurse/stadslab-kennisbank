@@ -5,6 +5,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
+import com.vaadin.ui.TabSheet.SelectedTabChangeEvent
 import com.vaadin.ui.TabSheet.Tab
 import com.vaadin.navigator.Navigator
 import com.vaadin.navigator.View;
@@ -37,10 +38,20 @@ class MainView extends Panel implements View {
 		VerticalLayout homeVerticalLayout = new VerticalLayout()
 		homeVerticalLayout.setSizeFull()
 		topTabs.addTab(homeVerticalLayout, "Home")
+		topTabs.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
+					public void selectedTabChange(SelectedTabChangeEvent event) {
+						String uri = UI.getCurrent().getPage().getUriFragment()
+						if (uri != null) {
+							String[] uriParameters = uri.split("/")
+
+							Tab tab = topTabs.getTab(event.getTabSheet().getSelectedTab())
+							UI.getCurrent().getPage().getCurrent().setLocation(tab.getComponent().tabName())
+						}
+					}
+				});
 
 		// Layout for the left panel
 		VerticalLayout left = new VerticalLayout()
-		//left.setPrimaryStyleName("island-layout")
 		left.setSpacing(true)
 		left.setMargin(true)
 		left.setWidth("100%")
@@ -61,17 +72,16 @@ class MainView extends Panel implements View {
 		Panel logoPanel = new Panel()
 		logoPanel.setPrimaryStyleName("island-panel")
 		logoPanel.setStyleName(Runo.PANEL_LIGHT)
-		
+
 		HorizontalLayout logoLayout = new HorizontalLayout()
 		logoLayout.setSpacing(true)
 		logoPanel.setContent(logoLayout)
-		
+
 		Embedded logo = new Embedded(null, new ThemeResource("hr.gif"))
-		//logo.setWidth("95%")
 		logo.setHeight("32px")
 		logoLayout.addComponent(logo)
 		logoLayout.setComponentAlignment(logo, Alignment.MIDDLE_CENTER)
-		
+
 		Label logoLabel = new Label ("<b>Kennisbank</b>", Label.CONTENT_XHTML)
 		logoLayout.addComponent(logoLabel)
 		logoLayout.setComponentAlignment(logoLabel, Alignment.MIDDLE_CENTER)
@@ -130,6 +140,7 @@ class MainView extends Panel implements View {
 		loginPanel.setStyleName(Runo.PANEL_LIGHT)
 		VerticalLayout loginPanelLayout = new VerticalLayout()
 		loginPanelLayout.setSizeFull()
+		loginPanelLayout.setSpacing(true)
 		loginPanel.setContent(loginPanelLayout)
 		loginPanel.setWidth("100%")
 		TextField usernameField = new TextField()
@@ -138,28 +149,31 @@ class MainView extends Panel implements View {
 		passwordField.setInputPrompt("Password")
 		loginPanelLayout.addComponent(usernameField)
 		loginPanelLayout.addComponent(passwordField)
-		
+
 		Button loginButton = new Button("Login")
-		
+
 		//Loggedin Panel
-		
+
 		Panel loggedinPanel = new Panel ("Welcome")
 		loggedinPanel.setPrimaryStyleName("island-panel")
 		loggedinPanel.setHeight("130px")
 		loggedinPanel.setStyleName(Runo.PANEL_LIGHT)
 		VerticalLayout loggedinPanelLayout = new VerticalLayout()
+		loggedinPanelLayout.setSizeFull()
+		loggedinPanelLayout.setMargin(true)
+		loggedinPanelLayout.setSpacing(true)
 		loggedinPanel.setSizeFull()
 		loggedinPanel.setContent(loggedinPanelLayout)
 		loggedinPanel.setWidth("100%")
 		Label welcome = new Label()
 		loggedinPanelLayout.addComponent(welcome)
 		loggedinPanel.setVisible(false);
-		
+
 		Button logoutButton = new Button("Log out")
-		
+
 		loginButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
-						
+
 						println(usernameField.getValue());
 						println(passwordField.getValue());
 						if(usernameField.getValue() == "admin" && passwordField.getValue() == "password"){
@@ -170,7 +184,7 @@ class MainView extends Panel implements View {
 							left.replaceComponent(loginPanel, loggedinPanel)
 							loggedinPanel.setVisible(true);
 							loginPanel.setVisible(false);
-							
+
 						}
 						else{
 							Notification.show("Nope, chucktesta!")
@@ -178,22 +192,23 @@ class MainView extends Panel implements View {
 					}
 				})
 		logoutButton.addClickListener(new Button.ClickListener() {
-			public void buttonClick(ClickEvent event) {
-				UI.getCurrent().setLogged(false);
-				left.replaceComponent(loggedinPanel, loginPanel)
-				loggedinPanel.setVisible(false);
-				loginPanel.setVisible(true);
-				Notification.show("You're now logged out")
-			}
-			
-		})
+					public void buttonClick(ClickEvent event) {
+						UI.getCurrent().setLogged(false);
+						left.replaceComponent(loggedinPanel, loginPanel)
+						loggedinPanel.setVisible(false);
+						loginPanel.setVisible(true);
+						Notification.show("You're now logged out")
+					}
+
+				})
 		loginPanelLayout.addComponent(loginButton)
 		loggedinPanelLayout.addComponent(logoutButton)
 		loginPanelLayout.setComponentAlignment(usernameField, Alignment.MIDDLE_CENTER)
 		loginPanelLayout.setComponentAlignment(passwordField, Alignment.TOP_CENTER)
 		loginPanelLayout.setComponentAlignment(loginButton, Alignment.TOP_CENTER)
 		loggedinPanelLayout.setComponentAlignment(logoutButton, Alignment.TOP_CENTER)
-		
+		loggedinPanelLayout.setComponentAlignment(welcome, Alignment.MIDDLE_CENTER)
+
 		//Add components to the left panel
 		left.addComponent(logoPanel)
 		left.addComponent(loginPanel)
@@ -212,20 +227,5 @@ class MainView extends Panel implements View {
 	}
 
 	public void enter(ViewChangeEvent event) {
-		if(event.getParameters() != null){
-			String[] msgs = event.getParameters().split("/")
-
-			if (msgs[0] == "project") {
-				Project currentProject = Project.findByTitle(msgs[1])
-
-				if (currentProject != null) {
-					ProjectView projectTab = new ProjectView(currentProject)
-					Tab tab = topTabs.addTab(projectTab, "Project: "+ currentProject.getTitle())
-					tab.setClosable(true)
-					topTabs.setSelectedTab(tab)
-				}
-			}
-		}
 	}
-
 }
