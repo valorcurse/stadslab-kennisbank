@@ -15,15 +15,15 @@ import kennisbank.*
 class ProjectsOverview extends VerticalLayout {
 
 	String uriFragment
-	
+
 	String tabName() {
 		return uriFragment
-	}	
-	
+	}
+
 	ProjectsOverview() {
 
 		setMargin(true)
-		
+
 		uriFragment = "#!/project"
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
@@ -44,7 +44,7 @@ class ProjectsOverview extends VerticalLayout {
 		Panel createNewProjectPanel = new Panel("New project")
 		createNewProjectPanel.setPrimaryStyleName("embedded-panel")
 		createNewProjectPanel.addStyleName(Runo.PANEL_LIGHT)
-		
+
 		HorizontalLayout createNewProjectLayout = new HorizontalLayout()
 		createNewProjectLayout.setSpacing(true)
 		createNewProjectLayout.setMargin(true)
@@ -65,7 +65,7 @@ class ProjectsOverview extends VerticalLayout {
 										Project.withTransaction {
 											projectService.createProject(projectNameTextField.getValue())
 										}
-										
+
 										//UI.getCurrent().getPage().getCurrent().setLocation("#!/project/" + projectNameTextField)
 										window.close()
 									}
@@ -83,12 +83,12 @@ class ProjectsOverview extends VerticalLayout {
 		Panel existingProjectsPanel = new Panel("Existing project")
 		existingProjectsPanel.setPrimaryStyleName("embedded-panel")
 		existingProjectsPanel.addStyleName(Runo.PANEL_LIGHT)
-		
+
 		VerticalLayout existingProjectsLayout = new VerticalLayout()
 		existingProjectsPanel.setContent(existingProjectsLayout)
 		existingProjectsLayout.setMargin(true)
 		existingProjectsLayout.setSpacing(true)
-			
+
 		Table projectsTable = new Table()
 		//projectsTable.addStyleName(Reindeer.TABLE_BORDERLESS)
 		projectsTable.setHeight("350px")
@@ -128,7 +128,9 @@ class ProjectsOverview extends VerticalLayout {
 		existingProjectsLayout.addComponent(projectsTable)
 
 		layout.addComponent(titleLabel)
-		layout.addComponent(createNewProjectPanel)
+		if(UI.getCurrent().getLogged()){
+			layout.addComponent(createNewProjectPanel)
+		}
 		layout.addComponent(existingProjectsPanel)
 
 		layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
