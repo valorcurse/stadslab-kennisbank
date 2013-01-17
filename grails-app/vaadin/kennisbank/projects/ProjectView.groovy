@@ -5,6 +5,10 @@ import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.MenuBar.Command
 import com.vaadin.ui.MenuBar.MenuItem
 import kennisbank.Project
+import kennisbank.ProjectMemberService
+import kennisbank.ProjectService
+import kennisbank.SummaryService
+import kennisbank.Summary
 import kennisbank.projects.Member
 import com.vaadin.ui.TabSheet.Tab
 import com.vaadin.ui.themes.Runo
@@ -37,15 +41,15 @@ class ProjectView extends CssLayout {
 		final MenuBar.MenuItem projectItem = menu.addItem("Project", null)
 		final MenuBar.MenuItem membersItem = menu.addItem("Members", null)
 		projectItem.addItem("New project", new Command() {
-			public void menuSelected(MenuItem selectedItem) {
-				showNotification("New project created!")
-			}
-		})
+					public void menuSelected(MenuItem selectedItem) {
+						showNotification("New project created!")
+					}
+				})
 		projectItem.addItem("Edit project", new Command() {
-			public void menuSelected(MenuItem selectedItem) {
-				showNotification("Edit this project!")
-			}
-		})
+					public void menuSelected(MenuItem selectedItem) {
+						showNotification("Edit this project!")
+					}
+				})
 
 		Label titleLabel = new Label("<h1><b>"+project.getTitle()+"</b></h1>", Label.CONTENT_XHTML)
 		titleLabel.setWidth("100%")
@@ -60,33 +64,82 @@ class ProjectView extends CssLayout {
 		summaryLayout.setSpacing(true)
 		summaryLayout.setMargin(true)
 		summaryLayout.setWidth("100%")
-		summaryPanel.setContent(summaryLayout)
+		
 
-		RichTextArea editor = new RichTextArea()
-		editor.setWidth("100%")
+		/*RichTextArea editor = new RichTextArea()
+		 editor.setWidth("100%")
 
 		Label summaryText = new Label()
 		summaryText.setWidth("100%")
-		summaryText.setContentMode(Label.CONTENT_XHTML)
-		summaryLayout.addComponent(summaryText)
+		summaryText.setContentMode(Label.CONTENT_XHTML)*/
+		
+		String placeholder;
 
-		Button editButton = new Button("Edit")
-		editButton.addClickListener(new Button.ClickListener() {
-			public void buttonClick(ClickEvent event) {
-				if (editButton.getCaption() == "Apply") {
-					summaryText.setValue(editor.getValue())
-					summaryLayout.replaceComponent(editor, summaryText)
-					editButton.setCaption("Edit")
-				}
-				else if (editButton.getCaption() == "Edit") {
-					editor.setValue(summaryText.getValue())
-					summaryLayout.replaceComponent(summaryText, editor)
-					editButton.setCaption("Apply")
-				}
-			}
-		})
+		Button editButton = new Button("Edit", new Button.ClickListener() {
+					public void buttonClick(ClickEvent event) {
+						Window window = new Window("Edit Summary")
+						window.setModal(true)
+						VerticalLayout windowLayout = new VerticalLayout()
+						windowLayout.setSpacing(true)
+						windowLayout.setMargin(true)
+						TextField summaryTextField = new TextField("Summary")
+						windowLayout.addComponent(summaryTextField)
+						Button okButton = new Button("Apply", new Button.ClickListener() {
+									public void buttonClick(ClickEvent event2) {
+										def summaryService = new SummaryService()
+										Summary.withTransaction {
+											summaryService.createSummary(summaryTextField.getValue())
+										}
 
-		summaryLayout.addComponent(summaryText)
+										//UI.getCurrent().getPage().getCurrent().setLocation("#!/project/" + projectNameTextField)
+										placeholder = summaryTextField.getvalue()
+										window.close()
+									}
+								})
+						windowLayout.addComponent(okButton)
+						windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
+						windowLayout.setComponentAlignment(summaryTextField, Alignment.MIDDLE_CENTER)
+						window.setContent(windowLayout)
+						UI.getCurrent().addWindow(window)
+					}
+				})
+
+
+		/*Button editButton = new Button("Edit")
+		 editButton.addClickListener(new Button.ClickListener() {
+		 public void buttonClick(ClickEvent event) {
+		 if (editButton.getCaption() == "Apply") {
+		 if(Summary.getSummary() != null){
+		 summaryText.setValue(summary.getSummary())
+		 }
+		 else{
+		 summaryText.setValue("N/A")
+		 }
+		 summaryLayout.replaceComponent(editor, summaryText)
+		 def summaryService = new SummaryService()
+		 Summary.withTransaction {
+		 summaryService.createSummary(editor.getValue())
+		 }
+		 editButton.setCaption("Edit")
+		 }
+		 else if (editButton.getCaption() == "Edit") {
+		 if(Summary.getSummary() != null){
+		 editor.setValue(Summary.getSummary())
+		 }
+		 else{
+		 editor.setValue("N/A")
+		 }
+		 summaryLayout.replaceComponent(summaryText, editor)
+		 editButton.setCaption("Apply")
+		 }
+		 }
+		 })*/
+		//summaryPanel.addComponent(new Label(placeholder))
+		summaryPanel.setContent(summaryLayout)
+		
+		
+		//summaryLayout.addComponent(summaryText)
+
 		if(UI.getCurrent().getLogged()){
 			summaryLayout.addComponent(editButton)
 			summaryLayout.setComponentAlignment(editButton, Alignment.TOP_RIGHT)
@@ -101,39 +154,39 @@ class ProjectView extends CssLayout {
 		membersPanel.setContent(membersLayout)
 
 		Button createNewMemberButton = new Button("Add Member", new Button.ClickListener() {
-			public void buttonClick(ClickEvent event) {
-				Window window = new Window("Add a new member")
-				window.setModal(true)
-				VerticalLayout windowLayout = new VerticalLayout()
-				windowLayout.setSpacing(true)
-				windowLayout.setMargin(true)
-				TextField memberNameTextField = new TextField("Name")
-				TextField memberEmailTextField = new TextField("Email")
-				DateField memberBirthTextField = new DateField("Birth date")
-				windowLayout.addComponent(memberNameTextField)
-				windowLayout.addComponent(memberEmailTextField)
-				windowLayout.addComponent(memberBirthTextField)
-				Button okButton = new Button("Add", new Button.ClickListener() {
-					public void buttonClick(ClickEvent event2) {
-						def projectMemberService = new ProjectMemberService()
-						ProjectMember.withTransaction {
-							projectMemberService.createMember(memberNameTextField.getValue(),
-							memberEmailTextField.getValue(), memberBirthTextField.getValue())
-						}
+					public void buttonClick(ClickEvent event) {
+						Window window = new Window("Add a new member")
+						window.setModal(true)
+						VerticalLayout windowLayout = new VerticalLayout()
+						windowLayout.setSpacing(true)
+						windowLayout.setMargin(true)
+						TextField memberNameTextField = new TextField("Name")
+						TextField memberEmailTextField = new TextField("Email")
+						DateField memberBirthTextField = new DateField("Birth date")
+						windowLayout.addComponent(memberNameTextField)
+						windowLayout.addComponent(memberEmailTextField)
+						windowLayout.addComponent(memberBirthTextField)
+						Button okButton = new Button("Add", new Button.ClickListener() {
+									public void buttonClick(ClickEvent event2) {
+										def projectMemberService = new ProjectMemberService()
+										ProjectMember.withTransaction {
+											projectMemberService.createMember(memberNameTextField.getValue(),
+													memberEmailTextField.getValue(), memberBirthTextField.getValue())
+										}
 
-						//UI.getCurrent().getPage().getCurrent().setLocation("#!/project/" + projectNameTextField)
-						window.close()
+										//UI.getCurrent().getPage().getCurrent().setLocation("#!/project/" + projectNameTextField)
+										window.close()
+									}
+								})
+						windowLayout.addComponent(okButton)
+						windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
+						windowLayout.setComponentAlignment(memberNameTextField, Alignment.MIDDLE_CENTER)
+						windowLayout.setComponentAlignment(memberEmailTextField, Alignment.MIDDLE_CENTER)
+						windowLayout.setComponentAlignment(memberBirthTextField, Alignment.MIDDLE_CENTER)
+						window.setContent(windowLayout)
+						UI.getCurrent().addWindow(window)
 					}
 				})
-				windowLayout.addComponent(okButton)
-				windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
-				windowLayout.setComponentAlignment(memberNameTextField, Alignment.MIDDLE_CENTER)
-				windowLayout.setComponentAlignment(memberEmailTextField, Alignment.MIDDLE_CENTER)
-				windowLayout.setComponentAlignment(memberBirthTextField, Alignment.MIDDLE_CENTER)
-				window.setContent(windowLayout)
-				UI.getCurrent().addWindow(window)
-			}
-		})
 
 		membersLayout.setMargin(true)
 		membersLayout.setSpacing(true)
@@ -155,7 +208,7 @@ class ProjectView extends CssLayout {
 			new Integer(membersTable.size()+1));
 		}
 		membersLayout.addComponent(membersTable)
-		
+
 		if(UI.getCurrent().getLogged()){
 			membersLayout.addComponent(createNewMemberButton)
 		}
@@ -172,20 +225,20 @@ class ProjectView extends CssLayout {
 		updatesLayout.addComponent(updateMessageLayout)
 
 		/*HorizontalLayout messageUpdatesLayout = new HorizontalLayout()
-		messageUpdatesLayout.setSpacing(true)
-		messageUpdatesLayout.setMargin(true)
-		messageUpdatesLayout.setSizeFull()
-		TextField messageField = new TextField()
-		messageField.setWidth("100%")
-		messageUpdatesLayout.addComponent(messageField)
-		Button messageButton = new Button("Post", new Button.ClickListener() {
-			public void buttonClick(ClickEvent event) {
-				updateMessageLayout.addComponent(new Update(messageField.getValue()))
-			}
-		})
-		messageUpdatesLayout.addComponent(messageButton)
-		updatesLayout.addComponent(messageUpdatesLayout)
-		updatesLayout.setComponentAlignment(messageUpdatesLayout, Alignment.BOTTOM_LEFT)*/
+		 messageUpdatesLayout.setSpacing(true)
+		 messageUpdatesLayout.setMargin(true)
+		 messageUpdatesLayout.setSizeFull()
+		 TextField messageField = new TextField()
+		 messageField.setWidth("100%")
+		 messageUpdatesLayout.addComponent(messageField)
+		 Button messageButton = new Button("Post", new Button.ClickListener() {
+		 public void buttonClick(ClickEvent event) {
+		 updateMessageLayout.addComponent(new Update(messageField.getValue()))
+		 }
+		 })
+		 messageUpdatesLayout.addComponent(messageButton)
+		 updatesLayout.addComponent(messageUpdatesLayout)
+		 updatesLayout.setComponentAlignment(messageUpdatesLayout, Alignment.BOTTOM_LEFT)*/
 
 
 		VerticalLayout filesLayout = new VerticalLayout()

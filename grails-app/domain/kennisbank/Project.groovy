@@ -14,6 +14,10 @@ class Project {
 	String getTitle() {
 		return title
 	}
+	
+	String getSummary() {
+		return summary
+	}
 
 	String getCourse() {
 		return course
