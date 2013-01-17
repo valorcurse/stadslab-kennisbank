@@ -1,3 +1,15 @@
+# Folder to ignore #
+####################
 target/
 web-app/plugins/
 web-app/WEB-INF/classes/
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
