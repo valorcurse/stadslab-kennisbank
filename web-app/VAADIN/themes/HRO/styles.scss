@@ -6,37 +6,6 @@
 	border-radius: $radius;
 }
 
-@mixin page-curl($shadow-color:rgba(0,0,0,0.3), $skew:15deg, $rotate:5deg, $hoff:8px, $voff:12px, $blur:10px){
-	position: relative;                            
-	 @include box-shadow($shadow-color, 0px, 0px,3px);
-
-	&:after {
-		z-index: -1;
-		position: absolute;
-		background: transparent;
-		width: 70%;
-		height: 55%;
-		content: '';
-		right: 10px;
-		bottom: 10px; 
-		@include box-shadow($shadow-color, 8px, 12px, 10px);  
-		@include transform(1, 5deg, 0, 0, 15deg);
-	}        
-	
-	&:before {
-		z-index: -2;
-		position: absolute;
-		background: transparent;
-		width: 70%;
-		height: 55%;
-		content: '';
-		left: 10px;
-		bottom: 10px;  
-		@include box-shadow($shadow-color, -8px, 12px, 10px);  
-		@include transform(1, -5deg, 0, 0, -15deg);
-	} 
-} 
-
 .my-style {
   @include border-radius(4px);
 }
@@ -53,14 +22,6 @@
 
 .v-tabsheet-tabsheetpanel {
 	background: #DDD;
-}
-
-.v-app .v-splitpanel-hsplitter-locked .v-splitpanel-hsplitter-invisible-locked {
-	display: none;
-}
-
-.v-app .v-splitpanel-hsplitter-invisible div{
-	display: none;
 }
 
 .embedded-panel {
@@ -82,8 +43,6 @@
 	border-radius: 10px;
 	
 	background: #F8F8F8;
-	padding-top: 18px;
-	padding-bottom: 8px;
 	margin: 5px;	
 	box-shadow: 1px 1px 3px RGBA(0,0,0,0.15);
 	
@@ -93,6 +52,18 @@
 	
 	.v-scrollable {
 		overflow: hidden;
+	}
+
+	.v-layout.v-margin-left {
+		padding-left: 8px;
+	}
+	
+	.v-layout.v-margin-top {
+		padding-top: 8px;
+	}
+	
+	.v-layout.v-margin-right {
+		padding-right: 8px;
 	}
 
 	.v-panel-content-novscroll {

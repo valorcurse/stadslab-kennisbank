@@ -13,7 +13,7 @@ environments {
 	development {
 		dataSource {
 			dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
-			url = "jdbc:mysql://localhost:3307/Kennisbank_test?useUnicode=yes&characterEncoding=UTF-8"
+			url = "jdbc:mysql://localhost/Kennisbank_test?useUnicode=yes&characterEncoding=UTF-8"
 			username = "root"
 			password = "123456"
 		}

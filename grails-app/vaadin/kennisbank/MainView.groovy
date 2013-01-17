@@ -10,6 +10,7 @@ import com.vaadin.ui.TabSheet.Tab
 import com.vaadin.navigator.Navigator
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
+import kennisbank.home.HomeView
 import kennisbank.projects.*
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.themes.Reindeer
@@ -26,8 +27,6 @@ class MainView extends Panel implements View {
 		VerticalLayout view = new VerticalLayout()
 		view.setSizeFull() // Set layout to cover the whole screen
 
-		//view.setComponentAlignment(view, Alignment.TOP_CENTER)
-
 		// Tabs on the right panel
 		topTabs = new TabSheet()
 		topTabs.setSizeFull()
@@ -35,18 +34,11 @@ class MainView extends Panel implements View {
 		topTabs.addStyleName(Reindeer.TABSHEET_HOVER_CLOSABLE)
 
 		//Home tab
-		VerticalLayout homeVerticalLayout = new VerticalLayout()
-		homeVerticalLayout.setSizeFull()
-		topTabs.addTab(homeVerticalLayout, "Home")
+		topTabs.addTab(new HomeView(), "Home")
 		topTabs.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
 					public void selectedTabChange(SelectedTabChangeEvent event) {
-						String uri = UI.getCurrent().getPage().getUriFragment()
-						if (uri != null) {
-							String[] uriParameters = uri.split("/")
-
-							Tab tab = topTabs.getTab(event.getTabSheet().getSelectedTab())
-							UI.getCurrent().getPage().getCurrent().setLocation(tab.getComponent().tabName())
-						}
+						Tab tab = topTabs.getTab(event.getTabSheet().getSelectedTab())
+						UI.getCurrent().getPage().getCurrent().setLocation(tab.getComponent().tabName())
 					}
 				});
 
@@ -136,13 +128,14 @@ class MainView extends Panel implements View {
 		// Login Panel
 		Panel loginPanel = new Panel("Login")
 		loginPanel.setPrimaryStyleName("island-panel")
-		loginPanel.setHeight("150px")
+		loginPanel.setHeight("100%")
 		loginPanel.setStyleName(Runo.PANEL_LIGHT)
 		VerticalLayout loginPanelLayout = new VerticalLayout()
-		loginPanelLayout.setSizeFull()
+		//loginPanelLayout.setSizeFull()
 		loginPanelLayout.setSpacing(true)
+		loginPanelLayout.setMargin(true)
 		loginPanel.setContent(loginPanelLayout)
-		loginPanel.setWidth("100%")
+		//loginPanel.setWidth("100%")
 		TextField usernameField = new TextField()
 		PasswordField passwordField = new PasswordField()
 		usernameField.setInputPrompt("Username")
@@ -169,7 +162,7 @@ class MainView extends Panel implements View {
 		loggedinPanelLayout.addComponent(welcome)
 		loggedinPanel.setVisible(false);
 
-		Button logoutButton = new Button("Log out")		
+		Button logoutButton = new Button("Log out")
 
 		loginButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
@@ -202,39 +195,39 @@ class MainView extends Panel implements View {
 					}
 
 				})
-		
+
 		Button registerButton = new Button("Register", new Button.ClickListener() {
-			public void buttonClick(ClickEvent event) {
-				Window window = new Window("Register")
-				window.setModal(true)
-				VerticalLayout windowLayout = new VerticalLayout()
-				windowLayout.setSpacing(true)
-				windowLayout.setMargin(true)
-				TextField userNameTextField = new TextField("Username")
-				PasswordField passwordTextField = new PasswordField("Password")
-				windowLayout.addComponent(userNameTextField)
-				windowLayout.addComponent(passwordTextField)
-				Button okButton = new Button("Apply", new Button.ClickListener() {
-							public void buttonClick(ClickEvent event2) {
-								def userService = new UserService()
-								User.withTransaction {
-									userService.createProject(userNameTextField.getValue(), passwordTextField.getValue())
-								}
-								window.close()
-							}
-						})
-				windowLayout.addComponent(okButton)
-				windowLayout.setComponentAlignment(userNameTextField, Alignment.MIDDLE_CENTER)
-				windowLayout.setComponentAlignment(passwordTextField, Alignment.MIDDLE_CENTER)
-				windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
-				window.setContent(windowLayout)
-				UI.getCurrent().addWindow(window)
-			}
-		})
+					public void buttonClick(ClickEvent event) {
+						Window window = new Window("Register")
+						window.setModal(true)
+						VerticalLayout windowLayout = new VerticalLayout()
+						windowLayout.setSpacing(true)
+						windowLayout.setMargin(true)
+						TextField userNameTextField = new TextField("Username")
+						PasswordField passwordTextField = new PasswordField("Password")
+						windowLayout.addComponent(userNameTextField)
+						windowLayout.addComponent(passwordTextField)
+						Button okButton = new Button("Apply", new Button.ClickListener() {
+									public void buttonClick(ClickEvent event2) {
+										def userService = new UserService()
+										User.withTransaction {
+											userService.createProject(userNameTextField.getValue(), passwordTextField.getValue())
+										}
+										window.close()
+									}
+								})
+						windowLayout.addComponent(okButton)
+						windowLayout.setComponentAlignment(userNameTextField, Alignment.MIDDLE_CENTER)
+						windowLayout.setComponentAlignment(passwordTextField, Alignment.MIDDLE_CENTER)
+						windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
+						window.setContent(windowLayout)
+						UI.getCurrent().addWindow(window)
+					}
+				})
 		registerButton.setStyleName(Reindeer.BUTTON_LINK)
 
-		
-		
+
+
 		loginPanelLayout.addComponent(loginButton)
 		loggedinPanelLayout.addComponent(logoutButton)
 		loginPanelLayout.setComponentAlignment(usernameField, Alignment.MIDDLE_CENTER)
@@ -243,7 +236,7 @@ class MainView extends Panel implements View {
 		loggedinPanelLayout.setComponentAlignment(logoutButton, Alignment.TOP_CENTER)
 		loggedinPanelLayout.setComponentAlignment(welcome, Alignment.MIDDLE_CENTER)
 		loginPanelLayout.addComponent(registerButton)
-		
+
 		//Add components to the left panel
 		left.addComponent(logoPanel)
 		left.addComponent(loginPanel)
@@ -262,5 +255,35 @@ class MainView extends Panel implements View {
 	}
 
 	public void enter(ViewChangeEvent event) {
+		if(event.getParameters() != null){
+
+			for (int t = 1; t < topTabs.getComponentCount(); t++) {
+				println(topTabs.getTab(t).getComponent().tabName().replace("#!/", "") + " - " + event.getParameters())
+				if (topTabs.getTab(t).getComponent().tabName().replace("#!/", "").equals(event.getParameters())) {
+					return
+				}
+			}
+
+			String[] urlParameters = event.getParameters().split("/")
+			if (urlParameters[0] == "project") {
+				if (urlParameters.size() == 2) {
+					Project currentProject = Project.findByTitle(urlParameters[1])
+
+					if (currentProject != null) {
+						ProjectView projectTab = new ProjectView(currentProject)
+						Tab tab = topTabs.addTab(projectTab, "Project: "+ currentProject.getTitle())
+						tab.setClosable(true)
+						topTabs.setSelectedTab(tab)
+					}
+				}
+				else {
+					ProjectsOverview projectTab = new ProjectsOverview()
+					Tab tab = topTabs.addTab(projectTab, "Projects")
+					tab.setClosable(true)
+					topTabs.setSelectedTab(tab)
+				}
+			}
+
+		}
 	}
 }
