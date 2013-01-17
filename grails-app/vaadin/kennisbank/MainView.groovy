@@ -14,6 +14,7 @@ import kennisbank.home.HomeView
 import kennisbank.projects.*
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.themes.Reindeer
+import com.vaadin.event.ShortcutAction.KeyCode;
 
 class MainView extends Panel implements View {
 
@@ -144,6 +145,7 @@ class MainView extends Panel implements View {
 		loginPanelLayout.addComponent(passwordField)
 
 		Button loginButton = new Button("Login")
+		loginButton.setClickShortcut(KeyCode.ENTER);
 
 		//Loggedin Panel
 
@@ -216,6 +218,7 @@ class MainView extends Panel implements View {
 										window.close()
 									}
 								})
+						okButton.setClickShortcut(KeyCode.ENTER);
 						windowLayout.addComponent(okButton)
 						windowLayout.setComponentAlignment(userNameTextField, Alignment.MIDDLE_CENTER)
 						windowLayout.setComponentAlignment(passwordTextField, Alignment.MIDDLE_CENTER)
