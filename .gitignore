@@ -12,4 +12,4 @@ web-app/WEB-INF/classes/
 *.exe
 *.o
 *.so
-
+*.log
