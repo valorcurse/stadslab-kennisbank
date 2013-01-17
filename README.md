@@ -1,7 +1,9 @@
 stadslab-kennisbank
 ===================
 
+
 Database:
+
 	- Type: MySQL
 	- Name: kennisbank, kennisbank_test
 	[default]
