@@ -136,7 +136,7 @@ class MainView extends Panel implements View {
 		// Login Panel
 		Panel loginPanel = new Panel("Login")
 		loginPanel.setPrimaryStyleName("island-panel")
-		loginPanel.setHeight("130px")
+		loginPanel.setHeight("150px")
 		loginPanel.setStyleName(Runo.PANEL_LIGHT)
 		VerticalLayout loginPanelLayout = new VerticalLayout()
 		loginPanelLayout.setSizeFull()
@@ -156,7 +156,7 @@ class MainView extends Panel implements View {
 
 		Panel loggedinPanel = new Panel ("Welcome")
 		loggedinPanel.setPrimaryStyleName("island-panel")
-		loggedinPanel.setHeight("130px")
+		loggedinPanel.setHeight("150px")
 		loggedinPanel.setStyleName(Runo.PANEL_LIGHT)
 		VerticalLayout loggedinPanelLayout = new VerticalLayout()
 		loggedinPanelLayout.setSizeFull()
@@ -169,14 +169,15 @@ class MainView extends Panel implements View {
 		loggedinPanelLayout.addComponent(welcome)
 		loggedinPanel.setVisible(false);
 
-		Button logoutButton = new Button("Log out")
+		Button logoutButton = new Button("Log out")		
 
 		loginButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
 
 						println(usernameField.getValue());
 						println(passwordField.getValue());
-						if(usernameField.getValue() == "admin" && passwordField.getValue() == "password"){
+						User user = User.findByUsername(usernameField.getValue())
+						if(usernameField.getValue() == user.getUsername() && passwordField.getValue() == user.getPassword()){
 							UI.getCurrent().setLogged(true);
 							println(UI.getCurrent().getLogged());
 							Notification.show("Login succesful!");
@@ -201,6 +202,39 @@ class MainView extends Panel implements View {
 					}
 
 				})
+		
+		Button registerButton = new Button("Register", new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				Window window = new Window("Register")
+				window.setModal(true)
+				VerticalLayout windowLayout = new VerticalLayout()
+				windowLayout.setSpacing(true)
+				windowLayout.setMargin(true)
+				TextField userNameTextField = new TextField("Username")
+				PasswordField passwordTextField = new PasswordField("Password")
+				windowLayout.addComponent(userNameTextField)
+				windowLayout.addComponent(passwordTextField)
+				Button okButton = new Button("Apply", new Button.ClickListener() {
+							public void buttonClick(ClickEvent event2) {
+								def userService = new UserService()
+								User.withTransaction {
+									userService.createProject(userNameTextField.getValue(), passwordTextField.getValue())
+								}
+								window.close()
+							}
+						})
+				windowLayout.addComponent(okButton)
+				windowLayout.setComponentAlignment(userNameTextField, Alignment.MIDDLE_CENTER)
+				windowLayout.setComponentAlignment(passwordTextField, Alignment.MIDDLE_CENTER)
+				windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
+				window.setContent(windowLayout)
+				UI.getCurrent().addWindow(window)
+			}
+		})
+		registerButton.setStyleName(Reindeer.BUTTON_LINK)
+
+		
+		
 		loginPanelLayout.addComponent(loginButton)
 		loggedinPanelLayout.addComponent(logoutButton)
 		loginPanelLayout.setComponentAlignment(usernameField, Alignment.MIDDLE_CENTER)
@@ -208,7 +242,8 @@ class MainView extends Panel implements View {
 		loginPanelLayout.setComponentAlignment(loginButton, Alignment.TOP_CENTER)
 		loggedinPanelLayout.setComponentAlignment(logoutButton, Alignment.TOP_CENTER)
 		loggedinPanelLayout.setComponentAlignment(welcome, Alignment.MIDDLE_CENTER)
-
+		loginPanelLayout.addComponent(registerButton)
+		
 		//Add components to the left panel
 		left.addComponent(logoPanel)
 		left.addComponent(loginPanel)

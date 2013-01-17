@@ -93,6 +93,7 @@ class ProjectView extends CssLayout {
 		Panel membersPanel = new Panel("Members")
 		membersPanel.setPrimaryStyleName("island-panel")
 		membersPanel.setStyleName(Runo.PANEL_LIGHT)
+
 		
 		VerticalLayout membersLayout = new VerticalLayout()
 		membersLayout.setWidth("150px")
@@ -109,8 +110,8 @@ class ProjectView extends CssLayout {
 				})
 
 		PopupView popup = new PopupView("Add Member", popupLayout)
-		membersLayout.addComponent(popup)
-*/
+		membersLayout.addComponent(popup)*/
+
 		Panel updatesPanel = new Panel("Panel")
 		VerticalLayout updatesLayout = new VerticalLayout()
 		updatesLayout.setWidth("100%")
