@@ -154,10 +154,11 @@ class ProjectView extends CssLayout {
 				member.getDateOfBirth().toString()] as Object[],
 			new Integer(membersTable.size()+1));
 		}
-
 		membersLayout.addComponent(membersTable)
-		membersLayout.addComponent(createNewMemberButton)
-
+		
+		if(UI.getCurrent().getLogged()){
+			membersLayout.addComponent(createNewMemberButton)
+		}
 		Panel updatesPanel = new Panel("Updates")
 		updatesPanel.setPrimaryStyleName("island-panel")
 		updatesPanel.setStyleName(Runo.PANEL_LIGHT)
@@ -170,7 +171,7 @@ class ProjectView extends CssLayout {
 		VerticalLayout updateMessageLayout = new VerticalLayout()
 		updatesLayout.addComponent(updateMessageLayout)
 
-		HorizontalLayout messageUpdatesLayout = new HorizontalLayout()
+		/*HorizontalLayout messageUpdatesLayout = new HorizontalLayout()
 		messageUpdatesLayout.setSpacing(true)
 		messageUpdatesLayout.setMargin(true)
 		messageUpdatesLayout.setSizeFull()
@@ -184,7 +185,7 @@ class ProjectView extends CssLayout {
 		})
 		messageUpdatesLayout.addComponent(messageButton)
 		updatesLayout.addComponent(messageUpdatesLayout)
-		updatesLayout.setComponentAlignment(messageUpdatesLayout, Alignment.BOTTOM_LEFT)
+		updatesLayout.setComponentAlignment(messageUpdatesLayout, Alignment.BOTTOM_LEFT)*/
 
 
 		VerticalLayout filesLayout = new VerticalLayout()
