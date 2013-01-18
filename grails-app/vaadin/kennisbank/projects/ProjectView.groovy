@@ -19,13 +19,16 @@ import kennisbank.*
 class ProjectView extends CssLayout {
 
 	String uriFragment
-
+	ProjectService projectService
+	
 	String tabName() {
 		return uriFragment
 	}
 
 	public ProjectView(Project project) {
 
+		projectService = new ProjectService(project)
+		
 		uriFragment = "#!/project/" + project.getTitle()
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
@@ -64,24 +67,26 @@ class ProjectView extends CssLayout {
 		summaryLayout.setSpacing(true)
 		summaryLayout.setMargin(true)
 		summaryLayout.setWidth("100%")
-		
 
-		/*RichTextArea editor = new RichTextArea()
-		 editor.setWidth("100%")
 
+		RichTextArea editor = new RichTextArea()
+		editor.setWidth("100%")
 		Label summaryText = new Label()
 		summaryText.setWidth("100%")
-
 		summaryText.setContentMode(Label.CONTENT_XHTML)
+		summaryText.setValue(project.getSummary())
 		summaryLayout.addComponent(summaryText)
-
 		Button editButton = new Button("Edit")
 		editButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
 						if (editButton.getCaption() == "Apply") {
+							Project.withTransaction {
+								projectService.setSummary(editor.getValue())
+							}
 							summaryText.setValue(editor.getValue())
 							summaryLayout.replaceComponent(editor, summaryText)
 							editButton.setCaption("Edit")
+
 						}
 						else if (editButton.getCaption() == "Edit") {
 							editor.setValue(summaryText.getValue())
@@ -90,78 +95,11 @@ class ProjectView extends CssLayout {
 						}
 					}
 				})
-
 		summaryLayout.addComponent(summaryText)
-
-		summaryText.setContentMode(Label.CONTENT_XHTML)*/
-		
-		String placeholder;
-
-		Button editButton = new Button("Edit", new Button.ClickListener() {
-					public void buttonClick(ClickEvent event) {
-						Window window = new Window("Edit Summary")
-						window.setModal(true)
-						VerticalLayout windowLayout = new VerticalLayout()
-						windowLayout.setSpacing(true)
-						windowLayout.setMargin(true)
-						TextField summaryTextField = new TextField("Summary")
-						windowLayout.addComponent(summaryTextField)
-						Button okButton = new Button("Apply", new Button.ClickListener() {
-									public void buttonClick(ClickEvent event2) {
-										def summaryService = new SummaryService()
-										Summary.withTransaction {
-											summaryService.createSummary(summaryTextField.getValue())
-										}
-
-										//UI.getCurrent().getPage().getCurrent().setLocation("#!/project/" + projectNameTextField)
-										placeholder = summaryTextField.getvalue()
-										window.close()
-									}
-								})
-						windowLayout.addComponent(okButton)
-						windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
-						windowLayout.setComponentAlignment(summaryTextField, Alignment.MIDDLE_CENTER)
-						window.setContent(windowLayout)
-						UI.getCurrent().addWindow(window)
-					}
-				})
-
-
-		/*Button editButton = new Button("Edit")
-		 editButton.addClickListener(new Button.ClickListener() {
-		 public void buttonClick(ClickEvent event) {
-		 if (editButton.getCaption() == "Apply") {
-		 if(Summary.getSummary() != null){
-		 summaryText.setValue(summary.getSummary())
-		 }
-		 else{
-		 summaryText.setValue("N/A")
-		 }
-		 summaryLayout.replaceComponent(editor, summaryText)
-		 def summaryService = new SummaryService()
-		 Summary.withTransaction {
-		 summaryService.createSummary(editor.getValue())
-		 }
-		 editButton.setCaption("Edit")
-		 }
-		 else if (editButton.getCaption() == "Edit") {
-		 if(Summary.getSummary() != null){
-		 editor.setValue(Summary.getSummary())
-		 }
-		 else{
-		 editor.setValue("N/A")
-		 }
-		 summaryLayout.replaceComponent(summaryText, editor)
-		 editButton.setCaption("Apply")
-		 }
-		 }
-		 })*/
-		//summaryPanel.addComponent(new Label(placeholder))
+		summaryText.setContentMode(Label.CONTENT_XHTML)
 		summaryPanel.setContent(summaryLayout)
-		
-		
-		//summaryLayout.addComponent(summaryText)
-		
+
+
 		if(UI.getCurrent().getLogged()){
 			summaryLayout.addComponent(editButton)
 			summaryLayout.setComponentAlignment(editButton, Alignment.TOP_RIGHT)

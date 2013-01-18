@@ -5,12 +5,14 @@ class Project {
 	String title, summary, course
 	Date dateCreated
 
-	static searchable = true
-	
 	static hasMany = [document:Document, tags:Tag, projectmember:ProjectMember, information:Information]
 
 	static constraints = {}
 
+	static mapping = {
+		summary type: "text"
+	}
+	
 	String getTitle() {
 		return title
 	}
@@ -25,5 +27,9 @@ class Project {
 	
 	Date getDateCreated() {
 		return dateCreated
+	}
+	
+	void setSummary(String s) {
+		summary = s
 	}
 }
