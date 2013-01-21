@@ -7,8 +7,8 @@ import com.vaadin.ui.MenuBar.MenuItem
 import kennisbank.Project
 import kennisbank.ProjectMemberService
 import kennisbank.ProjectService
-import kennisbank.SummaryService
-import kennisbank.Summary
+//import kennisbank.SummaryService
+//import kennisbank.Summary
 import kennisbank.projects.Member
 import com.vaadin.ui.TabSheet.Tab
 import com.vaadin.ui.themes.Runo
@@ -205,16 +205,87 @@ class ProjectView extends CssLayout {
 
 
 		VerticalLayout filesLayout = new VerticalLayout()
-		filesLayout.setWidth("150px")
-		Panel filesPanel =  new Panel()
-		filesPanel.setHeight("250px")
+		filesLayout.setWidth("450px")
+		Panel filesPanel =  new Panel("Files")
+		filesPanel.setPrimaryStyleName("island-panel")
+		filesPanel.setStyleName(Runo.PANEL_LIGHT)
+		filesPanel.setHeight("290px")
 		filesPanel.setWidth("100%")
 		VerticalLayout filesPanelLayout = new VerticalLayout()
-		Label filesLabel = new Label("<b>Files</b>", Label.CONTENT_XHTML)
+		//Label UploadInfo = new Label("<b>No file uploaded</b>", Label.CONTENT_XHTML)
+		
+		filesPanelLayout.setMargin(true)
+		filesPanelLayout.setSpacing(true)
+		
+		
+		//TextField searchField = new TextField()
+		//searchField.addStyleName("search")
+		//searchField.setInputPrompt("filepath")
+		//VerticalLayout searchLayout = new VerticalLayout()
+		//filesPanel.setContent(searchLayout)
+		//searchLayout.setSizeFull()
+		
+		
+		Button UploadButton = new Button("Upload", new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				Window window = new Window("Upload")
+				window.setModal(true)
+				VerticalLayout windowLayout = new VerticalLayout()
+				windowLayout.setSpacing(true)
+				windowLayout.setMargin(true)
+				TextField fileTextField = new TextField("Filename")
+				TextField sizeTextField = new TextField("Size")
+				DateField dateTextField = new DateField("Date")
+				windowLayout.addComponent(fileTextField)
+				windowLayout.addComponent(sizeTextField)
+				windowLayout.addComponent(dateTextField)
+				Button okButton = new Button("Ok", new Button.ClickListener() {
+							public void buttonClick(ClickEvent event2) {
+								def documentService = new DocumentService()
+										Document.withTransaction {
+											documentService.createDocument(fileTextField.getValue(), sizeTextField.getValue(), 
+												dateTextField.getValue())}
+								window.close()
+							}
+						})
+				windowLayout.addComponent(okButton)
+				windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
+				windowLayout.setComponentAlignment(fileTextField, Alignment.MIDDLE_CENTER)
+				windowLayout.setComponentAlignment(sizeTextField, Alignment.MIDDLE_CENTER)
+				windowLayout.setComponentAlignment(dateTextField, Alignment.MIDDLE_CENTER)
+				window.setContent(windowLayout)
+				UI.getCurrent().addWindow(window)
+			}
+		})
+		Table fileTable = new Table()
+		fileTable.setHeight("150px")
+		fileTable.setWidth("100%")
 
+		fileTable.addContainerProperty("File Name", String.class, null)
+		fileTable.addContainerProperty("Size", String.class, null)
+		fileTable.addContainerProperty("Date added", String.class, null)
+		
+		List<Document> documents = Document.list() 
+
+		for (Document document : documents) {
+			fileTable.addItem(	[document.getTitle(), document.getSize(),
+				document.getDateAdded().toString()] as Object[],
+			new Integer(fileTable.size()+1));
+		}
+		
+		
+		//filesPanelLayout.addComponent(BladerButton)
+		filesPanelLayout.addComponent(UploadButton)
+		//filesPanelLayout.addComponent(UploadInfo)
+		filesPanelLayout.addComponent(fileTable)
+		
+		
+		//filesPanelLayout.setComponentAlignment(searchField, Alignment.TOP_LEFT)
+		filesPanelLayout.setComponentAlignment(UploadButton, Alignment.MIDDLE_LEFT)
+		//filesPanelLayout.setComponentAlignment(BladerButton, Alignment.MIDDLE_LEFT)
 		Upload upload = new Upload(null, null)
 
-		filesLayout.addComponent(filesLabel)
+		//filesLayout.addComponent(filesLabel)
 		filesLayout.addComponent(filesPanel)
 		filesPanel.setContent(filesPanelLayout)
 		if(UI.getCurrent().getLogged()){
@@ -226,6 +297,7 @@ class ProjectView extends CssLayout {
 		layout.addComponent(membersPanel, 0, 3)
 		layout.addComponent(updatesPanel, 1, 3, 1, 4)
 		layout.addComponent(filesLayout, 0, 4)
+
 
 		mainLayout.addComponent(menu)
 		mainLayout.addComponent(layout)
