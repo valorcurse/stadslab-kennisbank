@@ -15,6 +15,7 @@ import kennisbank.projects.*
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.themes.Reindeer
 import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.server.Sizeable.Unit
 
 class MainView extends Panel implements View {
 
@@ -51,7 +52,7 @@ class MainView extends Panel implements View {
 
 		// Split panel dividing the left panel from the right
 		HorizontalSplitPanel horizontalSplitPanel = new HorizontalSplitPanel()
-		horizontalSplitPanel.setSplitPosition(12)
+		horizontalSplitPanel.setSplitPosition(200, Unit.PIXELS)
 		horizontalSplitPanel.setLocked(true)
 		horizontalSplitPanel.addStyleName("invisible")
 		horizontalSplitPanel.setHeight("100%")
@@ -169,8 +170,6 @@ class MainView extends Panel implements View {
 		loginButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
 
-						println(usernameField.getValue());
-						println(passwordField.getValue());
 						User user = User.findByUsername(usernameField.getValue())
 						if(usernameField.getValue() == user.getUsername() && passwordField.getValue() == user.getPassword()){
 							UI.getCurrent().setLogged(true);
