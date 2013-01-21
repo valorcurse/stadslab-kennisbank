@@ -7,8 +7,6 @@ import com.vaadin.ui.MenuBar.MenuItem
 import kennisbank.Project
 import kennisbank.ProjectMemberService
 import kennisbank.ProjectService
-//import kennisbank.SummaryService
-//import kennisbank.Summary
 import kennisbank.projects.Member
 import com.vaadin.ui.TabSheet.Tab
 import com.vaadin.ui.themes.Runo
@@ -20,7 +18,7 @@ class ProjectView extends CssLayout {
 
 	String uriFragment
 	ProjectService projectService
-	
+
 	String tabName() {
 		return uriFragment
 	}
@@ -28,7 +26,7 @@ class ProjectView extends CssLayout {
 	public ProjectView(Project project) {
 
 		projectService = new ProjectService(project)
-		
+
 		uriFragment = "#!/project/" + project.getTitle()
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
@@ -182,26 +180,32 @@ class ProjectView extends CssLayout {
 
 		VerticalLayout updatesLayout = new VerticalLayout()
 		updatesLayout.setSizeFull()
+		updatesLayout.setMargin(true)
+		updatesLayout.setSpacing(true)
 		updatesPanel.setContent(updatesLayout)
 
+		Panel updateMessagePanel = new Panel()
+		updatesLayout.addComponent(updateMessagePanel)
+		updateMessagePanel.setHeight("310px")
+		
 		VerticalLayout updateMessageLayout = new VerticalLayout()
-		updatesLayout.addComponent(updateMessageLayout)
+		updateMessagePanel.setContent(updateMessageLayout)
 
-		/*HorizontalLayout messageUpdatesLayout = new HorizontalLayout()
-		 messageUpdatesLayout.setSpacing(true)
-		 messageUpdatesLayout.setMargin(true)
-		 messageUpdatesLayout.setSizeFull()
-		 TextField messageField = new TextField()
-		 messageField.setWidth("100%")
-		 messageUpdatesLayout.addComponent(messageField)
-		 Button messageButton = new Button("Post", new Button.ClickListener() {
-		 public void buttonClick(ClickEvent event) {
-		 updateMessageLayout.addComponent(new Update(messageField.getValue()))
-		 }
-		 })
-		 messageUpdatesLayout.addComponent(messageButton)
-		 updatesLayout.addComponent(messageUpdatesLayout)
-		 updatesLayout.setComponentAlignment(messageUpdatesLayout, Alignment.BOTTOM_LEFT)*/
+		HorizontalLayout messageUpdatesLayout = new HorizontalLayout()
+		messageUpdatesLayout.setSpacing(true)
+		//messageUpdatesLayout.setMargin(true)
+		messageUpdatesLayout.setWidth("100%")
+		TextField messageField = new TextField()
+		messageField.setWidth("100%")
+		messageUpdatesLayout.addComponent(messageField)
+		Button messageButton = new Button("Post", new Button.ClickListener() {
+					public void buttonClick(ClickEvent event) {
+						updateMessageLayout.addComponent(new Update(messageField.getValue()))
+					}
+				})
+		messageUpdatesLayout.addComponent(messageButton)
+		updatesLayout.addComponent(messageUpdatesLayout)
+		//updatesLayout.setComponentAlignment(messageUpdatesLayout, Alignment.BOTTOM_LEFT)
 
 
 		VerticalLayout filesLayout = new VerticalLayout()
@@ -213,50 +217,50 @@ class ProjectView extends CssLayout {
 		filesPanel.setWidth("100%")
 		VerticalLayout filesPanelLayout = new VerticalLayout()
 		//Label UploadInfo = new Label("<b>No file uploaded</b>", Label.CONTENT_XHTML)
-		
+
 		filesPanelLayout.setMargin(true)
 		filesPanelLayout.setSpacing(true)
-		
-		
+
+
 		//TextField searchField = new TextField()
 		//searchField.addStyleName("search")
 		//searchField.setInputPrompt("filepath")
 		//VerticalLayout searchLayout = new VerticalLayout()
 		//filesPanel.setContent(searchLayout)
 		//searchLayout.setSizeFull()
-		
-		
+
+
 		Button UploadButton = new Button("Upload", new Button.ClickListener() {
-			public void buttonClick(ClickEvent event) {
-				Window window = new Window("Upload")
-				window.setModal(true)
-				VerticalLayout windowLayout = new VerticalLayout()
-				windowLayout.setSpacing(true)
-				windowLayout.setMargin(true)
-				TextField fileTextField = new TextField("Filename")
-				TextField sizeTextField = new TextField("Size")
-				DateField dateTextField = new DateField("Date")
-				windowLayout.addComponent(fileTextField)
-				windowLayout.addComponent(sizeTextField)
-				windowLayout.addComponent(dateTextField)
-				Button okButton = new Button("Ok", new Button.ClickListener() {
-							public void buttonClick(ClickEvent event2) {
-								def documentService = new DocumentService()
+					public void buttonClick(ClickEvent event) {
+						Window window = new Window("Upload")
+						window.setModal(true)
+						VerticalLayout windowLayout = new VerticalLayout()
+						windowLayout.setSpacing(true)
+						windowLayout.setMargin(true)
+						TextField fileTextField = new TextField("Filename")
+						TextField sizeTextField = new TextField("Size")
+						DateField dateTextField = new DateField("Date")
+						windowLayout.addComponent(fileTextField)
+						windowLayout.addComponent(sizeTextField)
+						windowLayout.addComponent(dateTextField)
+						Button okButton = new Button("Ok", new Button.ClickListener() {
+									public void buttonClick(ClickEvent event2) {
+										def documentService = new DocumentService()
 										Document.withTransaction {
-											documentService.createDocument(fileTextField.getValue(), sizeTextField.getValue(), 
-												dateTextField.getValue())}
-								window.close()
-							}
-						})
-				windowLayout.addComponent(okButton)
-				windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
-				windowLayout.setComponentAlignment(fileTextField, Alignment.MIDDLE_CENTER)
-				windowLayout.setComponentAlignment(sizeTextField, Alignment.MIDDLE_CENTER)
-				windowLayout.setComponentAlignment(dateTextField, Alignment.MIDDLE_CENTER)
-				window.setContent(windowLayout)
-				UI.getCurrent().addWindow(window)
-			}
-		})
+											documentService.createDocument(fileTextField.getValue(), sizeTextField.getValue(),
+													dateTextField.getValue())}
+										window.close()
+									}
+								})
+						windowLayout.addComponent(okButton)
+						windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
+						windowLayout.setComponentAlignment(fileTextField, Alignment.MIDDLE_CENTER)
+						windowLayout.setComponentAlignment(sizeTextField, Alignment.MIDDLE_CENTER)
+						windowLayout.setComponentAlignment(dateTextField, Alignment.MIDDLE_CENTER)
+						window.setContent(windowLayout)
+						UI.getCurrent().addWindow(window)
+					}
+				})
 		Table fileTable = new Table()
 		fileTable.setHeight("150px")
 		fileTable.setWidth("100%")
@@ -264,22 +268,22 @@ class ProjectView extends CssLayout {
 		fileTable.addContainerProperty("File Name", String.class, null)
 		fileTable.addContainerProperty("Size", String.class, null)
 		fileTable.addContainerProperty("Date added", String.class, null)
-		
-		List<Document> documents = Document.list() 
+
+		List<Document> documents = Document.list()
 
 		for (Document document : documents) {
 			fileTable.addItem(	[document.getTitle(), document.getSize(),
 				document.getDateAdded().toString()] as Object[],
 			new Integer(fileTable.size()+1));
 		}
-		
-		
+
+
 		//filesPanelLayout.addComponent(BladerButton)
 		filesPanelLayout.addComponent(UploadButton)
 		//filesPanelLayout.addComponent(UploadInfo)
 		filesPanelLayout.addComponent(fileTable)
-		
-		
+
+
 		//filesPanelLayout.setComponentAlignment(searchField, Alignment.TOP_LEFT)
 		filesPanelLayout.setComponentAlignment(UploadButton, Alignment.MIDDLE_LEFT)
 		//filesPanelLayout.setComponentAlignment(BladerButton, Alignment.MIDDLE_LEFT)

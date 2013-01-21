@@ -6,9 +6,9 @@ class Document {
 	
 	String title
 	String size
-	Date dateAdded
+	Date dateCreated
 	
-	//static belongsTo = [project:Project]
+	static belongsTo = [project:Project]
 
     static constraints = {
     }
