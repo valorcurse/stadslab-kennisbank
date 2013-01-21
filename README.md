@@ -9,5 +9,5 @@ Database:
 	[default]
 		- Username: root
 		- Password: 123456
-		- Port: 3306
+		- Port: 3307
 	Check configuration on DataSource.groovy to match your system's.
