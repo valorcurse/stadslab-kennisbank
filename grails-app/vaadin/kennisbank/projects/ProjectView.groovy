@@ -132,7 +132,6 @@ class ProjectView extends CssLayout {
 													memberEmailTextField.getValue(), memberBirthTextField.getValue())
 										}
 
-										//UI.getCurrent().getPage().getCurrent().setLocation("#!/project/" + projectNameTextField)
 										window.close()
 									}
 								})
@@ -173,6 +172,8 @@ class ProjectView extends CssLayout {
 		if(UI.getCurrent().getLogged()){
 			membersLayout.addComponent(createNewMemberButton)
 		}
+		
+		
 		Panel updatesPanel = new Panel("Updates")
 		updatesPanel.setPrimaryStyleName("island-panel")
 		updatesPanel.setStyleName(Runo.PANEL_LIGHT)
@@ -188,26 +189,24 @@ class ProjectView extends CssLayout {
 		updatesLayout.addComponent(updateMessagePanel)
 		updateMessagePanel.setHeight("310px")
 		
-		VerticalLayout updateMessageLayout = new VerticalLayout()
-		updateMessagePanel.setContent(updateMessageLayout)
+		Update updates = new Update()
+		updateMessagePanel.setContent(updates)
 
 		HorizontalLayout messageUpdatesLayout = new HorizontalLayout()
 		messageUpdatesLayout.setSpacing(true)
-		//messageUpdatesLayout.setMargin(true)
 		messageUpdatesLayout.setWidth("100%")
 		TextField messageField = new TextField()
 		messageField.setWidth("100%")
 		messageUpdatesLayout.addComponent(messageField)
 		Button messageButton = new Button("Post", new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
-						updateMessageLayout.addComponent(new Update(messageField.getValue()))
+						updates.addMessage(messageField.getValue())
 					}
 				})
 		messageUpdatesLayout.addComponent(messageButton)
 		updatesLayout.addComponent(messageUpdatesLayout)
-		//updatesLayout.setComponentAlignment(messageUpdatesLayout, Alignment.BOTTOM_LEFT)
 
-
+		
 		VerticalLayout filesLayout = new VerticalLayout()
 		filesLayout.setWidth("450px")
 		Panel filesPanel =  new Panel("Files")
@@ -220,7 +219,6 @@ class ProjectView extends CssLayout {
 
 		filesPanelLayout.setMargin(true)
 		filesPanelLayout.setSpacing(true)
-
 
 		//TextField searchField = new TextField()
 		//searchField.addStyleName("search")

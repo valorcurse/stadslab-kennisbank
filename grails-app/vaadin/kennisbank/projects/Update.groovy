@@ -5,17 +5,19 @@ import com.vaadin.ui.Panel
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.Runo
 
-class Update extends Panel {
+class Update extends VerticalLayout {
 	
 	Update(String m) {
-		setSizeFull()
-		setPrimaryStyleName("updates-panel")
-		setStyleName(Runo.PANEL_LIGHT)
-		
-		VerticalLayout layout = new VerticalLayout()
-		Label message = new Label(m)
-		layout.addComponent(message)
-		
-		setContent(layout)
 	}
+	
+	void addMessage(String message) {
+		Panel panel = new Panel()
+		panel.setPrimaryStyleName("updates-panel")
+		panel.setStyleName(Runo.PANEL_LIGHT)
+		VerticalLayout layout = new VerticalLayout()
+		layout.addComponent(new Label(message))
+		panel.setContent(layout)
+		addComponent(panel)
+	}
+	
 }
