@@ -8,7 +8,10 @@ class Project {
 	
 	static hasMany = [document:Document, tags:Tag, projectMembers:ProjectMember, information:Information]
 
-	static constraints = {}
+	static constraints = {
+		summary(nullable: true)
+		course(nullable: true)
+	}
 
 	static mapping = {
 		summary type: "text"

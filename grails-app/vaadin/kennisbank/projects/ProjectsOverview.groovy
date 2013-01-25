@@ -63,10 +63,9 @@ class ProjectsOverview extends VerticalLayout {
 									public void buttonClick(ClickEvent event2) {
 										def projectService = new ProjectService()
 										Project.withTransaction {
-											projectService.createProject(projectNameTextField.getValue())
+											Project project = new Project(title: projectNameTextField.getValue()).save(flush: true, ErrorOnFail: true)
+											project.addToProjectMembers(new ProjectMember(username: UI.getCurrent().getLoggedInUser().getUsername()))
 										}
-
-										//UI.getCurrent().getPage().getCurrent().setLocation("#!/project/" + projectNameTextField)
 										window.close()
 									}
 								})

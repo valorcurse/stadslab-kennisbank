@@ -59,7 +59,7 @@ See configure target to adjust this buildfile.
         <echo>Modify this example Ant script to compile your own widget sets.</echo>
 
         <!-- Name of the widget set -->
-        <property name="widgetset" value="com.github.wolfie.refresher"/>
+        <property name="widgetset" value="com.github.wolfie.refresher.RefresherApplicationWidgetset"/>
 
         <!-- Define if the widget set be generated automatically -->
         <!-- from all widget sets included in the class path.    -->

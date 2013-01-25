@@ -148,16 +148,12 @@ class ProjectView extends CssLayout {
 									public void buttonClick(ClickEvent event2) {
 										def projectMemberService = new ProjectMemberService()
 										ProjectMember.withTransaction {
-											//ProjectMember newMember = projectMemberService.createMember(User.findByUsername(memberNameTextField.getValue()).getUsername())
-											ProjectMember newMember = new ProjectMember(username: User.findByUsername(memberNameTextField.getValue()).getUsername())//.save(flush: true, ErrorOnFail: true)
-											Project.withTransaction {
-												project.addToProjectMembers(newMember)
-												project.save()
-											}
-											membersTable.addItem(	[newMember.getUsername(), "",
-												""] as Object[],
-											new Integer(membersTable.size()+1));
+											ProjectMember newMember = new ProjectMember(username: User.findByUsername(memberNameTextField.getValue()).getUsername())
+											project.addToProjectMembers(newMember)
+											project.save()
 										}
+										membersTable.addItem(	[newMember.getUsername(), "", ""] as Object[],
+										new Integer(membersTable.size()+1));
 
 										window.close()
 									}
@@ -176,11 +172,14 @@ class ProjectView extends CssLayout {
 		membersLayout.setMargin(true)
 		membersLayout.setSpacing(true)
 
-		if(UI.getCurrent().getLogged()){
-			membersLayout.addComponent(createNewMemberButton)
+		if(UI.getCurrent().getLogged()) {
+			def currentUser = UI.getCurrent().getLoggedInUser().getUsername()
+			if (checkIfMember(currentUser)) {
+				membersLayout.addComponent(createNewMemberButton)
+			}
 		}
 
-
+		
 		Panel updatesPanel = new Panel("Updates")
 		updatesPanel.setPrimaryStyleName("island-panel")
 		updatesPanel.setStyleName(Runo.PANEL_LIGHT)
@@ -211,7 +210,7 @@ class ProjectView extends CssLayout {
 					}
 				})
 		messageUpdatesLayout.addComponent(messageButton)
-		
+
 		if(UI.getCurrent().getLogged()) {
 			def currentUser = UI.getCurrent().getLoggedInUser().getUsername()
 			if (checkIfMember(currentUser)) {
@@ -313,7 +312,7 @@ class ProjectView extends CssLayout {
 		public OutputStream receiveUpload(String strFilename, String strMIMEType) {
 			File file=null;
 			try {
-				file = new File("C:\" "+strFilename);
+				file = new File(strFilename);
 				if(!file.exists()) {
 					file.createNewFile();
 				}

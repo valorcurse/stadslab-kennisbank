@@ -122,5 +122,8 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.grails.ide.eclipse.core.CLASSPATH_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/refresher-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/vaadin-client-7.0.0.rc1.jar"/>
+	<classpathentry kind="lib" path="lib/vaadin-client-compiler-7.0.0.rc1.jar"/>
 	<classpathentry kind="output" path="target-eclipse/classes"/>
 </classpath>
