@@ -26,12 +26,12 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
  */
 
 //Theme being used, default is Reindeer
+
 @Theme("HRO")
-
-
 class MyUI extends UI {
 
 	boolean loggedIn
+	User loggedInUser
 	MainView mainView
 	
 	@Override
@@ -53,5 +53,13 @@ class MyUI extends UI {
 	
 	public boolean getLogged(){
 		return loggedIn;
+	}
+	
+	public User getLoggedInUser(){
+		return loggedInUser;
+	}
+	
+	public void setLoggedInUser(User user) {
+		loggedInUser = user
 	}
 }

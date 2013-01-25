@@ -1,5 +1,7 @@
 package kennisbank
 
+import java.util.Date;
+
 class User {
 	
 	String username, password

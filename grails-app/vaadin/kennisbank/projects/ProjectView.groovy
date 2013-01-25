@@ -4,20 +4,22 @@ import com.vaadin.ui.*
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.MenuBar.Command
 import com.vaadin.ui.MenuBar.MenuItem
-import kennisbank.Project
-import kennisbank.ProjectMemberService
-import kennisbank.ProjectService
+import kennisbank.*
 import kennisbank.projects.Member
 import com.vaadin.ui.TabSheet.Tab
+import com.vaadin.ui.Upload.Receiver
+import com.vaadin.ui.Upload.StartedEvent
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.themes.Reindeer
 import kennisbank.*
+import com.vaadin.event.ShortcutAction.KeyCode;
 
 
 class ProjectView extends CssLayout {
 
 	String uriFragment
 	ProjectService projectService
+	Project currentProject
 
 	String tabName() {
 		return uriFragment
@@ -26,6 +28,7 @@ class ProjectView extends CssLayout {
 	public ProjectView(Project project) {
 
 		projectService = new ProjectService(project)
+		currentProject = project
 
 		uriFragment = "#!/project/" + project.getTitle()
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
@@ -97,11 +100,14 @@ class ProjectView extends CssLayout {
 		summaryText.setContentMode(Label.CONTENT_XHTML)
 		summaryPanel.setContent(summaryLayout)
 
-
-		if(UI.getCurrent().getLogged()){
-			summaryLayout.addComponent(editButton)
-			summaryLayout.setComponentAlignment(editButton, Alignment.TOP_RIGHT)
+		if(UI.getCurrent().getLogged()) {
+			def currentUser = UI.getCurrent().getLoggedInUser().getUsername()
+			if (checkIfMember(currentUser)) {
+				summaryLayout.addComponent(editButton)
+				summaryLayout.setComponentAlignment(editButton, Alignment.TOP_RIGHT)
+			}
 		}
+
 		Panel membersPanel = new Panel("Members")
 		membersPanel.setPrimaryStyleName("island-panel")
 		membersPanel.setStyleName(Runo.PANEL_LIGHT)
@@ -111,6 +117,24 @@ class ProjectView extends CssLayout {
 		membersLayout.setWidth("450px")
 		membersPanel.setContent(membersLayout)
 
+		Table membersTable = new Table()
+		//projectsTable.addStyleName(Reindeer.TABLE_BORDERLESS)
+		membersTable.setHeight("150px")
+		membersTable.setWidth("100%")
+
+		membersTable.addContainerProperty("Name", String.class, null)
+		membersTable.addContainerProperty("Email", String.class, null)
+		membersTable.addContainerProperty("Birth Date", String.class, null)
+
+		List<ProjectMember> members = project.projectMembers
+
+		for (ProjectMember member : members) {
+			membersTable.addItem(	[member.getUsername(), "",
+				""] as Object[],
+			new Integer(membersTable.size()+1));
+		}
+		membersLayout.addComponent(membersTable)
+
 		Button createNewMemberButton = new Button("Add Member", new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
 						Window window = new Window("Add a new member")
@@ -119,17 +143,20 @@ class ProjectView extends CssLayout {
 						windowLayout.setSpacing(true)
 						windowLayout.setMargin(true)
 						TextField memberNameTextField = new TextField("Name")
-						TextField memberEmailTextField = new TextField("Email")
-						DateField memberBirthTextField = new DateField("Birth date")
 						windowLayout.addComponent(memberNameTextField)
-						windowLayout.addComponent(memberEmailTextField)
-						windowLayout.addComponent(memberBirthTextField)
 						Button okButton = new Button("Add", new Button.ClickListener() {
 									public void buttonClick(ClickEvent event2) {
 										def projectMemberService = new ProjectMemberService()
 										ProjectMember.withTransaction {
-											projectMemberService.createMember(memberNameTextField.getValue(),
-													memberEmailTextField.getValue(), memberBirthTextField.getValue())
+											//ProjectMember newMember = projectMemberService.createMember(User.findByUsername(memberNameTextField.getValue()).getUsername())
+											ProjectMember newMember = new ProjectMember(username: User.findByUsername(memberNameTextField.getValue()).getUsername())//.save(flush: true, ErrorOnFail: true)
+											Project.withTransaction {
+												project.addToProjectMembers(newMember)
+												project.save()
+											}
+											membersTable.addItem(	[newMember.getUsername(), "",
+												""] as Object[],
+											new Integer(membersTable.size()+1));
 										}
 
 										window.close()
@@ -141,8 +168,6 @@ class ProjectView extends CssLayout {
 						windowLayout.addComponent(okButton)
 						windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
 						windowLayout.setComponentAlignment(memberNameTextField, Alignment.MIDDLE_CENTER)
-						windowLayout.setComponentAlignment(memberEmailTextField, Alignment.MIDDLE_CENTER)
-						windowLayout.setComponentAlignment(memberBirthTextField, Alignment.MIDDLE_CENTER)
 						window.setContent(windowLayout)
 						UI.getCurrent().addWindow(window)
 					}
@@ -151,29 +176,11 @@ class ProjectView extends CssLayout {
 		membersLayout.setMargin(true)
 		membersLayout.setSpacing(true)
 
-		Table membersTable = new Table()
-		//projectsTable.addStyleName(Reindeer.TABLE_BORDERLESS)
-		membersTable.setHeight("150px")
-		membersTable.setWidth("100%")
-
-		membersTable.addContainerProperty("Name", String.class, null)
-		membersTable.addContainerProperty("Email", String.class, null)
-		membersTable.addContainerProperty("Birth Date", String.class, null)
-
-		List<ProjectMember> members = ProjectMember.list()
-
-		for (ProjectMember member : members) {
-			membersTable.addItem(	[member.getName(), member.getEmail(),
-				member.getDateOfBirth().toString()] as Object[],
-			new Integer(membersTable.size()+1));
-		}
-		membersLayout.addComponent(membersTable)
-
 		if(UI.getCurrent().getLogged()){
 			membersLayout.addComponent(createNewMemberButton)
 		}
-		
-		
+
+
 		Panel updatesPanel = new Panel("Updates")
 		updatesPanel.setPrimaryStyleName("island-panel")
 		updatesPanel.setStyleName(Runo.PANEL_LIGHT)
@@ -188,7 +195,7 @@ class ProjectView extends CssLayout {
 		Panel updateMessagePanel = new Panel()
 		updatesLayout.addComponent(updateMessagePanel)
 		updateMessagePanel.setHeight("310px")
-		
+
 		Update updates = new Update()
 		updateMessagePanel.setContent(updates)
 
@@ -204,9 +211,14 @@ class ProjectView extends CssLayout {
 					}
 				})
 		messageUpdatesLayout.addComponent(messageButton)
-		updatesLayout.addComponent(messageUpdatesLayout)
-
 		
+		if(UI.getCurrent().getLogged()) {
+			def currentUser = UI.getCurrent().getLoggedInUser().getUsername()
+			if (checkIfMember(currentUser)) {
+				updatesLayout.addComponent(messageUpdatesLayout)
+			}
+		}
+
 		VerticalLayout filesLayout = new VerticalLayout()
 		filesLayout.setWidth("450px")
 		Panel filesPanel =  new Panel("Files")
@@ -215,84 +227,59 @@ class ProjectView extends CssLayout {
 		filesPanel.setHeight("290px")
 		filesPanel.setWidth("100%")
 		VerticalLayout filesPanelLayout = new VerticalLayout()
-		//Label UploadInfo = new Label("<b>No file uploaded</b>", Label.CONTENT_XHTML)
-
 		filesPanelLayout.setMargin(true)
 		filesPanelLayout.setSpacing(true)
-
-		//TextField searchField = new TextField()
-		//searchField.addStyleName("search")
-		//searchField.setInputPrompt("filepath")
-		//VerticalLayout searchLayout = new VerticalLayout()
-		//filesPanel.setContent(searchLayout)
-		//searchLayout.setSizeFull()
-
-
-		Button UploadButton = new Button("Upload", new Button.ClickListener() {
-					public void buttonClick(ClickEvent event) {
-						Window window = new Window("Upload")
-						window.setModal(true)
-						VerticalLayout windowLayout = new VerticalLayout()
-						windowLayout.setSpacing(true)
-						windowLayout.setMargin(true)
-						TextField fileTextField = new TextField("Filename")
-						TextField sizeTextField = new TextField("Size")
-						DateField dateTextField = new DateField("Date")
-						windowLayout.addComponent(fileTextField)
-						windowLayout.addComponent(sizeTextField)
-						windowLayout.addComponent(dateTextField)
-						Button okButton = new Button("Ok", new Button.ClickListener() {
-									public void buttonClick(ClickEvent event2) {
-										def documentService = new DocumentService()
-										Document.withTransaction {
-											documentService.createDocument(fileTextField.getValue(), sizeTextField.getValue(),
-													dateTextField.getValue())}
-										window.close()
-									}
-								})
-						windowLayout.addComponent(okButton)
-						windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
-						windowLayout.setComponentAlignment(fileTextField, Alignment.MIDDLE_CENTER)
-						windowLayout.setComponentAlignment(sizeTextField, Alignment.MIDDLE_CENTER)
-						windowLayout.setComponentAlignment(dateTextField, Alignment.MIDDLE_CENTER)
-						window.setContent(windowLayout)
-						UI.getCurrent().addWindow(window)
-					}
-				})
 		Table fileTable = new Table()
 		fileTable.setHeight("150px")
 		fileTable.setWidth("100%")
 
 		fileTable.addContainerProperty("File Name", String.class, null)
-		fileTable.addContainerProperty("Size", String.class, null)
-		fileTable.addContainerProperty("Date added", String.class, null)
+
+		fileTable.addContainerProperty("Date Created", String.class, null)
 
 		List<Document> documents = Document.list()
 
 		for (Document document : documents) {
-			fileTable.addItem(	[document.getTitle(), document.getSize(),
-				document.getDateAdded().toString()] as Object[],
+			fileTable.addItem(	[document.getTitle(),
+				document.getDateCreated().toString()] as Object[],
 			new Integer(fileTable.size()+1));
 		}
+		Label status = new Label("Please select a file to upload");
 
+		UploadReceiver receiver = new UploadReceiver()
+		Upload upload = new Upload(null, receiver)
+		upload.setImmediate(true)
 
-		//filesPanelLayout.addComponent(BladerButton)
-		filesPanelLayout.addComponent(UploadButton)
-		//filesPanelLayout.addComponent(UploadInfo)
+		upload.addStartedListener(new Upload.StartedListener() {
+					public void uploadStarted(StartedEvent event) {
+						// This method gets called immediatedly after upload is started
+						upload.setVisible(true);
+						//progressLayout.setVisible(true);
+						//pi.setValue(0f);
+						//pi.setPollingInterval(500);
+						status.setValue("Uploading file \"" + event.getFilename()
+								+ "\"");
+						def documentService = new DocumentService()
+						Document.withTransaction {
+							documentService.createDocument(event.getFilename())
+						}
+					}
+				});
+
 		filesPanelLayout.addComponent(fileTable)
 
-
-		//filesPanelLayout.setComponentAlignment(searchField, Alignment.TOP_LEFT)
-		filesPanelLayout.setComponentAlignment(UploadButton, Alignment.MIDDLE_LEFT)
-		//filesPanelLayout.setComponentAlignment(BladerButton, Alignment.MIDDLE_LEFT)
-		Upload upload = new Upload(null, null)
-
-		//filesLayout.addComponent(filesLabel)
 		filesLayout.addComponent(filesPanel)
-		filesPanel.setContent(filesPanelLayout)
 		if(UI.getCurrent().getLogged()){
 			filesPanelLayout.addComponent(upload)
+			filesPanelLayout.addComponent(status);
+			filesPanelLayout.setComponentAlignment(upload, Alignment.MIDDLE_LEFT)
+
 		}
+
+		filesPanel.setContent(filesPanelLayout)
+
+
+
 		layout.addComponent(titleLabel, 0, 0, 1, 0)
 		layout.addComponent(menu, 0, 1, 1, 1)
 		layout.addComponent(summaryPanel, 0, 2, 1, 2)
@@ -309,5 +296,43 @@ class ProjectView extends CssLayout {
 		addComponent(mainLayout)
 	}
 
+	private boolean checkIfMember(String username) {
+		if(UI.getCurrent().getLogged()) {
+			def currentUser = UI.getCurrent().getLoggedInUser().getUsername()
+			if (currentProject.projectMembers.any { it.getUsername() == currentUser }) {
+				return true
+			}
+		}
+		return false
+	}
 
+	public class UploadReceiver implements Receiver {
+		private static final long serialVersionUID = 2215337036540966711L;
+		OutputStream outputFile = null;
+		@Override
+		public OutputStream receiveUpload(String strFilename, String strMIMEType) {
+			File file=null;
+			try {
+				file = new File("C:\" "+strFilename);
+				if(!file.exists()) {
+					file.createNewFile();
+				}
+				outputFile =  new FileOutputStream(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return outputFile;
+		}
+
+		protected void finalize() {
+			try {
+				super.finalize();
+				if(outputFile!=null) {
+					outputFile.close();
+				}
+			} catch (Throwable exception) {
+				exception.printStackTrace();
+			}
+		}
+	}
 }

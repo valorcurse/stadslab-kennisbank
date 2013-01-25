@@ -19,6 +19,15 @@ class ProjectService {
 		project.save()
 	}
 	
+	void addMember(ProjectMember member) {
+		project.addToProjectmembers(member)
+		project.save()
+	}
+	
+	ProjectMember[] getMembers() {
+		return project.members
+	}
+	
 	def serviceMethod() {
 
 	}

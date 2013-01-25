@@ -2,43 +2,15 @@ package kennisbank
 
 class ProjectMember {
 
-	String name
-	Date dateOfBirth
-	String gender
-	String address
-	String city
-	String zipcode
-	String email
+	String username
 	
     static constraints = {
     }
 	
-	String getName() {
-		return name
-	}
+	static belongsTo = [project:Project]
 	
-	Date getDateOfBirth() {
-		return dateOfBirth
-	}
-	
-	String getGender() {
-		return gender
-	}
-	
-	String getAddress() {
-		return address
-	}
-	
-	String getCity() {
-		return city
-	}
-	
-	String getZipCode() {
-		return zipcode
-	}
-	
-	String getEmail() {
-		return email
+	String getUsername() {
+		return username
 	}
 	
 }

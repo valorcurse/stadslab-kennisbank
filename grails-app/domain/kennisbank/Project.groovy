@@ -4,13 +4,15 @@ class Project {
 
 	String title, summary, course
 	Date dateCreated
-
-	static hasMany = [document:Document, tags:Tag, projectmember:ProjectMember, information:Information]
+	List projectMembers
+	
+	static hasMany = [document:Document, tags:Tag, projectMembers:ProjectMember, information:Information]
 
 	static constraints = {}
 
 	static mapping = {
 		summary type: "text"
+		projectMembers lazy: false
 	}
 	
 	String getTitle() {

@@ -173,6 +173,8 @@ class MainView extends Panel implements View {
 						User user = User.findByUsername(usernameField.getValue())
 						if(usernameField.getValue() == user.getUsername() && passwordField.getValue() == user.getPassword()){
 							UI.getCurrent().setLogged(true);
+							UI.getCurrent().setLoggedInUser(user)
+							Notification.show(UI.getCurrent().getLoggedInUser().username)
 							println(UI.getCurrent().getLogged());
 							Notification.show("Login succesful!");
 							welcome.setValue("You're now logged in, "+usernameField.getValue()+".")
@@ -260,7 +262,6 @@ class MainView extends Panel implements View {
 		if(event.getParameters() != null){
 
 			for (int t = 1; t < topTabs.getComponentCount(); t++) {
-				println(topTabs.getTab(t).getComponent().tabName().replace("#!/", "") + " - " + event.getParameters())
 				if (topTabs.getTab(t).getComponent().tabName().replace("#!/", "").equals(event.getParameters())) {
 					return
 				}
