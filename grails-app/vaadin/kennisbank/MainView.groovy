@@ -10,12 +10,13 @@ import com.vaadin.ui.TabSheet.Tab
 import com.vaadin.navigator.Navigator
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
-import kennisbank.home.HomeView
+import kennisbank.home.*
 import kennisbank.projects.*
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.themes.Reindeer
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.Sizeable.Unit
+
 
 class MainView extends Panel implements View {
 
@@ -47,12 +48,11 @@ class MainView extends Panel implements View {
 		// Layout for the left panel
 		VerticalLayout left = new VerticalLayout()
 		left.setSpacing(true)
-		left.setMargin(true)
 		left.setWidth("100%")
 
 		// Split panel dividing the left panel from the right
 		HorizontalSplitPanel horizontalSplitPanel = new HorizontalSplitPanel()
-		horizontalSplitPanel.setSplitPosition(200, Unit.PIXELS)
+		horizontalSplitPanel.setSplitPosition(160, Unit.PIXELS)
 		horizontalSplitPanel.setLocked(true)
 		horizontalSplitPanel.addStyleName("invisible")
 		horizontalSplitPanel.setHeight("100%")
@@ -64,7 +64,7 @@ class MainView extends Panel implements View {
 
 		// Logo on the top-left
 		Panel logoPanel = new Panel()
-		logoPanel.setPrimaryStyleName("island-panel")
+		//logoPanel.setPrimaryStyleName("island-panel")
 		logoPanel.setStyleName(Runo.PANEL_LIGHT)
 
 		HorizontalLayout logoLayout = new HorizontalLayout()
@@ -88,7 +88,7 @@ class MainView extends Panel implements View {
 		searchPanel.setWidth("100%")
 
 		searchPanel.setStyleName(Runo.PANEL_LIGHT)
-		searchPanel.setPrimaryStyleName("island-panel")
+		searchPanel.setPrimaryStyleName("sidebar-panel")
 
 		TextField searchField = new TextField()
 		searchField.addStyleName("search")
@@ -99,11 +99,12 @@ class MainView extends Panel implements View {
 		searchLayout.addComponent(searchField)
 		searchLayout.setComponentAlignment(searchField, Alignment.MIDDLE_CENTER)
 
+		
 		// Menu on the left
 		Panel leftMenuPanel = new Panel("Menu")
 
 		leftMenuPanel.setStyleName(Runo.PANEL_LIGHT)
-		leftMenuPanel.setPrimaryStyleName("island-panel")
+		leftMenuPanel.setPrimaryStyleName("sidebar-panel")
 
 		leftMenuPanel.setWidth("100%")
 		leftMenuPanel.setHeight("70px")
@@ -129,15 +130,12 @@ class MainView extends Panel implements View {
 
 		// Login Panel
 		Panel loginPanel = new Panel("Login")
-		loginPanel.setPrimaryStyleName("island-panel")
-		loginPanel.setHeight("100%")
+		loginPanel.setPrimaryStyleName("sidebar-panel")
 		loginPanel.setStyleName(Runo.PANEL_LIGHT)
+		loginPanel.setHeight("100%")
 		VerticalLayout loginPanelLayout = new VerticalLayout()
-		//loginPanelLayout.setSizeFull()
 		loginPanelLayout.setSpacing(true)
-		loginPanelLayout.setMargin(true)
 		loginPanel.setContent(loginPanelLayout)
-		//loginPanel.setWidth("100%")
 		TextField usernameField = new TextField()
 		PasswordField passwordField = new PasswordField()
 		usernameField.setInputPrompt("Username")
@@ -151,12 +149,12 @@ class MainView extends Panel implements View {
 		//Loggedin Panel
 
 		Panel loggedinPanel = new Panel ("Welcome")
-		loggedinPanel.setPrimaryStyleName("island-panel")
-		loggedinPanel.setHeight("150px")
+		loggedinPanel.setPrimaryStyleName("sidebar-panel")
 		loggedinPanel.setStyleName(Runo.PANEL_LIGHT)
+		loggedinPanel.setHeight("150px")
 		VerticalLayout loggedinPanelLayout = new VerticalLayout()
 		loggedinPanelLayout.setSizeFull()
-		loggedinPanelLayout.setMargin(true)
+		//loggedinPanelLayout.setMargin(true)
 		loggedinPanelLayout.setSpacing(true)
 		loggedinPanel.setSizeFull()
 		loggedinPanel.setContent(loggedinPanelLayout)

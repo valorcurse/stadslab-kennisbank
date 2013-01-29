@@ -6,10 +6,6 @@
 	border-radius: $radius;
 }
 
-.my-style {
-  @include border-radius(4px);
-}
-
 .v-splitpanel-first-container {
 	width: 150px;
 }
@@ -20,31 +16,86 @@
 }
 
 .v-splitpanel-first-container {
-	background: #ddd;
+	background: #EEE;
 	/*background-image: -webkit-linear-gradient(left, #ffffff 60%,#ddd 100%);*/
 }
 
 .v-tabsheet-tabsheetpanel {
-	background: #DDD;
+	background: #FFFFFF;
 }
 
 .embedded-panel {
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
 	
-	background: #F8F8F8;
-	padding-top: 18px;
-	padding-bottom: 8px;
-	margin: 5px;	
-	box-shadow: 1px 1px 3px #000000;
+	.v-panel-caption-light {
+		margin: 8px;
+		border-bottom: 1px solid black;
+	}
+	.v-panel-light {
+		border:solid 1px #000000;
+	}
+	
+	.v-scrollable {
+		overflow: hidden;
+	}
+
+	.v-layout.v-margin-left {
+		padding-left: 8px;
+	}
+	
+	.v-layout.v-margin-top {
+		padding-top: 8px;
+	}
+	
+	.v-layout.v-margin-right {
+		padding-right: 8px;
+	}
+
+	.v-panel-content-novscroll {
+    	overflow-y: hidden !important;
+    	overflow-x: hidden !important;
+	}
 	
 }
 
+.sidebar-panel {
+
+	padding-left: 9px;
+	padding-right: 9px;
+
+	.v-panel-caption-light {
+		margin-bottom: 8px;
+		margin-top: 8px;
+		border-bottom: 1px solid black;
+	}
+	.v-panel-light {
+		border:solid 1px #000000;
+	}
+	
+	.v-scrollable {
+		overflow: hidden;
+	}
+
+	.v-layout.v-margin-left {
+		padding-left: 8px;
+	}
+	
+	.v-layout.v-margin-top {
+		padding-top: 8px;
+	}
+	
+	.v-layout.v-margin-right {
+		padding-right: 8px;
+	}
+
+	.v-panel-content-novscroll {
+    	overflow-y: hidden !important;
+    	overflow-x: hidden !important;
+	}
+
+}
+
 .island-panel {
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
+	@include border-radius(4px);
 	
 	background: #F8F8F8;
 	margin: 5px;	
@@ -81,4 +132,10 @@
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
 	border-bottom-color: gainsboro;
+}
+
+.project-layout {
+	background-image: url(textures/dark_fish_skin.png);
+	background-repeat: repeat;
+	position: absolute;
 }

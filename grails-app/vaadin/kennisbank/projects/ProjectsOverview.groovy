@@ -22,13 +22,13 @@ class ProjectsOverview extends VerticalLayout {
 
 	ProjectsOverview() {
 
-		setMargin(true)
+		//setMargin(true)
 
 		uriFragment = "#!/project"
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
 		Panel panel = new Panel()
-		panel.setPrimaryStyleName("island-panel")
+		//panel.setPrimaryStyleName("island-panel")
 		panel.addStyleName(Runo.PANEL_LIGHT)
 
 		VerticalLayout layout = new VerticalLayout()

@@ -11,11 +11,9 @@ import com.vaadin.ui.Upload.Receiver
 import com.vaadin.ui.Upload.StartedEvent
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.themes.Reindeer
-import kennisbank.*
 import com.vaadin.event.ShortcutAction.KeyCode;
 
-
-class ProjectView extends CssLayout {
+class ProjectView extends VerticalLayout {
 
 	String uriFragment
 	ProjectService projectService
@@ -33,27 +31,22 @@ class ProjectView extends CssLayout {
 		uriFragment = "#!/project/" + project.getTitle()
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
-		VerticalLayout mainLayout = new VerticalLayout()
-		mainLayout.setWidth("100%")
-		GridLayout layout = new GridLayout(2, 5)
+		setSizeFull()
+		addStyleName("project-layout")
+		setMargin(true)
+
+		Panel panel = new Panel()
+		addComponent(panel)
+		panel.setPrimaryStyleName("island-panel")
+		//panel.addStyleName("project-panel")
+		//panel.setWidth("99%")
+
+		//panel.addStyleName(Runo.PANEL_LIGHT)
+
+		GridLayout layout = new GridLayout(2, 4)
 		layout.setSpacing(true)
 		layout.setMargin(true)
 		layout.setWidth("100%")
-
-		MenuBar menu = new MenuBar()
-		menu.setWidth("100%")
-		final MenuBar.MenuItem projectItem = menu.addItem("Project", null)
-		final MenuBar.MenuItem membersItem = menu.addItem("Members", null)
-		projectItem.addItem("New project", new Command() {
-					public void menuSelected(MenuItem selectedItem) {
-						showNotification("New project created!")
-					}
-				})
-		projectItem.addItem("Edit project", new Command() {
-					public void menuSelected(MenuItem selectedItem) {
-						showNotification("Edit this project!")
-					}
-				})
 
 		Label titleLabel = new Label("<h1><b>"+project.getTitle()+"</b></h1>", Label.CONTENT_XHTML)
 		titleLabel.setWidth("100%")
@@ -61,7 +54,7 @@ class ProjectView extends CssLayout {
 
 
 		Panel summaryPanel = new Panel("Summary")
-		summaryPanel.setPrimaryStyleName("island-panel")
+		summaryPanel.setPrimaryStyleName("embedded-panel")
 		summaryPanel.setStyleName(Runo.PANEL_LIGHT)
 
 		VerticalLayout summaryLayout = new VerticalLayout()
@@ -109,7 +102,7 @@ class ProjectView extends CssLayout {
 		}
 
 		Panel membersPanel = new Panel("Members")
-		membersPanel.setPrimaryStyleName("island-panel")
+		membersPanel.setPrimaryStyleName("embedded-panel")
 		membersPanel.setStyleName(Runo.PANEL_LIGHT)
 		membersPanel.setWidth("450px")
 
@@ -179,9 +172,9 @@ class ProjectView extends CssLayout {
 			}
 		}
 
-		
+
 		Panel updatesPanel = new Panel("Updates")
-		updatesPanel.setPrimaryStyleName("island-panel")
+		updatesPanel.setPrimaryStyleName("embedded-panel")
 		updatesPanel.setStyleName(Runo.PANEL_LIGHT)
 		updatesPanel.setHeight("400px")
 
@@ -221,7 +214,7 @@ class ProjectView extends CssLayout {
 		VerticalLayout filesLayout = new VerticalLayout()
 		filesLayout.setWidth("450px")
 		Panel filesPanel =  new Panel("Files")
-		filesPanel.setPrimaryStyleName("island-panel")
+		filesPanel.setPrimaryStyleName("embedded-panel")
 		filesPanel.setStyleName(Runo.PANEL_LIGHT)
 		filesPanel.setHeight("290px")
 		filesPanel.setWidth("100%")
@@ -278,21 +271,20 @@ class ProjectView extends CssLayout {
 		filesPanel.setContent(filesPanelLayout)
 
 
-
+		// Column 0, Row 0 to Column 1, Row 0
 		layout.addComponent(titleLabel, 0, 0, 1, 0)
-		layout.addComponent(menu, 0, 1, 1, 1)
-		layout.addComponent(summaryPanel, 0, 2, 1, 2)
-		layout.addComponent(membersPanel, 0, 3)
-		layout.addComponent(updatesPanel, 1, 3, 1, 4)
-		layout.addComponent(filesLayout, 0, 4)
-
-
-		mainLayout.addComponent(menu)
-		mainLayout.addComponent(layout)
+		// Column 0, Row 1 to Column 1, Row 1
+		layout.addComponent(summaryPanel, 0, 1, 1, 1)
+		// Column 0, Row 2
+		layout.addComponent(membersPanel, 0, 2)
+		// Column 1, Row 2 to Column 1, Row 3
+		layout.addComponent(updatesPanel, 1, 2, 1, 3)
+		// Column 0, Row 3
+		layout.addComponent(filesLayout, 0, 3)
 
 		layout.setColumnExpandRatio(1, 0.1)
 
-		addComponent(mainLayout)
+		panel.setContent(layout)
 	}
 
 	private boolean checkIfMember(String username) {
