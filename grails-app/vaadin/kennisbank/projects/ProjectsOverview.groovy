@@ -22,14 +22,15 @@ class ProjectsOverview extends VerticalLayout {
 
 	ProjectsOverview() {
 
-		//setMargin(true)
+		setMargin(true)
+		setSizeFull()
 
 		uriFragment = "#!/project"
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
 		Panel panel = new Panel()
-		//panel.setPrimaryStyleName("island-panel")
-		panel.addStyleName(Runo.PANEL_LIGHT)
+		panel.setPrimaryStyleName("island-panel")
+		//panel.addStyleName(Runo.PANEL_LIGHT)
 
 		VerticalLayout layout = new VerticalLayout()
 		layout.setSpacing(true)
@@ -50,7 +51,7 @@ class ProjectsOverview extends VerticalLayout {
 		createNewProjectLayout.setMargin(true)
 		createNewProjectPanel.setContent(createNewProjectLayout)
 
-		Button createNewProjectButton = new Button("Create a new project", new Button.ClickListener() {
+		NativeButton createNewProjectButton = new NativeButton("Create a new project", new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
 						Window window = new Window("Create a new project")
 						window.setModal(true)
@@ -59,7 +60,7 @@ class ProjectsOverview extends VerticalLayout {
 						windowLayout.setMargin(true)
 						TextField projectNameTextField = new TextField("Project name")
 						windowLayout.addComponent(projectNameTextField)
-						Button okButton = new Button("Ok", new Button.ClickListener() {
+						NativeButton okButton = new NativeButton("Ok", new Button.ClickListener() {
 									public void buttonClick(ClickEvent event2) {
 										def projectService = new ProjectService()
 										Project.withTransaction {

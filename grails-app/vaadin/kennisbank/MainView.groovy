@@ -109,12 +109,11 @@ class MainView extends Panel implements View {
 		leftMenuPanel.setWidth("100%")
 		leftMenuPanel.setHeight("70px")
 		VerticalLayout leftMenuLayout = new VerticalLayout()
-		leftMenuLayout.setStyleName("sidebar-menu")
 		leftMenuLayout.setSizeFull()
 		leftMenuLayout.setSpacing(true)
 
 
-		Button projectButton = new Button("Projects")
+		NativeButton projectButton = new NativeButton("Projects")
 		projectButton.setWidth("90%")
 		projectButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
@@ -143,11 +142,10 @@ class MainView extends Panel implements View {
 		loginPanelLayout.addComponent(usernameField)
 		loginPanelLayout.addComponent(passwordField)
 
-		Button loginButton = new Button("Login")
+		NativeButton loginButton = new NativeButton("Login")
 		loginButton.setClickShortcut(KeyCode.ENTER);
 
 		//Loggedin Panel
-
 		Panel loggedinPanel = new Panel ("Welcome")
 		loggedinPanel.setPrimaryStyleName("sidebar-panel")
 		loggedinPanel.setStyleName(Runo.PANEL_LIGHT)
@@ -163,7 +161,7 @@ class MainView extends Panel implements View {
 		loggedinPanelLayout.addComponent(welcome)
 		loggedinPanel.setVisible(false);
 
-		Button logoutButton = new Button("Log out")
+		NativeButton logoutButton = new NativeButton("Log out")
 
 		loginButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {

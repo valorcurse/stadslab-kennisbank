@@ -6,6 +6,35 @@
 	border-radius: $radius;
 }
 
+@mixin styled-nativebutton {
+	.v-nativebutton {
+		padding-left: 9px;
+		padding-right: 9px;
+		padding-bottom: 3px;
+		border: 1px solid #AEAEAE;
+		border-bottom-color: #959595;
+		@include border-radius(4px);
+		line-height: 17px;
+		font-family: "Lucida Grande",Tahoma,Verdana,Helvetical,sans-serif;
+		background: transparent;
+	
+		&:hover {
+			background-image: -webkit-gradient(linear, left top, left bottom, from(#EEE), to(#C8C8C8));
+		}
+		
+		&:active {
+			-moz-box-shadow:inset 3px 3px 9px #3b3a3b;
+			-webkit-box-shadow:inset 3px 3px 9px #3b3a3b;
+			box-shadow:inset 3px 3px 9px #3b3a3b;
+		}
+	}
+	
+	.v-nativebutton-caption {
+		color: #707070;
+		font-weight: bold;
+	}
+}
+
 .v-splitpanel-first-container {
 	width: 150px;
 }
@@ -22,6 +51,12 @@
 
 .v-tabsheet-tabsheetpanel {
 	background: #FFFFFF;
+}
+
+.v-tabsheet-tabsheetpanel  {
+	background-image: url(textures/dark_fish_skin.png);
+	background-repeat: repeat;
+	position: absolute;
 }
 
 .embedded-panel {
@@ -54,6 +89,8 @@
     	overflow-y: hidden !important;
     	overflow-x: hidden !important;
 	}
+	
+	@include styled-nativebutton;
 	
 }
 
@@ -91,11 +128,14 @@
     	overflow-y: hidden !important;
     	overflow-x: hidden !important;
 	}
+	
+	@include styled-nativebutton;
 
 }
 
 .island-panel {
 	@include border-radius(4px);
+	@include styled-nativebutton;
 	
 	background: #F8F8F8;
 	margin: 5px;	
@@ -120,6 +160,10 @@
 	.v-layout.v-margin-right {
 		padding-right: 8px;
 	}
+	
+	.v-layout.v-margin-bottom {
+		padding-bottom: 18px;
+	}
 
 	.v-panel-content-novscroll {
     	overflow-y: hidden !important;
@@ -128,14 +172,9 @@
 	
 }
 
+	
 .updates-panel {
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
 	border-bottom-color: gainsboro;
-}
-
-.project-layout {
-	background-image: url(textures/dark_fish_skin.png);
-	background-repeat: repeat;
-	position: absolute;
 }

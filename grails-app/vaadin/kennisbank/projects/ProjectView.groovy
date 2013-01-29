@@ -32,7 +32,6 @@ class ProjectView extends VerticalLayout {
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
 		setSizeFull()
-		addStyleName("project-layout")
 		setMargin(true)
 
 		Panel panel = new Panel()
@@ -50,7 +49,6 @@ class ProjectView extends VerticalLayout {
 
 		Label titleLabel = new Label("<h1><b>"+project.getTitle()+"</b></h1>", Label.CONTENT_XHTML)
 		titleLabel.setWidth("100%")
-		layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
 
 
 		Panel summaryPanel = new Panel("Summary")
@@ -70,7 +68,7 @@ class ProjectView extends VerticalLayout {
 		summaryText.setContentMode(Label.CONTENT_XHTML)
 		summaryText.setValue(project.getSummary())
 		summaryLayout.addComponent(summaryText)
-		Button editButton = new Button("Edit")
+		NativeButton editButton = new NativeButton("Edit")
 		editButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
 						if (editButton.getCaption() == "Apply") {
@@ -128,7 +126,7 @@ class ProjectView extends VerticalLayout {
 		}
 		membersLayout.addComponent(membersTable)
 
-		Button createNewMemberButton = new Button("Add Member", new Button.ClickListener() {
+		NativeButton createNewMemberButton = new NativeButton("Add Member", new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
 						Window window = new Window("Add a new member")
 						window.setModal(true)
@@ -137,7 +135,7 @@ class ProjectView extends VerticalLayout {
 						windowLayout.setMargin(true)
 						TextField memberNameTextField = new TextField("Name")
 						windowLayout.addComponent(memberNameTextField)
-						Button okButton = new Button("Add", new Button.ClickListener() {
+						NativeButton okButton = new NativeButton("Add", new Button.ClickListener() {
 									public void buttonClick(ClickEvent event2) {
 										def projectMemberService = new ProjectMemberService()
 										ProjectMember.withTransaction {
@@ -197,7 +195,7 @@ class ProjectView extends VerticalLayout {
 		TextField messageField = new TextField()
 		messageField.setWidth("100%")
 		messageUpdatesLayout.addComponent(messageField)
-		Button messageButton = new Button("Post", new Button.ClickListener() {
+		NativeButton messageButton = new NativeButton("Post", new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
 						updates.addMessage(messageField.getValue())
 					}
@@ -282,6 +280,8 @@ class ProjectView extends VerticalLayout {
 		// Column 0, Row 3
 		layout.addComponent(filesLayout, 0, 3)
 
+		layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
+		
 		layout.setColumnExpandRatio(1, 0.1)
 
 		panel.setContent(layout)
