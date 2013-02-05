@@ -1,9 +1,11 @@
 package kennisbank.projects
 
+import java.rmi.server.UID;
+
 import com.vaadin.ui.*
-import com.vaadin.ui.Button.ClickEvent
-import com.vaadin.ui.MenuBar.Command
-import com.vaadin.ui.MenuBar.MenuItem
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.MenuBar.Command;
+import com.vaadin.ui.MenuBar.MenuItem;
 import kennisbank.*
 import kennisbank.projects.Member
 import com.vaadin.ui.TabSheet.Tab
@@ -11,7 +13,7 @@ import com.vaadin.ui.Upload.Receiver
 import com.vaadin.ui.Upload.StartedEvent
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.themes.Reindeer
-import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.event.ShortcutAction.KeyCode
 
 class ProjectView extends VerticalLayout {
 
@@ -122,7 +124,7 @@ class ProjectView extends VerticalLayout {
 		for (ProjectMember member : members) {
 			membersTable.addItem(	[member.getUsername(), "",
 				""] as Object[],
-			new Integer(membersTable.size()+1));
+			new Integer(membersTable.size()+1))
 		}
 		membersLayout.addComponent(membersTable)
 
@@ -144,13 +146,13 @@ class ProjectView extends VerticalLayout {
 											project.save()
 										}
 										membersTable.addItem(	[newMember.getUsername(), "", ""] as Object[],
-										new Integer(membersTable.size()+1));
+										new Integer(membersTable.size()+1))
 
 										window.close()
 									}
 								})
 
-						okButton.setClickShortcut(KeyCode.ENTER);
+						okButton.setClickShortcut(KeyCode.ENTER)
 
 						windowLayout.addComponent(okButton)
 						windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
@@ -227,41 +229,41 @@ class ProjectView extends VerticalLayout {
 
 		fileTable.addContainerProperty("Date Created", String.class, null)
 
-		List<Document> documents = Document.list()
+		List<Document> documents = project.documents
 
 		for (Document document : documents) {
 			fileTable.addItem(	[document.getTitle(),
 				document.getDateCreated().toString()] as Object[],
-			new Integer(fileTable.size()+1));
+			new Integer(fileTable.size()+1))
 		}
-		Label status = new Label("Please select a file to upload");
+		Label status = new Label("Please select a file to upload")
 
-		UploadReceiver receiver = new UploadReceiver()
+		UploadReceiver receiver = new UploadReceiver(project)
 		Upload upload = new Upload(null, receiver)
 		upload.setImmediate(true)
 
 		upload.addStartedListener(new Upload.StartedListener() {
 					public void uploadStarted(StartedEvent event) {
 						// This method gets called immediatedly after upload is started
-						upload.setVisible(true);
-						//progressLayout.setVisible(true);
-						//pi.setValue(0f);
-						//pi.setPollingInterval(500);
+						upload.setVisible(true)
+						//progressLayout.setVisible(true)
+						//pi.setValue(0f)
+						//pi.setPollingInterval(500)
 						status.setValue("Uploading file \"" + event.getFilename()
-								+ "\"");
+								+ "\"")
 						def documentService = new DocumentService()
 						Document.withTransaction {
 							documentService.createDocument(event.getFilename())
 						}
 					}
-				});
+				})
 
 		filesPanelLayout.addComponent(fileTable)
 
 		filesLayout.addComponent(filesPanel)
 		if(UI.getCurrent().getLogged()){
 			filesPanelLayout.addComponent(upload)
-			filesPanelLayout.addComponent(status);
+			filesPanelLayout.addComponent(status)
 			filesPanelLayout.setComponentAlignment(upload, Alignment.MIDDLE_LEFT)
 
 		}
@@ -281,7 +283,7 @@ class ProjectView extends VerticalLayout {
 		layout.addComponent(filesLayout, 0, 3)
 
 		layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
-		
+
 		layout.setColumnExpandRatio(1, 0.1)
 
 		panel.setContent(layout)
@@ -298,31 +300,45 @@ class ProjectView extends VerticalLayout {
 	}
 
 	public class UploadReceiver implements Receiver {
-		private static final long serialVersionUID = 2215337036540966711L;
-		OutputStream outputFile = null;
+
+		private static final long serialVersionUID = 2215337036540966711L
+		OutputStream outputFile = null
+		Project project = null
+
+		UploadReceiver(Project project) {
+			this.project = project
+		}
+
 		@Override
 		public OutputStream receiveUpload(String strFilename, String strMIMEType) {
-			File file=null;
+			File file = null
+			
 			try {
-				file = new File(strFilename);
+				file = new File("uploads/"+project.getTitle()+"/"+strFilename)
+
 				if(!file.exists()) {
-					file.createNewFile();
+					file.createNewFile()
+					Document.withTransaction {
+						Document newDocument = new Document(title: file.name, path: file.absolutePath)
+						project.addToDocuments(newDocument)
+						project.save()
+					}
 				}
-				outputFile =  new FileOutputStream(file);
+				outputFile =  new FileOutputStream(file)
 			} catch (IOException e) {
-				e.printStackTrace();
+				e.printStackTrace()
 			}
-			return outputFile;
+			return outputFile
 		}
 
 		protected void finalize() {
 			try {
-				super.finalize();
-				if(outputFile!=null) {
-					outputFile.close();
+				super.finalize()
+				if(outputFile != null) {
+					outputFile.close()
 				}
 			} catch (Throwable exception) {
-				exception.printStackTrace();
+				exception.printStackTrace()
 			}
 		}
 	}

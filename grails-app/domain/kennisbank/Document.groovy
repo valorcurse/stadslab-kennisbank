@@ -4,7 +4,7 @@ import java.util.Date;
 
 class Document {
 
-	String title
+	String title, path
 	Date dateCreated
 
 	static belongsTo = [project:Project]
