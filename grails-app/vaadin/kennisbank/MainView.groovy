@@ -64,7 +64,7 @@ class MainView extends Panel implements View {
 
 		// Logo on the top-left
 		Panel logoPanel = new Panel()
-		//logoPanel.setPrimaryStyleName("island-panel")
+		logoPanel.setPrimaryStyleName("sidebar-panel")
 		logoPanel.setStyleName(Runo.PANEL_LIGHT)
 
 		HorizontalLayout logoLayout = new HorizontalLayout()
@@ -77,6 +77,7 @@ class MainView extends Panel implements View {
 		logoLayout.setComponentAlignment(logo, Alignment.MIDDLE_CENTER)
 
 		Label logoLabel = new Label ("<b>Kennisbank</b>", Label.CONTENT_XHTML)
+		logoLabel.addStyleName("logo-label")
 		logoLayout.addComponent(logoLabel)
 		logoLayout.setComponentAlignment(logoLabel, Alignment.MIDDLE_CENTER)
 		logoLayout.setMargin(true)
@@ -152,12 +153,12 @@ class MainView extends Panel implements View {
 		loggedinPanel.setHeight("150px")
 		VerticalLayout loggedinPanelLayout = new VerticalLayout()
 		loggedinPanelLayout.setSizeFull()
-		//loggedinPanelLayout.setMargin(true)
 		loggedinPanelLayout.setSpacing(true)
 		loggedinPanel.setSizeFull()
 		loggedinPanel.setContent(loggedinPanelLayout)
 		loggedinPanel.setWidth("100%")
 		Label welcome = new Label()
+		welcome.addStyleName("welcome-label")
 		loggedinPanelLayout.addComponent(welcome)
 		loggedinPanel.setVisible(false);
 
