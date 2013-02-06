@@ -13,6 +13,7 @@ import com.vaadin.ui.Upload.Receiver
 import com.vaadin.ui.Upload.StartedEvent
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.themes.Reindeer
+import com.vaadin.server.ExternalResource
 import com.vaadin.event.ShortcutAction.KeyCode
 
 class ProjectView extends VerticalLayout {
@@ -225,14 +226,14 @@ class ProjectView extends VerticalLayout {
 		fileTable.setHeight("150px")
 		fileTable.setWidth("100%")
 
-		fileTable.addContainerProperty("File Name", String.class, null)
+		fileTable.addContainerProperty("File Name", Link.class, null)
 
 		fileTable.addContainerProperty("Date Created", String.class, null)
 
 		List<Document> documents = project.documents
 
 		for (Document document : documents) {
-			fileTable.addItem(	[document.getTitle(),
+			fileTable.addItem(	[new Link(document.getTitle(), new ExternalResource("uploads/"+project.getTitle()+"/bel.rtf")),
 				document.getDateCreated().toString()] as Object[],
 			new Integer(fileTable.size()+1))
 		}
@@ -341,5 +342,34 @@ class ProjectView extends VerticalLayout {
 				exception.printStackTrace()
 			}
 		}
+	}
+	
+	/*import java.io.File;
+	import java.io.FileInputStream;
+	import java.io.FileNotFoundException;
+	
+	import com.vaadin.Application;
+	import com.vaadin.terminal.DownloadStream;
+	import com.vaadin.terminal.FileResource;
+	   
+		public class FileDownloadResource  extends UploadReceiver{
+	
+		public FileDownloadResource(File sourceFile, Application application) {
+			super(sourceFile, application);
+		}
+	
+		public DownloadStream getStream() {
+			try {
+				final DownloadStream ds = new DownloadStream(new FileInputStream(
+						getSourceFile()), getMIMEType(), getFilename());
+				ds.setParameter("Content-Disposition", "attachment; filename="
+						+ getFilename());
+				ds.setCacheTime(getCacheTime());
+				return ds;
+			} catch (final FileNotFoundException e) {
+				//TODO:do something
+				return null;
+			}
+		}*/
 	}
 }
