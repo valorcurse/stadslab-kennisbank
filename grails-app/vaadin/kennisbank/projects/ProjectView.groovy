@@ -226,14 +226,22 @@ class ProjectView extends VerticalLayout {
 		fileTable.setHeight("150px")
 		fileTable.setWidth("100%")
 
+<<<<<<< HEAD
+		fileTable.addContainerProperty("File Name", DownloadLink.class, null)
+=======
 		fileTable.addContainerProperty("File Name", Link.class, null)
 
+>>>>>>> 7ba97c1309e414e7bb4c2917dc507e2268dad0ba
 		fileTable.addContainerProperty("Date Created", String.class, null)
 
 		List<Document> documents = project.documents
 
 		for (Document document : documents) {
+<<<<<<< HEAD
+			fileTable.addItem(	[new DownloadLink(document),
+=======
 			fileTable.addItem(	[new Link(document.getTitle(), new ExternalResource("uploads/"+project.getTitle()+"/bel.rtf")),
+>>>>>>> 7ba97c1309e414e7bb4c2917dc507e2268dad0ba
 				document.getDateCreated().toString()] as Object[],
 			new Integer(fileTable.size()+1))
 		}
@@ -315,7 +323,9 @@ class ProjectView extends VerticalLayout {
 			File file = null
 			
 			try {
+				new File("uploads/"+project.getTitle()).mkdirs()
 				file = new File("uploads/"+project.getTitle()+"/"+strFilename)
+
 
 				if(!file.exists()) {
 					file.createNewFile()
