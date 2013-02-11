@@ -66,6 +66,7 @@ class ProjectsOverview extends VerticalLayout {
 										Project.withTransaction {
 											Project project = new Project(title: projectNameTextField.getValue()).save(flush: true, ErrorOnFail: true)
 											project.addToProjectMembers(new ProjectMember(username: UI.getCurrent().getLoggedInUser().getUsername()))
+											
 										}
 										window.close()
 									}

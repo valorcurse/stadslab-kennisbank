@@ -11,7 +11,7 @@ import com.vaadin.ui.themes.Runo
 import com.vaadin.navigator.*
 import com.vaadin.server.Resource
 import com.vaadin.server.VaadinRequest
-import com.vaadin.annotations.Theme
+import com.vaadin.annotations.*
 import com.vaadin.ui.HorizontalSplitPanel
 import com.vaadin.server.ThemeResource
 import com.vaadin.ui.Button.ClickEvent
@@ -28,6 +28,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 //Theme being used, default is Reindeer
 
 @Theme("HRO")
+//@PreserveOnRefresh
 class MyUI extends UI {
 
 	boolean loggedIn

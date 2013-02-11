@@ -11,6 +11,7 @@ import kennisbank.projects.Member
 import com.vaadin.ui.TabSheet.Tab
 import com.vaadin.ui.Upload.Receiver
 import com.vaadin.ui.Upload.StartedEvent
+import com.vaadin.ui.Upload.SucceededEvent
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.themes.Reindeer
 import com.vaadin.server.ExternalResource
@@ -214,38 +215,34 @@ class ProjectView extends VerticalLayout {
 
 		VerticalLayout filesLayout = new VerticalLayout()
 		filesLayout.setWidth("450px")
+
 		Panel filesPanel =  new Panel("Files")
 		filesPanel.setPrimaryStyleName("embedded-panel")
 		filesPanel.setStyleName(Runo.PANEL_LIGHT)
 		filesPanel.setHeight("290px")
 		filesPanel.setWidth("100%")
+
 		VerticalLayout filesPanelLayout = new VerticalLayout()
 		filesPanelLayout.setMargin(true)
 		filesPanelLayout.setSpacing(true)
+
 		Table fileTable = new Table()
 		fileTable.setHeight("150px")
 		fileTable.setWidth("100%")
-
-<<<<<<< HEAD
 		fileTable.addContainerProperty("File Name", DownloadLink.class, null)
-=======
 		fileTable.addContainerProperty("File Name", Link.class, null)
-
->>>>>>> 7ba97c1309e414e7bb4c2917dc507e2268dad0ba
 		fileTable.addContainerProperty("Date Created", String.class, null)
 
 		List<Document> documents = project.documents
 
 		for (Document document : documents) {
-<<<<<<< HEAD
-			fileTable.addItem(	[new DownloadLink(document),
-=======
-			fileTable.addItem(	[new Link(document.getTitle(), new ExternalResource("uploads/"+project.getTitle()+"/bel.rtf")),
->>>>>>> 7ba97c1309e414e7bb4c2917dc507e2268dad0ba
-				document.getDateCreated().toString()] as Object[],
+			fileTable.addItem(	[new DownloadLink(document), document.getDateCreated().toString()] as Object[],
 			new Integer(fileTable.size()+1))
 		}
+
 		Label status = new Label("Please select a file to upload")
+		ProgressIndicator progressBar = new ProgressIndicator()
+		progressBar.setVisible(false)
 
 		UploadReceiver receiver = new UploadReceiver(project)
 		Upload upload = new Upload(null, receiver)
@@ -253,25 +250,36 @@ class ProjectView extends VerticalLayout {
 
 		upload.addStartedListener(new Upload.StartedListener() {
 					public void uploadStarted(StartedEvent event) {
-						// This method gets called immediatedly after upload is started
-						upload.setVisible(true)
-						//progressLayout.setVisible(true)
-						//pi.setValue(0f)
-						//pi.setPollingInterval(500)
-						status.setValue("Uploading file \"" + event.getFilename()
-								+ "\"")
-						def documentService = new DocumentService()
-						Document.withTransaction {
-							documentService.createDocument(event.getFilename())
-						}
+						progressBar.setValue(0f)
+						progressBar.setVisible(true)
+						status.setValue("Uploading file " + event.getFilename() + "")
 					}
 				})
+
+		upload.addListener(new Upload.ProgressListener() {
+					public void updateProgress(long readBytes, long contentLength) {
+						// this method gets called several times during the update
+						progressBar.setValue(new Float(readBytes / (float) contentLength));
+						//textualProgress.setValue("Processed " + readBytes
+						//		+ " bytes of " + contentLength);
+						//result.setValue(counter.getLineBreakCount() + " (counting...)");
+					}
+
+				});
+
+		upload.addListener(new Upload.SucceededListener() {
+					public void uploadSucceeded(SucceededEvent event) {
+						status.setValue("File " + event.getFilename() + " uploaded sucessfuly.")
+						progressBar.setVisible(false)
+					}
+				});
 
 		filesPanelLayout.addComponent(fileTable)
 
 		filesLayout.addComponent(filesPanel)
 		if(UI.getCurrent().getLogged()){
 			filesPanelLayout.addComponent(upload)
+			filesPanelLayout.addComponent(progressBar)
 			filesPanelLayout.addComponent(status)
 			filesPanelLayout.setComponentAlignment(upload, Alignment.MIDDLE_LEFT)
 
@@ -310,7 +318,7 @@ class ProjectView extends VerticalLayout {
 
 	public class UploadReceiver implements Receiver {
 
-		private static final long serialVersionUID = 2215337036540966711L
+		private static final long serialVersionUID = 2215337036540966711
 		OutputStream outputFile = null
 		Project project = null
 
@@ -321,7 +329,7 @@ class ProjectView extends VerticalLayout {
 		@Override
 		public OutputStream receiveUpload(String strFilename, String strMIMEType) {
 			File file = null
-			
+
 			try {
 				new File("uploads/"+project.getTitle()).mkdirs()
 				file = new File("uploads/"+project.getTitle()+"/"+strFilename)
@@ -352,34 +360,5 @@ class ProjectView extends VerticalLayout {
 				exception.printStackTrace()
 			}
 		}
-	}
-	
-	/*import java.io.File;
-	import java.io.FileInputStream;
-	import java.io.FileNotFoundException;
-	
-	import com.vaadin.Application;
-	import com.vaadin.terminal.DownloadStream;
-	import com.vaadin.terminal.FileResource;
-	   
-		public class FileDownloadResource  extends UploadReceiver{
-	
-		public FileDownloadResource(File sourceFile, Application application) {
-			super(sourceFile, application);
-		}
-	
-		public DownloadStream getStream() {
-			try {
-				final DownloadStream ds = new DownloadStream(new FileInputStream(
-						getSourceFile()), getMIMEType(), getFilename());
-				ds.setParameter("Content-Disposition", "attachment; filename="
-						+ getFilename());
-				ds.setCacheTime(getCacheTime());
-				return ds;
-			} catch (final FileNotFoundException e) {
-				//TODO:do something
-				return null;
-			}
-		}*/
 	}
 }

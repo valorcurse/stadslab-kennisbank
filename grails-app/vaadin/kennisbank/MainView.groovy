@@ -171,7 +171,6 @@ class MainView extends Panel implements View {
 						if(usernameField.getValue() == user.getUsername() && passwordField.getValue() == user.getPassword()){
 							UI.getCurrent().setLogged(true);
 							UI.getCurrent().setLoggedInUser(user)
-							Notification.show(UI.getCurrent().getLoggedInUser().username)
 							println(UI.getCurrent().getLogged());
 							Notification.show("Login succesful!");
 							welcome.setValue("You're now logged in, "+usernameField.getValue()+".")
@@ -181,7 +180,7 @@ class MainView extends Panel implements View {
 
 						}
 						else{
-							Notification.show("Nope, chucktesta!")
+							Notification.show("Username and/or password incorrect.")
 						}
 					}
 				})
