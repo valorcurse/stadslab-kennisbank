@@ -22,6 +22,7 @@ class ProjectView extends VerticalLayout {
 	String uriFragment
 	ProjectService projectService
 	Project currentProject
+	def hiddenComponents
 
 	String tabName() {
 		return uriFragment
@@ -31,6 +32,7 @@ class ProjectView extends VerticalLayout {
 
 		projectService = new ProjectService(project)
 		currentProject = project
+		hiddenComponents = []
 
 		uriFragment = "#!/project/" + project.getTitle()
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
@@ -39,12 +41,7 @@ class ProjectView extends VerticalLayout {
 		setMargin(true)
 
 		Panel panel = new Panel()
-		addComponent(panel)
 		panel.setPrimaryStyleName("island-panel")
-		//panel.addStyleName("project-panel")
-		//panel.setWidth("99%")
-
-		//panel.addStyleName(Runo.PANEL_LIGHT)
 
 		GridLayout layout = new GridLayout(2, 4)
 		layout.setSpacing(true)
@@ -54,6 +51,7 @@ class ProjectView extends VerticalLayout {
 		Label titleLabel = new Label("<h1><b>"+project.getTitle()+"</b></h1>", Label.CONTENT_XHTML)
 		titleLabel.setWidth("100%")
 
+		// ------------------------------------------------------- Summary -------------------------------------------------------
 
 		Panel summaryPanel = new Panel("Summary")
 		summaryPanel.setPrimaryStyleName("embedded-panel")
@@ -91,18 +89,16 @@ class ProjectView extends VerticalLayout {
 						}
 					}
 				})
+
 		summaryLayout.addComponent(summaryText)
-		summaryText.setContentMode(Label.CONTENT_XHTML)
+		summaryLayout.addComponent(editButton)
+		hiddenComponents.add(editButton)
+		editButton.setVisible(false)
+		summaryLayout.setComponentAlignment(editButton, Alignment.TOP_RIGHT)
 		summaryPanel.setContent(summaryLayout)
 
-		if(UI.getCurrent().getLogged()) {
-			def currentUser = UI.getCurrent().getLoggedInUser().getUsername()
-			if (checkIfMember(currentUser)) {
-				summaryLayout.addComponent(editButton)
-				summaryLayout.setComponentAlignment(editButton, Alignment.TOP_RIGHT)
-			}
-		}
-
+		// ------------------------------------------------------- Members -------------------------------------------------------
+		
 		Panel membersPanel = new Panel("Members")
 		membersPanel.setPrimaryStyleName("embedded-panel")
 		membersPanel.setStyleName(Runo.PANEL_LIGHT)
@@ -134,11 +130,14 @@ class ProjectView extends VerticalLayout {
 					public void buttonClick(ClickEvent event) {
 						Window window = new Window("Add a new member")
 						window.setModal(true)
+						
 						VerticalLayout windowLayout = new VerticalLayout()
 						windowLayout.setSpacing(true)
 						windowLayout.setMargin(true)
+						
 						TextField memberNameTextField = new TextField("Name")
 						windowLayout.addComponent(memberNameTextField)
+						
 						NativeButton okButton = new NativeButton("Add", new Button.ClickListener() {
 									public void buttonClick(ClickEvent event2) {
 										def projectMemberService = new ProjectMemberService()
@@ -164,17 +163,13 @@ class ProjectView extends VerticalLayout {
 					}
 				})
 
+		hiddenComponents.add(createNewMemberButton)
+		membersLayout.addComponent(createNewMemberButton)
 		membersLayout.setMargin(true)
 		membersLayout.setSpacing(true)
 
-		if(UI.getCurrent().getLogged()) {
-			def currentUser = UI.getCurrent().getLoggedInUser().getUsername()
-			if (checkIfMember(currentUser)) {
-				membersLayout.addComponent(createNewMemberButton)
-			}
-		}
-
-
+		// ------------------------------------------------------- Updates -------------------------------------------------------
+		
 		Panel updatesPanel = new Panel("Updates")
 		updatesPanel.setPrimaryStyleName("embedded-panel")
 		updatesPanel.setStyleName(Runo.PANEL_LIGHT)
@@ -205,14 +200,11 @@ class ProjectView extends VerticalLayout {
 					}
 				})
 		messageUpdatesLayout.addComponent(messageButton)
+		updatesLayout.addComponent(messageUpdatesLayout)
+		hiddenComponents.add(messageUpdatesLayout)
 
-		if(UI.getCurrent().getLogged()) {
-			def currentUser = UI.getCurrent().getLoggedInUser().getUsername()
-			if (checkIfMember(currentUser)) {
-				updatesLayout.addComponent(messageUpdatesLayout)
-			}
-		}
-
+		// ------------------------------------------------------- Uploads -------------------------------------------------------
+		
 		VerticalLayout filesLayout = new VerticalLayout()
 		filesLayout.setWidth("450px")
 
@@ -233,61 +225,53 @@ class ProjectView extends VerticalLayout {
 		fileTable.addContainerProperty("File Name", Link.class, null)
 		fileTable.addContainerProperty("Date Created", String.class, null)
 
+		// List all uploaded files in the table
 		List<Document> documents = project.documents
-
 		for (Document document : documents) {
 			fileTable.addItem(	[new DownloadLink(document), document.getDateCreated().toString()] as Object[],
 			new Integer(fileTable.size()+1))
 		}
 
-		Label status = new Label("Please select a file to upload")
-		ProgressIndicator progressBar = new ProgressIndicator()
-		progressBar.setVisible(false)
+		ProgressIndicator progressBar = new ProgressIndicator() // Progress bar for uploads
+		progressBar.setVisible(false) // Hide the progress bar from unauthorized users
 
-		UploadReceiver receiver = new UploadReceiver(project)
-		Upload upload = new Upload(null, receiver)
-		upload.setImmediate(true)
+		UploadReceiver receiver = new UploadReceiver(project) // Receiver that handles the data stream
+		Upload upload = new Upload(null, receiver) // Upload button
+		upload.setImmediate(true) // Starts to upload immediately after choosing file
 
 		upload.addStartedListener(new Upload.StartedListener() {
 					public void uploadStarted(StartedEvent event) {
 						progressBar.setValue(0f)
 						progressBar.setVisible(true)
-						status.setValue("Uploading file " + event.getFilename() + "")
 					}
 				})
 
-		upload.addListener(new Upload.ProgressListener() {
+		upload.addProgressListener(new Upload.ProgressListener() {
 					public void updateProgress(long readBytes, long contentLength) {
 						// this method gets called several times during the update
 						progressBar.setValue(new Float(readBytes / (float) contentLength));
-						//textualProgress.setValue("Processed " + readBytes
-						//		+ " bytes of " + contentLength);
-						//result.setValue(counter.getLineBreakCount() + " (counting...)");
 					}
 
 				});
 
-		upload.addListener(new Upload.SucceededListener() {
+		upload.addSucceededListener(new Upload.SucceededListener() {
 					public void uploadSucceeded(SucceededEvent event) {
-						status.setValue("File " + event.getFilename() + " uploaded sucessfuly.")
 						progressBar.setVisible(false)
 					}
 				});
 
 		filesPanelLayout.addComponent(fileTable)
+		filesPanelLayout.addComponent(upload)
+		hiddenComponents.add(upload)
+		filesPanelLayout.addComponent(progressBar)
+		
+		filesPanelLayout.setComponentAlignment(upload, Alignment.MIDDLE_LEFT)
 
 		filesLayout.addComponent(filesPanel)
-		if(UI.getCurrent().getLogged()){
-			filesPanelLayout.addComponent(upload)
-			filesPanelLayout.addComponent(progressBar)
-			filesPanelLayout.addComponent(status)
-			filesPanelLayout.setComponentAlignment(upload, Alignment.MIDDLE_LEFT)
-
-		}
 
 		filesPanel.setContent(filesPanelLayout)
 
-
+		// Add components to the grid
 		// Column 0, Row 0 to Column 1, Row 0
 		layout.addComponent(titleLabel, 0, 0, 1, 0)
 		// Column 0, Row 1 to Column 1, Row 1
@@ -299,15 +283,38 @@ class ProjectView extends VerticalLayout {
 		// Column 0, Row 3
 		layout.addComponent(filesLayout, 0, 3)
 
-		layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
-
 		layout.setColumnExpandRatio(1, 0.1)
 
+		// Add the main layout to the main panel
 		panel.setContent(layout)
+
+		addComponent(panel)
+
+		if(UI.getCurrent().getLoggedIn()) {
+			def currentUser = UI.getCurrent().getLoggedInUser().getUsername()
+			if (checkIfMember(currentUser)) {
+				revealHiddenComponents()
+			}
+		}
+		else {
+			hideRevealedComponents()
+		}
+	}
+
+	void revealHiddenComponents() {
+		for (c in hiddenComponents) {
+			c.setVisible(true)
+		}
+	}
+
+	void hideRevealedComponents() {
+		for (c in hiddenComponents) {
+			c.setVisible(false)
+		}
 	}
 
 	private boolean checkIfMember(String username) {
-		if(UI.getCurrent().getLogged()) {
+		if(UI.getCurrent().getLoggedIn()) {
 			def currentUser = UI.getCurrent().getLoggedInUser().getUsername()
 			if (currentProject.projectMembers.any { it.getUsername() == currentUser }) {
 				return true
@@ -318,7 +325,6 @@ class ProjectView extends VerticalLayout {
 
 	public class UploadReceiver implements Receiver {
 
-		private static final long serialVersionUID = 2215337036540966711
 		OutputStream outputFile = null
 		Project project = null
 

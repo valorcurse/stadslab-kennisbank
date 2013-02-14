@@ -34,13 +34,14 @@ class MyUI extends UI {
 	boolean loggedIn
 	User loggedInUser
 	MainView mainView
+	Navigator navigator
 	
 	@Override
 	public void init(VaadinRequest request) {
 
 		mainView = new MainView()
 		
-		Navigator navigator = new Navigator(this, this) // Create a navigator used to handle URI fragments
+		navigator = new Navigator(this, this) // Create a navigator used to handle URI fragments
 
 		navigator.addView("", mainView) // Add the main view
 
@@ -48,15 +49,15 @@ class MyUI extends UI {
 		
 	}
 	
-	public void setLogged(loggedIn) {
+	public void setLoggedIn(loggedIn) {
 		this.loggedIn = loggedIn;
 	}
 	
-	public boolean getLogged(){
+	public boolean getLoggedIn() {
 		return loggedIn;
 	}
 	
-	public User getLoggedInUser(){
+	public User getLoggedInUser() {
 		return loggedInUser;
 	}
 	

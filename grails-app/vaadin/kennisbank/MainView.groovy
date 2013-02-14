@@ -100,7 +100,7 @@ class MainView extends Panel implements View {
 		searchLayout.addComponent(searchField)
 		searchLayout.setComponentAlignment(searchField, Alignment.MIDDLE_CENTER)
 
-		
+
 		// Menu on the left
 		Panel leftMenuPanel = new Panel("Menu")
 
@@ -128,6 +128,8 @@ class MainView extends Panel implements View {
 		leftMenuLayout.addComponent(projectButton)
 		leftMenuLayout.setComponentAlignment(projectButton, Alignment.MIDDLE_CENTER)
 
+		// ------------------------------------------------------- Login -------------------------------------------------------
+		
 		// Login Panel
 		Panel loginPanel = new Panel("Login")
 		loginPanel.setPrimaryStyleName("sidebar-panel")
@@ -168,16 +170,20 @@ class MainView extends Panel implements View {
 					public void buttonClick(ClickEvent event) {
 
 						User user = User.findByUsername(usernameField.getValue())
-						if(usernameField.getValue() == user.getUsername() && passwordField.getValue() == user.getPassword()){
-							UI.getCurrent().setLogged(true);
+						if(user != null && usernameField.getValue() == user.getUsername() && passwordField.getValue() == user.getPassword()){
+							UI.getCurrent().setLoggedIn(true);
 							UI.getCurrent().setLoggedInUser(user)
-							println(UI.getCurrent().getLogged());
+
 							Notification.show("Login succesful!");
 							welcome.setValue("You're now logged in, "+usernameField.getValue()+".")
 							left.replaceComponent(loginPanel, loggedinPanel)
 							loggedinPanel.setVisible(true);
 							loginPanel.setVisible(false);
 
+
+							for (int t = 1; t < topTabs.getComponentCount(); t++) {
+								topTabs.getTab(t).getComponent().revealHiddenComponents()
+							}
 						}
 						else{
 							Notification.show("Username and/or password incorrect.")
@@ -186,11 +192,15 @@ class MainView extends Panel implements View {
 				})
 		logoutButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
-						UI.getCurrent().setLogged(false);
+						UI.getCurrent().setLoggedIn(false);
 						left.replaceComponent(loggedinPanel, loginPanel)
 						loggedinPanel.setVisible(false);
 						loginPanel.setVisible(true);
 						Notification.show("You're now logged out")
+						
+						for (int t = 1; t < topTabs.getComponentCount(); t++) {
+							topTabs.getTab(t).getComponent().hideRevealedComponents()
+						}
 					}
 
 				})

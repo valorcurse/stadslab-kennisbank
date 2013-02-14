@@ -16,6 +16,8 @@ class ProjectsOverview extends VerticalLayout {
 
 	String uriFragment
 
+	def hiddenComponents
+
 	String tabName() {
 		return uriFragment
 	}
@@ -25,12 +27,13 @@ class ProjectsOverview extends VerticalLayout {
 		setMargin(true)
 		setSizeFull()
 
+		hiddenComponents = []
+
 		uriFragment = "#!/project"
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
 		Panel panel = new Panel()
 		panel.setPrimaryStyleName("island-panel")
-		//panel.addStyleName(Runo.PANEL_LIGHT)
 
 		VerticalLayout layout = new VerticalLayout()
 		layout.setSpacing(true)
@@ -42,7 +45,10 @@ class ProjectsOverview extends VerticalLayout {
 		Label titleLabel = new Label("<h1><b>Projects</b></h1>", Label.CONTENT_XHTML)
 		titleLabel.setWidth("100%")
 
+		// ------------------------------------------------------- New Project -------------------------------------------------------
+		
 		Panel createNewProjectPanel = new Panel("New project")
+		hiddenComponents.add(createNewProjectPanel)
 		createNewProjectPanel.setPrimaryStyleName("embedded-panel")
 		createNewProjectPanel.addStyleName(Runo.PANEL_LIGHT)
 
@@ -66,7 +72,7 @@ class ProjectsOverview extends VerticalLayout {
 										Project.withTransaction {
 											Project project = new Project(title: projectNameTextField.getValue()).save(flush: true, ErrorOnFail: true)
 											project.addToProjectMembers(new ProjectMember(username: UI.getCurrent().getLoggedInUser().getUsername()))
-											
+
 										}
 										window.close()
 									}
@@ -81,6 +87,8 @@ class ProjectsOverview extends VerticalLayout {
 
 		createNewProjectLayout.addComponent(createNewProjectButton)
 
+		// ------------------------------------------------------- Existing Project -------------------------------------------------------
+		
 		Panel existingProjectsPanel = new Panel("Existing project")
 		existingProjectsPanel.setPrimaryStyleName("embedded-panel")
 		existingProjectsPanel.addStyleName(Runo.PANEL_LIGHT)
@@ -129,15 +137,31 @@ class ProjectsOverview extends VerticalLayout {
 		existingProjectsLayout.addComponent(projectsTable)
 
 		layout.addComponent(titleLabel)
-		if(UI.getCurrent().getLogged()){
-			layout.addComponent(createNewProjectPanel)
-		}
+		layout.addComponent(createNewProjectPanel)
 		layout.addComponent(existingProjectsPanel)
 
 		layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
 		layout.setComponentAlignment(existingProjectsPanel, Alignment.TOP_CENTER)
 
 		addComponent(panel)
+
+		if(UI.getCurrent().getLoggedIn()) {
+			revealHiddenComponents()
+		}
+		else {
+			hideRevealedComponents()
+		}
 	}
 
+	void revealHiddenComponents() {
+		for (c in hiddenComponents) {
+			c.setVisible(true)
+		}
+	}
+
+	void hideRevealedComponents() {
+		for (c in hiddenComponents) {
+			c.setVisible(false)
+		}
+	}
 }
