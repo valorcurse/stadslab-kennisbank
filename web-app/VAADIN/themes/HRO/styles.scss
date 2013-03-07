@@ -200,6 +200,8 @@
 	background-image: url(textures/dark_fish_skin.png);
 	background-repeat: repeat;
 	position: absolute;
+	
+	@include styled-nativebutton;
 }
 
 .image-button {
