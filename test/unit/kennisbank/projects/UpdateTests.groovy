@@ -2,6 +2,7 @@ package kennisbank.projects
 
 
 
+import kennisbank.fabtool.projects.Update;
 import grails.test.mixin.*
 import org.junit.*
 

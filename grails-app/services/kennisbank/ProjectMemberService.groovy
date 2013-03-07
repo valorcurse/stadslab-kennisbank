@@ -1,5 +1,7 @@
 package kennisbank
 
+import kennisbank.project.ProjectMember;
+
 class ProjectMemberService {
 
 	static transactional = true

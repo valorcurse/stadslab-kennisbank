@@ -11,15 +11,23 @@
 		padding-left: 9px;
 		padding-right: 9px;
 		padding-bottom: 3px;
+		
 		border: 1px solid #AEAEAE;
 		border-bottom-color: #959595;
-		@include border-radius(4px);
+		
 		line-height: 17px;
 		font-family: "Lucida Grande",Tahoma,Verdana,Helvetical,sans-serif;
-		background: transparent;
+		background-color: #666666;
+	
+		.v-nativebutton-caption {
+				color: #FFFFFF;
+		}
 	
 		&:hover {
-			background-image: -webkit-gradient(linear, left top, left bottom, from(#EEE), to(#C8C8C8));
+			background-color: #336699;
+			.v-nativebutton-caption {
+				color: #FFFFFF;
+			}
 		}
 		
 		&:active {
@@ -42,17 +50,24 @@
 
 .v-splitpanel-first-container {
 	background: #EEE;
-	/*background-image: -webkit-linear-gradient(left, #ffffff 60%,#ddd 100%);*/
 }
 
 .v-tabsheet-borderless-spacertd {
 	background-image: none;
 }
 
-.v-tabsheet-tabsheetpanel  {
-	background-image: url(textures/dark_fish_skin.png);
-	background-repeat: repeat;
-	position: absolute;
+#top-tabs {
+	.v-tabsheet-tabsheetpanel  {
+		background-image: url(textures/dark_fish_skin.png);
+		background-repeat: repeat;
+		position: absolute;
+	}
+}
+
+#project-tabs {
+	.v-tabsheet-tabsheetpanel  {
+		background-image: none;
+	}
 }
 
 .embedded-panel {
@@ -61,10 +76,6 @@
 		margin: 8px;
 		color: #707070;
 		border-bottom: 1px solid #707070;
-	}
-	
-	.v-panel-light {
-		border:solid 1px #000000;
 	}
 	
 	.v-scrollable {
@@ -89,7 +100,12 @@
 	}
 	
 	@include styled-nativebutton;
-	
+		
+	.updates-panel {
+		border-width: 1px;
+		border-style: solid;
+		border-color: gainsboro;
+	}
 }
 
 .sidebar-panel {
@@ -143,7 +159,6 @@
 }
 
 .island-panel {
-	@include border-radius(4px);
 	@include styled-nativebutton;
 	
 	background: #F8F8F8;
@@ -181,9 +196,22 @@
 	
 }
 
+.check-in {
+	background-image: url(textures/dark_fish_skin.png);
+	background-repeat: repeat;
+	position: absolute;
+}
+
+.image-button {
+	border: 2px solid #AEAEAE;
 	
-.updates-panel {
-	border-bottom-width: 1px;
-	border-bottom-style: solid;
-	border-bottom-color: gainsboro;
+	.v-icon {
+		width: 260px;
+		height: 170px;
+		margin: 0px;
+	}
+	
+	&:hover {
+		border: 2px solid #1B9EE0;
+	}
 }

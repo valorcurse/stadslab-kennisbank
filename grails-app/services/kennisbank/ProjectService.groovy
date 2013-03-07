@@ -1,5 +1,8 @@
 package kennisbank
 
+import kennisbank.project.Project;
+import kennisbank.project.ProjectMember;
+
 class ProjectService {
 
 	Project project

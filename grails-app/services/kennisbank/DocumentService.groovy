@@ -1,5 +1,7 @@
 package kennisbank
 
+import kennisbank.project.Document;
+
 class DocumentService {
 	
 	static transactional = true
