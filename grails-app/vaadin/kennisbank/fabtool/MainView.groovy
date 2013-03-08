@@ -13,9 +13,9 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 
 import kennisbank.User;
 import kennisbank.UserService;
-import kennisbank.home.*
-import kennisbank.project.Project;
-import kennisbank.projects.*
+import kennisbank.fabtool.home.*
+import kennisbank.project.*;
+import kennisbank.fabtool.projects.*
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.themes.Reindeer
 import com.vaadin.event.ShortcutAction.KeyCode;

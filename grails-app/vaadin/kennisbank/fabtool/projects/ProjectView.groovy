@@ -8,7 +8,6 @@ import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
 import kennisbank.project.*
 import kennisbank.*
-import kennisbank.projects.Member
 import com.vaadin.ui.TabSheet.Tab
 import com.vaadin.ui.Upload.Receiver
 import com.vaadin.ui.Upload.StartedEvent
