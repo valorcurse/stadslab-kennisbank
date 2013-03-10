@@ -65,7 +65,7 @@ class ProjectView extends VerticalLayout {
 
 		// ------------------------------------------------------- Title -------------------------------------------------------
 
-		Label titleLabel = new Label("<h1><b>"+project.getTitle()+"</b></h1>", Label.CONTENT_XHTML)
+		Label titleLabel = new Label("<h1><b>"+project.getTitle()+"</b></h1>", ContentMode.HTML)
 		titleLabel.setWidth("100%")
 
 		// ------------------------------------------------------- Summary -------------------------------------------------------
@@ -84,7 +84,7 @@ class ProjectView extends VerticalLayout {
 		editor.setWidth("100%")
 		Label summaryText = new Label()
 		summaryText.setWidth("100%")
-		summaryText.setContentMode(Label.CONTENT_XHTML)
+		summaryText.setContentMode(ContentMode.HTML)
 		summaryText.setValue(project.getSummary())
 		summaryLayout.addComponent(summaryText)
 		NativeButton editButton = new NativeButton("Edit")

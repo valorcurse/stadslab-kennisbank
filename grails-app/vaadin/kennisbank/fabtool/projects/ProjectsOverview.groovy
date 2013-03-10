@@ -44,7 +44,7 @@ class ProjectsOverview extends VerticalLayout {
 
 		panel.setContent(layout)
 
-		Label titleLabel = new Label("<h1><b>Projects</b></h1>", Label.CONTENT_XHTML)
+		Label titleLabel = new Label("<h1><b>Projects</b></h1>", ContentMode.HTML)
 		titleLabel.setWidth("100%")
 
 		// ------------------------------------------------------- New Project -------------------------------------------------------
