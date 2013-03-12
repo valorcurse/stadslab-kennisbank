@@ -61,7 +61,7 @@ grails.hibernate.cache.queries = false
 
 environments {
     development {
-        grails.logging.jul.usebridge = true
+      grails.logging.jul.usebridge = true
     }
     production {
         grails.logging.jul.usebridge = false
@@ -88,4 +88,19 @@ log4j = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
+}
+
+grails { 
+    mail { 
+        host = "smtp.gmail.com" 
+        port = 587
+        username = "stadslab.kennisbank@gmail.com" 
+        password = "irXSt3sA0Nul" 
+        props = ["mail.smtp.protocol": "smtps", 
+                "mail.smtp.auth": "true", 
+                "mail.smtp.starttls.enable": "true", 
+                "mail.smtp.host": "smtp.gmail.com", 
+                "mail.smtp.user": "xyz@gmail.com", 
+                "mail.smtp.password": "mypassword"] 
+    } 
 }

@@ -16,6 +16,7 @@ import com.vaadin.shared.ui.label.ContentMode
 import org.springframework.context.MessageSource
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import com.vaadin.server.UserError
+import kennisbank.EmailService
 
 class StudentWindow extends Window {
 
@@ -109,6 +110,10 @@ class StudentWindow extends Window {
 		NativeButton checkinButton = new NativeButton("In-checken", new ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
+
+				EmailService emailService = new EmailService()
+
+				emailService.sendEmail()
 
 				// Set components back to default, i.e. no error messages
 				warningsLabel.setValue(warningsDefaultMessage)
