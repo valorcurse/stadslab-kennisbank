@@ -10,9 +10,14 @@ class CompanyCheckin {
 			numberOfWorkers,
 			projectDescription
 
-	String[] equipment
-
 	static mapping = {
 		projectDescription type: "text"
+	}
+
+	static constraints = {
+		contactPerson blank: false
+		email blank: false, email: true
+		numberOfWorkers blank: false, matches: "[0-9]+"
+		projectDescription blank: false
 	}
 }
