@@ -18,6 +18,7 @@ See configure target to adjust this buildfile.
 
 <project name="Widgetset compile example" basedir="." default="compile-widgetset">
 
+
 	<!-- 
 		Update based on your project structure, by default this buildfile assumes that you 
 		1. use WebContent under your project's root directory
@@ -52,6 +53,7 @@ See configure target to adjust this buildfile.
 		<!-- Target where to compile the widget set -->
 		<property name="client-side-destination" 
 			      value="${base}web-app/VAADIN/widgetsets" />
+
 	</target>
 		
     <!-- NOTE: Modify this example to compile your own widgetset -->
@@ -59,7 +61,7 @@ See configure target to adjust this buildfile.
         <echo>Modify this example Ant script to compile your own widget sets.</echo>
 
         <!-- Name of the widget set -->
-        <property name="widgetset" value="MyWidgetSet"/>
+        <property name="widgetset" value="MyWidgetset"/>
 
         <!-- Define if the widget set be generated automatically -->
         <!-- from all widget sets included in the class path.    -->
@@ -69,7 +71,7 @@ See configure target to adjust this buildfile.
     	<!-- generated widget sets. Must be relative to         --> 
     	<!-- $src-location, that is, under the first entry in   --> 
     	<!--  class path.                                       --> 
-        <property name="widgetset-path" value="com/vaadin/demo/widgetset"/>
+        <property name="widgetset-path" value="MyWidgetset"/>
     </target>
 
     <!-- Note: Modify this example to compile your own widgetset Jar. -->
@@ -145,7 +147,7 @@ See configure target to adjust this buildfile.
         <java classname="com.vaadin.terminal.gwt.widgetsetutils.WidgetSetBuilder"
               failonerror="yes" fork="yes" maxmemory="256m">
             <arg value="${widgetset}"/>
-            <jvmarg value="-Xss1024k"/>
+            <jvmarg value="-Xss1024m"/>
             <jvmarg value="-Djava.awt.headless=true"/>
             <classpath>
                 <path refid="compile.classpath"/>
@@ -163,7 +165,7 @@ See configure target to adjust this buildfile.
 			<arg value="-war" />
 			<arg value="${client-side-destination}" />
 			<arg value="${widgetset}" />
-            <jvmarg value="-Xss1024k"/>
+            <jvmarg value="-Xss1024m"/>
             <jvmarg value="-Djava.awt.headless=true"/>
 			<classpath>
 				<path refid="compile.classpath"/>

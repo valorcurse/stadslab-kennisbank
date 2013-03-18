@@ -9,7 +9,7 @@ import com.vaadin.ui.TabSheet.Tab
 import groovy.transform.InheritConstructors
 import com.vaadin.ui.themes.Reindeer
 import kennisbank.*
-import kennisbank.project.Project;
+import kennisbank.checkin.Checkout
 
 //@InheritConstructors
 class ProjectLink extends Button implements Button.ClickListener {
@@ -26,7 +26,7 @@ class ProjectLink extends Button implements Button.ClickListener {
 	public void buttonClick(ClickEvent event) {
 		TabSheet tabs = UI.getCurrent().mainView.topTabs
 		Tab tab = tabs.addTab(
-				new ProjectView(Project.findByTitle(projectTitle)), "Project: " + projectTitle)
+				new ProjectView(Checkout.findByUniqueID(projectTitle)), "Project: " + projectTitle)
 		tab.setClosable(true)
 		tabs.setSelectedTab(tab)
 	}

@@ -111,9 +111,20 @@ class StudentWindow extends Window {
 			@Override
 			public void buttonClick(ClickEvent event) {
 
-				EmailService emailService = new EmailService()
+				//EmailService emailService = new EmailService()
 
-				emailService.sendEmail()
+				//emailService.sendEmail()
+
+				/*StudentCheckout.withTransaction {
+					StudentCheckout checkout = new StudentCheckout()
+					if(checkout.save()) {
+						print checkout.uniqueID
+					}
+					else { print "Something, somewhere went terribly wrong."}
+					print StudentCheckout.findByUniqueID(checkout.uniqueID).toString()
+				}
+*/
+
 
 				// Set components back to default, i.e. no error messages
 				warningsLabel.setValue(warningsDefaultMessage)

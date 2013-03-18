@@ -11,6 +11,8 @@ vaadin {
 	// servletClass = "com.mycompany.MyGrailsAwareApplicationServlet"
 	applicationClass = "kennisbank.MyUI"
 	productionMode = false
+
+	//widgetset = "MyWidgetset"
 }
 
 environments {

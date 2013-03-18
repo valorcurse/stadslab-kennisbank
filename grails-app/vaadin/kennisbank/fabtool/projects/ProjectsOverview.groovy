@@ -3,16 +3,17 @@ package kennisbank.fabtool.projects
 import com.vaadin.data.Property
 import com.vaadin.event.FieldEvents.TextChangeEvent
 import com.vaadin.event.FieldEvents.TextChangeListener
+import com.vaadin.shared.ui.label.ContentMode
 import com.vaadin.server.ExternalResource
-import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Field.ValueChangeEvent
 import com.vaadin.ui.themes.Reindeer
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.*
 import kennisbank.*
-import kennisbank.project.Project;
-import kennisbank.project.ProjectMember;
-
+import kennisbank.project.Project
+import kennisbank.project.ProjectMember
+import kennisbank.checkin.Checkout
 
 class ProjectsOverview extends VerticalLayout {
 
@@ -100,7 +101,7 @@ class ProjectsOverview extends VerticalLayout {
 		existingProjectsLayout.setMargin(true)
 		existingProjectsLayout.setSpacing(true)
 
-		Table projectsTable = new Table()
+		/*Table projectsTable = new Table()
 		//projectsTable.addStyleName(Reindeer.TABLE_BORDERLESS)
 		projectsTable.setHeight("350px")
 		projectsTable.setWidth("100%")
@@ -110,16 +111,16 @@ class ProjectsOverview extends VerticalLayout {
 		projectsTable.addContainerProperty("Date created", String.class, null)
 
 		projectsTable.setColumnWidth("Project name", 200)
+*/
+		List<Project> projects = Checkout.list()
 
-		List<Project> projects = Project.list()
+		print projects[0].uniqueID
 
-		for (Project project : projects) {
-			projectsTable.addItem(	[new ProjectLink(project.getTitle()),
-				project.getCourse(), project.getDateCreated().toString()] as Object[],
-			new Integer(projectsTable.size()+1));
+		for (def project : projects) {
+			existingProjectsLayout.addComponent(new ProjectLink(project.uniqueID))
 		}
 
-		TextField searchProjectsTextField = new TextField()
+		/*TextField searchProjectsTextField = new TextField()
 		searchProjectsTextField.setInputPrompt("Search")
 		searchProjectsTextField.addTextChangeListener(new TextChangeListener() {
 					public void textChange(TextChangeEvent event) {
@@ -136,8 +137,8 @@ class ProjectsOverview extends VerticalLayout {
 				})
 
 		existingProjectsLayout.addComponent(searchProjectsTextField)
-		existingProjectsLayout.addComponent(projectsTable)
-
+		//existingProjectsLayout.addComponent(projectsTable)
+*/
 		layout.addComponent(titleLabel)
 		layout.addComponent(createNewProjectPanel)
 		layout.addComponent(existingProjectsPanel)

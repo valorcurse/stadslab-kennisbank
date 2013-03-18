@@ -8,6 +8,7 @@ import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
 import kennisbank.project.*
 import kennisbank.*
+import kennisbank.checkin.Checkout
 import com.vaadin.ui.TabSheet.Tab
 import com.vaadin.ui.Upload.Receiver
 import com.vaadin.ui.Upload.StartedEvent
@@ -16,12 +17,13 @@ import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.themes.Reindeer
 import com.vaadin.server.ExternalResource
 import com.vaadin.event.ShortcutAction.KeyCode
+import com.vaadin.shared.ui.label.ContentMode
 
 class ProjectView extends VerticalLayout {
 
 	String uriFragment
 	ProjectService projectService
-	Project currentProject
+	Checkout currentProject
 	def hiddenComponents
 	Update updates
 
@@ -29,16 +31,18 @@ class ProjectView extends VerticalLayout {
 		return uriFragment
 	}
 
-	public ProjectView(Project project) {
+	public ProjectView(Checkout project) {
 
-		projectService = new ProjectService(project)
+		print project.toString()
+
+		//projectService = new ProjectService(project)
 		currentProject = project
 		hiddenComponents = []
 		updates = new Update()
 		
 		updates.addSystemMessage("Project created")
 		
-		uriFragment = "#!/project/" + project.getTitle()
+		uriFragment = "#!/project/" + project.uniqueID
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
 		setSizeFull()
@@ -65,11 +69,18 @@ class ProjectView extends VerticalLayout {
 
 		// ------------------------------------------------------- Title -------------------------------------------------------
 
-		Label titleLabel = new Label("<h1><b>"+project.getTitle()+"</b></h1>", ContentMode.HTML)
+		Label titleLabel = new Label("<h1><b>"+project.uniqueID+"</b></h1>", ContentMode.HTML)
+		// Column 0, Row 0 to Column 1, Row 0
+		layout.addComponent(titleLabel, 0, 0, 1, 0)
 		titleLabel.setWidth("100%")
 
-		// ------------------------------------------------------- Summary -------------------------------------------------------
+		Label madeByLabel = new Label("<i>Gemaakt door " + project.checkin.firstName + " " + project.checkin.lastName + " (" + project.checkin.email + ")</i>", ContentMode.HTML)
+		// Column 0, Row 1 to Column 1, Row 1
+		layout.addComponent(madeByLabel, 0, 1, 1, 1)
+		madeByLabel.setWidth("100%")
 
+		// ------------------------------------------------------- Summary -------------------------------------------------------
+		/*
 		Panel summaryPanel = new Panel("Summary")
 		summaryPanel.setPrimaryStyleName("embedded-panel")
 		summaryPanel.setStyleName(Runo.PANEL_LIGHT)
@@ -79,7 +90,7 @@ class ProjectView extends VerticalLayout {
 		summaryLayout.setMargin(true)
 		summaryLayout.setWidth("100%")
 
-
+		
 		RichTextArea editor = new RichTextArea()
 		editor.setWidth("100%")
 		Label summaryText = new Label()
@@ -92,7 +103,7 @@ class ProjectView extends VerticalLayout {
 					public void buttonClick(ClickEvent event) {
 						if (editButton.getCaption() == "Apply") {
 							Project.withTransaction {
-								projectService.setSummary(editor.getValue())
+								//projectService.setSummary(editor.getValue())
 							}
 							summaryText.setValue(editor.getValue())
 							summaryLayout.replaceComponent(editor, summaryText)
@@ -288,18 +299,16 @@ class ProjectView extends VerticalLayout {
 		filesLayout.addComponent(filesPanel)
 
 		filesPanel.setContent(filesPanelLayout)
-
+*/
 		// Add components to the grid
-		// Column 0, Row 0 to Column 1, Row 0
-		layout.addComponent(titleLabel, 0, 0, 1, 0)
 		// Column 0, Row 1 to Column 1, Row 1
-		layout.addComponent(summaryPanel, 0, 1, 1, 1)
+		//layout.addComponent(summaryPanel, 0, 1, 1, 1)
 		// Column 0, Row 2
-		layout.addComponent(membersPanel, 0, 2)
+		//layout.addComponent(membersPanel, 0, 2)
 		// Column 1, Row 2 to Column 1, Row 3
-		layout.addComponent(updatesPanel, 1, 2, 1, 3)
+		//layout.addComponent(updatesPanel, 1, 2, 1, 3)
 		// Column 0, Row 3
-		layout.addComponent(filesLayout, 0, 3)
+		//layout.addComponent(filesLayout, 0, 3)
 
 		layout.setColumnExpandRatio(1, 0.1)
 
@@ -308,7 +317,7 @@ class ProjectView extends VerticalLayout {
 
 		addComponent(panel)
 
-		if(UI.getCurrent().getLoggedIn()) {
+		if(UI.getCurrent().loggedIn) {
 			def currentUser = UI.getCurrent().getLoggedInUser().getUsername()
 			if (checkIfMember(currentUser)) {
 				revealHiddenComponents()

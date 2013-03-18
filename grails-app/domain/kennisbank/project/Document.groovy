@@ -1,6 +1,6 @@
 package kennisbank.project
 
-import java.util.Date;
+import java.util.Date
 
 class Document {
 

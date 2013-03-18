@@ -1,0 +1,7 @@
+<module>
+
+    <inherits name="com.vaadin.terminal.gwt.DefaultWidgetSet" />
+
+        <!-- insert proper addon widgetset here -->
+        <inherits name="org.vaadin.easyuploads.Widgetset" />
+</module>

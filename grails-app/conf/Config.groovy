@@ -101,6 +101,7 @@ grails {
                 "mail.smtp.starttls.enable": "true", 
                 "mail.smtp.host": "smtp.gmail.com", 
                 "mail.smtp.user": "xyz@gmail.com", 
-                "mail.smtp.password": "mypassword"] 
+                "mail.smtp.password": "mypassword",
+                "mail.smtp.debug": "true"] 
     } 
 }

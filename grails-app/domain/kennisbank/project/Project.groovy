@@ -1,16 +1,18 @@
 package kennisbank.project
 
+import kennisbank.checkin.StudentCheckout
+
 class Project {
 
 	String title, summary, course
 	Date dateCreated
 	List projectMembers, documents
-	
+
 	static hasMany = [documents:Document, tags:Tag, projectMembers:ProjectMember, updates:ProjectUpdate]
 
 	static constraints = {
-		summary(nullable: true)
-		course(nullable: true)
+		summary nullable: true
+		course nullable: true
 	}
 
 	static mapping = {

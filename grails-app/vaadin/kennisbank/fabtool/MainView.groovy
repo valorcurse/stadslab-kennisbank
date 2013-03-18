@@ -16,6 +16,7 @@ import kennisbank.UserService;
 import kennisbank.fabtool.home.*
 import kennisbank.project.*;
 import kennisbank.fabtool.projects.*
+import kennisbank.checkin.Checkout
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.themes.Reindeer
 import com.vaadin.event.ShortcutAction.KeyCode;
@@ -44,11 +45,11 @@ class MainView extends Panel implements View {
 		//Home tab
 		topTabs.addTab(new HomeView(), "Home")
 		topTabs.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
-					public void selectedTabChange(SelectedTabChangeEvent event) {
-						Tab tab = topTabs.getTab(event.getTabSheet().getSelectedTab())
-						UI.getCurrent().getPage().getCurrent().setLocation(tab.getComponent().tabName())
-					}
-				});
+			public void selectedTabChange(SelectedTabChangeEvent event) {
+				Tab tab = topTabs.getTab(event.getTabSheet().getSelectedTab())
+				UI.getCurrent().getPage().getCurrent().setLocation(tab.getComponent().tabName())
+			}
+			});
 
 		// Layout for the left panel
 		VerticalLayout left = new VerticalLayout()
@@ -122,12 +123,12 @@ class MainView extends Panel implements View {
 		NativeButton projectButton = new NativeButton("Projects")
 		projectButton.setWidth("90%")
 		projectButton.addClickListener(new Button.ClickListener() {
-					public void buttonClick(ClickEvent event) {
-						Tab tab = topTabs.addTab(new ProjectsOverview(), "Projects")
-						tab.setClosable(true)
-						topTabs.setSelectedTab(tab)
-					}
-				})
+			public void buttonClick(ClickEvent event) {
+				Tab tab = topTabs.addTab(new ProjectsOverview(), "Projects")
+				tab.setClosable(true)
+				topTabs.setSelectedTab(tab)
+			}
+			})
 
 		leftMenuPanel.setContent(leftMenuLayout)
 		leftMenuLayout.addComponent(projectButton)
@@ -172,86 +173,86 @@ class MainView extends Panel implements View {
 		NativeButton logoutButton = new NativeButton("Log out")
 
 		loginButton.addClickListener(new Button.ClickListener() {
-					public void buttonClick(ClickEvent event) {
+			public void buttonClick(ClickEvent event) {
 
-						User user = User.findByUsername(usernameField.getValue())
-						if(user != null && usernameField.getValue() == user.getUsername() && passwordField.getValue() == user.getPassword()) {
-							UI.getCurrent().loggedIn = true;
-							UI.getCurrent().loggedInUser = user
+				User user = User.findByUsername(usernameField.getValue())
+				if(user != null && usernameField.getValue() == user.getUsername() && passwordField.getValue() == user.getPassword()) {
+					UI.getCurrent().loggedIn = true;
+					UI.getCurrent().loggedInUser = user
 
-							Notification.show("Login succesful!");
-							welcome.setValue("You're now logged in, "+usernameField.getValue()+".")
-							left.replaceComponent(loginPanel, loggedinPanel)
-							loggedinPanel.setVisible(true)
-							loginPanel.setVisible(false)
+					Notification.show("Login succesful!");
+					welcome.setValue("You're now logged in, "+usernameField.getValue()+".")
+					left.replaceComponent(loginPanel, loggedinPanel)
+					loggedinPanel.setVisible(true)
+					loginPanel.setVisible(false)
 
 
-							for (int t = 1; t < topTabs.getComponentCount(); t++) {
-								topTabs.getTab(t).getComponent().revealHiddenComponents()
-							}
-						}
-						else{
-							Notification.show("Username and/or password incorrect.")
-						}
+					for (int t = 1; t < topTabs.getComponentCount(); t++) {
+						topTabs.getTab(t).getComponent().revealHiddenComponents()
 					}
-				})
+				}
+				else{
+					Notification.show("Username and/or password incorrect.")
+				}
+			}
+			})
 		
 		logoutButton.addClickListener(new Button.ClickListener() {
-					public void buttonClick(ClickEvent event) {
-						UI.getCurrent().loggedIn = false
-						left.replaceComponent(loggedinPanel, loginPanel)
-						loggedinPanel.setVisible(false);
-						loginPanel.setVisible(true);
-						Notification.show("You're now logged out")
-						
-						for (int t = 1; t < topTabs.getComponentCount(); t++) {
-							topTabs.getTab(t).getComponent().hideRevealedComponents()
-						}
-					}
+			public void buttonClick(ClickEvent event) {
+				UI.getCurrent().loggedIn = false
+				left.replaceComponent(loggedinPanel, loginPanel)
+				loggedinPanel.setVisible(false);
+				loginPanel.setVisible(true);
+				Notification.show("You're now logged out")
 
-				})
+				for (int t = 1; t < topTabs.getComponentCount(); t++) {
+					topTabs.getTab(t).getComponent().hideRevealedComponents()
+				}
+			}
+
+			})
 
 		Button registerButton = new Button("Register", new Button.ClickListener() {
-					public void buttonClick(ClickEvent event) {
-						Window window = new Window("Register")
-						window.setModal(true)
-						VerticalLayout windowLayout = new VerticalLayout()
-						windowLayout.setSpacing(true)
-						windowLayout.setMargin(true)
-						TextField userNameTextField = new TextField("Username")
-						PasswordField passwordTextField = new PasswordField("Password")
-						windowLayout.addComponent(userNameTextField)
-						windowLayout.addComponent(passwordTextField)
-						Button okButton = new Button("Apply", new Button.ClickListener() {
-									public void buttonClick(ClickEvent event2) {
-										def userService = new UserService()
-										User.withTransaction {
-											userService.createProject(userNameTextField.getValue(), passwordTextField.getValue())
-										}
-										window.close()
-									}
-								})
-						okButton.setClickShortcut(KeyCode.ENTER);
-						windowLayout.addComponent(okButton)
-						windowLayout.setComponentAlignment(userNameTextField, Alignment.MIDDLE_CENTER)
-						windowLayout.setComponentAlignment(passwordTextField, Alignment.MIDDLE_CENTER)
-						windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
-						window.setContent(windowLayout)
-						UI.getCurrent().addWindow(window)
+			public void buttonClick(ClickEvent event) {
+				Window window = new Window("Register")
+				window.setModal(true)
+				VerticalLayout windowLayout = new VerticalLayout()
+				windowLayout.setSpacing(true)
+				windowLayout.setMargin(true)
+				TextField userNameTextField = new TextField("Username")
+				PasswordField passwordTextField = new PasswordField("Password")
+				windowLayout.addComponent(userNameTextField)
+				windowLayout.addComponent(passwordTextField)
+				Button okButton = new Button("Apply", new Button.ClickListener() {
+					public void buttonClick(ClickEvent event2) {
+						def userService = new UserService()
+						User.withTransaction {
+							userService.createProject(userNameTextField.getValue(), passwordTextField.getValue())
+						}
+						window.close()
 					}
-				})
-		registerButton.setStyleName(Reindeer.BUTTON_LINK)
+					})
+				okButton.setClickShortcut(KeyCode.ENTER);
+				windowLayout.addComponent(okButton)
+				windowLayout.setComponentAlignment(userNameTextField, Alignment.MIDDLE_CENTER)
+				windowLayout.setComponentAlignment(passwordTextField, Alignment.MIDDLE_CENTER)
+				windowLayout.setComponentAlignment(okButton, Alignment.MIDDLE_CENTER)
+				window.setContent(windowLayout)
+				UI.getCurrent().addWindow(window)
+			}
+			})
+registerButton.setStyleName(Reindeer.BUTTON_LINK)
 
 
 
-		loginPanelLayout.addComponent(loginButton)
-		loggedinPanelLayout.addComponent(logoutButton)
-		loginPanelLayout.setComponentAlignment(usernameField, Alignment.MIDDLE_CENTER)
-		loginPanelLayout.setComponentAlignment(passwordField, Alignment.TOP_CENTER)
-		loginPanelLayout.setComponentAlignment(loginButton, Alignment.TOP_CENTER)
-		loggedinPanelLayout.setComponentAlignment(logoutButton, Alignment.TOP_CENTER)
-		loggedinPanelLayout.setComponentAlignment(welcome, Alignment.MIDDLE_CENTER)
-		loginPanelLayout.addComponent(registerButton)
+loginPanelLayout.addComponent(loginButton)
+loggedinPanelLayout.addComponent(logoutButton)
+loginPanelLayout.setComponentAlignment(usernameField, Alignment.MIDDLE_CENTER)
+loginPanelLayout.setComponentAlignment(passwordField, Alignment.TOP_CENTER)
+loginPanelLayout.setComponentAlignment(loginButton, Alignment.TOP_CENTER)
+loggedinPanelLayout.setComponentAlignment(logoutButton, Alignment.TOP_CENTER)
+loggedinPanelLayout.setComponentAlignment(welcome, Alignment.MIDDLE_CENTER)
+loginPanelLayout.addComponent(registerButton)
 
 		//Add components to the left panel
 		left.addComponent(logoPanel)
@@ -289,6 +290,28 @@ class MainView extends Panel implements View {
 						Tab tab = topTabs.addTab(projectTab, "Project: "+ currentProject.getTitle())
 						tab.setClosable(true)
 						topTabs.setSelectedTab(tab)
+					}
+					//else {
+					//	Notification.show("No such project was found.")
+					//}
+
+					print Checkout.list().toString()
+
+					Checkout currentCheckout = Checkout.findByUniqueID(urlParameters[1])
+
+					if (currentCheckout != null) {
+						print "Unique ID " + currentCheckout.uniqueID + " exists!"
+						Project.withTransaction {
+							
+							//currentCheckout.project = new Project(title: currentCheckout.uniqueID)
+							//if (currentCheckout.project.save(flush: true)) {
+								ProjectView projectTab = new ProjectView(currentCheckout)
+								Tab tab = topTabs.addTab(projectTab, "Project: "+ currentCheckout.uniqueID)
+								tab.setClosable(true)
+								topTabs.setSelectedTab(tab)
+							//}
+							//else { println "Oh-oh..."}
+						}
 					}
 				}
 				else {

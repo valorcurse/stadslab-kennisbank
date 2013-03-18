@@ -148,5 +148,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.grails.ide.eclipse.core.CLASSPATH_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/easyuploads-7.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/easyuploads-7.0.0-sources.jar"/>
 	<classpathentry kind="output" path="target-eclipse/classes"/>
 </classpath>
