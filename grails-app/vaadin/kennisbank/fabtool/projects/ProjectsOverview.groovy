@@ -114,10 +114,8 @@ class ProjectsOverview extends VerticalLayout {
 */
 		List<Project> projects = Checkout.list()
 
-		print projects[0].uniqueID
-
 		for (def project : projects) {
-			existingProjectsLayout.addComponent(new ProjectLink(project.uniqueID))
+			if (project.published) existingProjectsLayout.addComponent(new ProjectLink(project.uniqueID))
 		}
 
 		/*TextField searchProjectsTextField = new TextField()

@@ -1,13 +1,10 @@
 package kennisbank.fabtool.projects
 
 import java.rmi.server.UID;
-
 import com.vaadin.ui.*
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
-import kennisbank.project.*
-import kennisbank.*
 import kennisbank.checkin.Checkout
 import com.vaadin.ui.TabSheet.Tab
 import com.vaadin.ui.Upload.Receiver
@@ -18,12 +15,16 @@ import com.vaadin.ui.themes.Reindeer
 import com.vaadin.server.ExternalResource
 import com.vaadin.event.ShortcutAction.KeyCode
 import com.vaadin.shared.ui.label.ContentMode
+import com.vaadin.server.ThemeResource
+import com.vaadin.server.FileResource
+import com.vaadin.server.Sizeable.Unit
+import com.vaadin.data.util.HierarchicalContainer
+import com.vaadin.data.Item
 
 class ProjectView extends VerticalLayout {
 
-	String uriFragment
-	ProjectService projectService
-	Checkout currentProject
+	String uriFragment, oldPicturePath
+	Checkout project
 	def hiddenComponents
 	Update updates
 
@@ -33,10 +34,7 @@ class ProjectView extends VerticalLayout {
 
 	public ProjectView(Checkout project) {
 
-		print project.toString()
-
-		//projectService = new ProjectService(project)
-		currentProject = project
+		this.project = Checkout.findByUniqueID(project.uniqueID)
 		hiddenComponents = []
 		updates = new Update()
 		
@@ -48,36 +46,134 @@ class ProjectView extends VerticalLayout {
 		setSizeFull()
 		setMargin(true)
 
+		Panel viewPanel = GenerateView()
+
+		addComponent(viewPanel)
+		setComponentAlignment(viewPanel, Alignment.TOP_CENTER)
+	}
+
+	private Panel GenerateView() {
 		Panel panel = new Panel()
 		panel.setPrimaryStyleName("island-panel")
-
-		TabSheet projectTabs = new TabSheet()
-		projectTabs.setSizeFull()
-		projectTabs.setStyleName(Reindeer.TABSHEET_MINIMAL)
-		projectTabs.setId("project-tabs")
+		panel.setSizeUndefined()
 
 		GridLayout layout = new GridLayout(2, 4)
+		panel.setContent(layout)
 		layout.setSpacing(true)
 		layout.setMargin(true)
-		layout.setWidth("100%")
-		layout.setHeight("100%")
-
 
 		// ------------------------------------------------------- Main Project -------------------------------------------------------
 
-		projectTabs.addTab(layout, "Main Project")
 
 		// ------------------------------------------------------- Title -------------------------------------------------------
 
+		VerticalLayout titleLayout = new VerticalLayout()
+		layout.addComponent(titleLayout, 0, 0, 1, 0) // Column 0, Row 0 to Column 1, Row 0
 		Label titleLabel = new Label("<h1><b>"+project.uniqueID+"</b></h1>", ContentMode.HTML)
-		// Column 0, Row 0 to Column 1, Row 0
-		layout.addComponent(titleLabel, 0, 0, 1, 0)
-		titleLabel.setWidth("100%")
+		titleLayout.addComponent(titleLabel)
+		titleLayout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
+		titleLabel.setSizeUndefined()
 
-		Label madeByLabel = new Label("<i>Gemaakt door " + project.checkin.firstName + " " + project.checkin.lastName + " (" + project.checkin.email + ")</i>", ContentMode.HTML)
-		// Column 0, Row 1 to Column 1, Row 1
-		layout.addComponent(madeByLabel, 0, 1, 1, 1)
-		madeByLabel.setWidth("100%")
+		Label madeByLabel = new Label("Gemaakt door: <br><i>" + 
+			project.checkin.firstName + " " + project.checkin.lastName + 
+			"<br>(<A HREF=\"mailto:" + project.checkin.email + "\">"+ project.checkin.email +"</A>)" +
+			"<br> op " + project.checkin.dateCreated.format('dd MMMM yyyy') + "</i>", ContentMode.HTML)
+		
+		// Column 1, Row 1
+		layout.addComponent(madeByLabel, 1, 1)
+		madeByLabel.setWidth("-1")
+
+		// ------------------------------------------------------- Picture -------------------------------------------------------
+
+		VerticalLayout uploadLayout = new VerticalLayout()
+		layout.addComponent(uploadLayout, 0, 1) // Column 0, Row 1
+		uploadLayout.setPrimaryStyleName("embedded-panel")
+		uploadLayout.setSpacing(true)
+		//uploadLayout.setMargin(true)
+
+		Button pictureButton = new Button();
+		uploadLayout.addComponent(pictureButton);
+		pictureButton.setStyleName(Reindeer.BUTTON_LINK);
+		pictureButton.addStyleName("picture-button");
+		pictureButton.setIcon(new FileResource(new File(project.picturePath)));
+		pictureButton.addClickListener(new Button.ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {
+				Window window = new Window()
+				window.setModal(true)
+				window.setCaption(new File(project.picturePath).name)
+				window.setStyleName(Reindeer.WINDOW_LIGHT)
+
+				VerticalLayout windowLayout = new VerticalLayout()
+				window.setContent(windowLayout)
+				windowLayout.setSpacing(true)
+				windowLayout.setMargin(true)
+
+				Image image = new Image()
+				windowLayout.addComponent(image)
+				image.setSource(new FileResource(new File(project.picturePath)))
+				image.setPrimaryStyleName("image-modal-window")				
+
+				UI.getCurrent().addWindow(window)
+			}
+			})
+
+		UploadReceiver receiver = new UploadReceiver(project) // Receiver that handles the data stream
+		Upload upload = new Upload(null, receiver) // Upload button
+		upload.addSucceededListener(new Upload.SucceededListener() {
+			public void uploadSucceeded(SucceededEvent event) {
+				Notification.show("Uploaden geslaagd!")	
+			}
+			})
+		uploadLayout.setWidth("-1")
+		uploadLayout.addComponent(upload)
+		upload.setImmediate(true) // Starts to upload immediately after choosing file
+
+		// ------------------------------------------------------- Material -------------------------------------------------------
+		
+		//VerticalLayout materialLayout = new VerticalLayout()
+		//layout.addComponent(materialLayout, 0, 2, 1, 2) // Column 0, Row 2 to Column 1, Row 2
+		//materialLayout.setMargin(true)
+
+		TreeTable materialTreeTable = new TreeTable()
+		layout.addComponent(materialTreeTable, 0, 2, 1, 2) // Column 0, Row 2 to Column 1, Row 2
+		//materialLayout.addComponent(materialTreeTable)
+		materialTreeTable.setWidth("100%")
+		materialTreeTable.setPageLength(0)
+		
+		HierarchicalContainer container = new HierarchicalContainer()
+		materialTreeTable.setContainerDataSource(container)
+		materialTreeTable.addContainerProperty("Apparatuur", AddMaterialButton.class, "")
+		materialTreeTable.addContainerProperty("Materiaal", Tree.class, "")
+		materialTreeTable.addContainerProperty("Instellingen", String.class, "")
+
+		print project.checkin.equipment.toString()
+
+
+		//Item item = container.getItem(container.addItem())
+		//item.getItemProperty("Apparatuur").setValue("Laser snijder")
+		//container.addItem("test")
+		//container.getItem(container.addItem()).getItemProperty("Apparatuur").setValue("test")
+		//item.getItemProperty("Materiaal").setValue(new Tree("Materiaal", container))
+
+		for (def equipmentUsed : project.checkin.equipment) {
+			Item item = container.getItem(container.addItem())
+			item.getItemProperty("Apparatuur").setValue(new AddMaterialButton(equipmentUsed))
+		}
+
+		HorizontalLayout buttonsLayout = new HorizontalLayout()
+		layout.addComponent(buttonsLayout, 0, 3, 1, 3)  // Column 0, Row 3 to Column 1, Row 3
+		layout.setComponentAlignment(buttonsLayout, Alignment.TOP_CENTER)
+		buttonsLayout.setSpacing(true)
+		buttonsLayout.setWidth("100%")
+
+		Button saveButton = new Button("Opslaan")
+		buttonsLayout.addComponent(saveButton)
+		buttonsLayout.setComponentAlignment(saveButton, Alignment.TOP_CENTER)		
+
+		Button saveDraftButton = new Button("Tijdelijk opslaan")
+		buttonsLayout.addComponent(saveDraftButton)
+		buttonsLayout.setComponentAlignment(saveDraftButton, Alignment.TOP_LEFT)
 
 		// ------------------------------------------------------- Summary -------------------------------------------------------
 		/*
@@ -299,7 +395,7 @@ class ProjectView extends VerticalLayout {
 		filesLayout.addComponent(filesPanel)
 
 		filesPanel.setContent(filesPanelLayout)
-*/
+		*/
 		// Add components to the grid
 		// Column 0, Row 1 to Column 1, Row 1
 		//layout.addComponent(summaryPanel, 0, 1, 1, 1)
@@ -310,12 +406,11 @@ class ProjectView extends VerticalLayout {
 		// Column 0, Row 3
 		//layout.addComponent(filesLayout, 0, 3)
 
-		layout.setColumnExpandRatio(1, 0.1)
+		//layout.setColumnExpandRatio(1, 0.1)
+		//layout.setRowExpandRatio(1, 0.1)
 
 		// Add the main layout to the main panel
 		panel.setContent(layout)
-
-		addComponent(panel)
 
 		if(UI.getCurrent().loggedIn) {
 			def currentUser = UI.getCurrent().getLoggedInUser().getUsername()
@@ -326,6 +421,8 @@ class ProjectView extends VerticalLayout {
 		else {
 			hideRevealedComponents()
 		}
+
+		return panel
 	}
 
 	void revealHiddenComponents() {
@@ -343,7 +440,7 @@ class ProjectView extends VerticalLayout {
 	private boolean checkIfMember(String username) {
 		if(UI.getCurrent().getLoggedIn()) {
 			def currentUser = UI.getCurrent().getLoggedInUser().getUsername()
-			if (currentProject.projectMembers.any { it.getUsername() == currentUser }) {
+			if (project.projectMembers.any { it.getUsername() == currentUser }) {
 				return true
 			}
 		}
@@ -353,45 +450,52 @@ class ProjectView extends VerticalLayout {
 	public class UploadReceiver implements Receiver {
 
 		OutputStream outputFile = null
-		Project project = null
+		Checkout project
 
-		UploadReceiver(Project project) {
+		public UploadReceiver(Checkout project) {
 			this.project = project
 		}
 
 		@Override
 		public OutputStream receiveUpload(String strFilename, String strMIMEType) {
-			File file = null
+			File file
 
 			try {
-				new File("uploads/"+project.getTitle()).mkdirs()
-				file = new File("uploads/"+project.getTitle()+"/"+strFilename)
 
+				new File('uploads/'+project.uniqueID).mkdirs()
+				file = new File("uploads/"+project.uniqueID+"/"+strFilename)
 
 				if(!file.exists()) {
 					file.createNewFile()
-					Document.withTransaction {
-						Document newDocument = new Document(title: file.name, path: file.absolutePath)
-						project.addToDocuments(newDocument)
+					Checkout.withTransaction {
+						String oldPicturePath = project.picturePath
+						project.picturePath = file.absolutePath
+						project = project.merge()
 						project.save()
+						new File(oldPicturePath).delete()
 					}
 				}
-				outputFile =  new FileOutputStream(file)
-			} catch (IOException e) {
-				e.printStackTrace()
-			}
-			return outputFile
-		}
-
-		protected void finalize() {
-			try {
-				super.finalize()
-				if(outputFile != null) {
-					outputFile.close()
+				else { 
+					Notification.show("This file has already been uploaded!") 
+					return
 				}
-			} catch (Throwable exception) {
-				exception.printStackTrace()
+
+				outputFile =  new FileOutputStream(file)
+				} catch (IOException e) {
+					e.printStackTrace()
+				}
+				return outputFile
+			}
+
+			protected void finalize() {
+				try {
+					super.finalize()
+					if(outputFile != null) {
+						outputFile.close()
+					}
+					} catch (Throwable exception) {
+						exception.printStackTrace()
+					}
+				}
 			}
 		}
-	}
-}

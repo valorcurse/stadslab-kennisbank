@@ -2,7 +2,7 @@ package kennisbank.checkin
 
 import com.vaadin.server.ExternalResource
 import com.vaadin.server.ThemeResource
-import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinRequest
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Label
 import com.vaadin.ui.Panel

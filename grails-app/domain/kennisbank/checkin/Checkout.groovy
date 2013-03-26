@@ -6,15 +6,15 @@ import org.apache.commons.lang.RandomStringUtils
 
 class Checkout {
 
-	Date dateCreated	
-	String uniqueID
-	Boolean idGenerated = false
-	File picture
+	Date dateCreated
+	String uniqueID, title
+	Boolean idGenerated = false, published = false
+	String picturePath
 
 	static hasMany = [files: File]
 
 	static constraints = {
-		picture nullable: true
+		picturePath nullable: true
 	}
 
 	static mapping = {
@@ -23,8 +23,15 @@ class Checkout {
 	def beforeValidate() {
 		if (!idGenerated) {
 			generateUniqueID()
+			title = uniqueID
 			idGenerated = true
+			picturePath = "emptyImage.gif"
+			println "Picture path was set on domain: " + picturePath
 		}
+	}
+
+	void setPicturePath(String path) {
+		picturePath = path
 	}
 
 	String generateUniqueID() {

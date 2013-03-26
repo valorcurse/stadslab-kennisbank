@@ -123,7 +123,7 @@ class StudentWindow extends Window {
 					else { print "Something, somewhere went terribly wrong."}
 					print StudentCheckout.findByUniqueID(checkout.uniqueID).toString()
 				}
-*/
+				*/
 
 
 				// Set components back to default, i.e. no error messages
