@@ -142,23 +142,13 @@ class ProjectView extends VerticalLayout {
 		materialTreeTable.setPageLength(0)
 		
 		HierarchicalContainer container = new HierarchicalContainer()
+		container.addContainerProperty("Apparatuur", Component.class, "")
+		container.addContainerProperty("Instellingen", String.class, "")
 		materialTreeTable.setContainerDataSource(container)
-		materialTreeTable.addContainerProperty("Apparatuur", AddMaterialButton.class, "")
-		materialTreeTable.addContainerProperty("Materiaal", Tree.class, "")
-		materialTreeTable.addContainerProperty("Instellingen", String.class, "")
-
-		print project.checkin.equipment.toString()
-
-
-		//Item item = container.getItem(container.addItem())
-		//item.getItemProperty("Apparatuur").setValue("Laser snijder")
-		//container.addItem("test")
-		//container.getItem(container.addItem()).getItemProperty("Apparatuur").setValue("test")
-		//item.getItemProperty("Materiaal").setValue(new Tree("Materiaal", container))
 
 		for (def equipmentUsed : project.checkin.equipment) {
-			Item item = container.getItem(container.addItem())
-			item.getItemProperty("Apparatuur").setValue(new AddMaterialButton(equipmentUsed))
+			Item item = container.addItem(equipmentUsed)
+			item.getItemProperty("Apparatuur").setValue(new AddMaterialButton(equipmentUsed, container))
 		}
 
 		HorizontalLayout buttonsLayout = new HorizontalLayout()

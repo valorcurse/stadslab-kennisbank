@@ -61,16 +61,16 @@ class CheckIn extends UI {
 
 		// ------------------------------------------------------- Student Button -------------------------------------------------------
 
-		Button studentButton = new Button();
+		Button studentButton = new Button("Check In");
 		buttonsLayout.addComponent(studentButton);
 		buttonsLayout.setComponentAlignment(studentButton, Alignment.MIDDLE_CENTER)
-		studentButton.setStyleName(Reindeer.BUTTON_LINK);
-		studentButton.addStyleName("image-button");
-		studentButton.setIcon(new ThemeResource("student.jpg"));
+		//studentButton.setStyleName(Reindeer.BUTTON_LINK);
+		//studentButton.addStyleName("image-button");
+		//studentButton.setIcon(new ThemeResource("student.jpg"));
 		studentButton.addClickListener(new ClickListener() {
 					@Override
 					public void buttonClick(ClickEvent secondEvent) {
-						StudentWindow window = new StudentWindow()
+						CheckinWindow window = new CheckinWindow()
 						UI.getCurrent().addWindow(window)
 					}
 				});
@@ -78,16 +78,16 @@ class CheckIn extends UI {
 
 		// ------------------------------------------------------- Company Button -------------------------------------------------------
 
-		Button companyButton = new Button();
+		Button companyButton = new Button("Check Uit");
 		buttonsLayout.addComponent(companyButton);
 		buttonsLayout.setComponentAlignment(companyButton, Alignment.MIDDLE_CENTER)
-		companyButton.setStyleName(Reindeer.BUTTON_LINK);
-		companyButton.addStyleName("image-button");
-		companyButton.setIcon(new ThemeResource("company.jpg"))
+		// companyButton.setStyleName(Reindeer.BUTTON_LINK);
+		// companyButton.addStyleName("image-button");
+		// companyButton.setIcon(new ThemeResource("company.jpg"))
 		companyButton.addClickListener(new ClickListener() {
 					@Override
 					public void buttonClick(ClickEvent event) {
-						CompanyWindow window = new CompanyWindow()
+						CheckoutWindow window = new CheckoutWindow()
 						UI.getCurrent().addWindow(window)
 					}
 				});
