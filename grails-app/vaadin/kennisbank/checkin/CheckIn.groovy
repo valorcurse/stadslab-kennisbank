@@ -78,7 +78,7 @@ class CheckIn extends UI {
 
 		// ------------------------------------------------------- Company Button -------------------------------------------------------
 
-		Button companyButton = new Button("Check Uit");
+		Button companyButton = new Button("Check Out");
 		buttonsLayout.addComponent(companyButton);
 		buttonsLayout.setComponentAlignment(companyButton, Alignment.MIDDLE_CENTER)
 		// companyButton.setStyleName(Reindeer.BUTTON_LINK);

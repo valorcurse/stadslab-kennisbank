@@ -1,0 +1,5 @@
+Message: No such property: <property> for class: <class>
+- Run 'grails clean' command.
+
+Table/TreeTable not showing any columns when using a container.
+- Make sure you set the container as a datasource for the Table only AFTER adding properties to the container.
