@@ -197,17 +197,22 @@
 		
 	}
 
-	img.image-modal-window.v-widget {
-		max-height: 800px;
-		max-width: 600px;
-	}
-
 	.check-in {
 		background-image: url(textures/dark_fish_skin.png);
 		background-repeat: repeat;
 		position: absolute;
 		
 		@include styled-nativebutton;
+	}
+
+	.check-out {
+		#picture {
+			.v-icon {
+				width: 260px;
+				height: 170px;
+				margin: 0px;
+			}
+		}
 	}
 
 	.image-button {
