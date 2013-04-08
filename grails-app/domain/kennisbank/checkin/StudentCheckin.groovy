@@ -1,5 +1,7 @@
 package kennisbank.checkin
 
+import kennisbank.equipment.Equipment
+
 class StudentCheckin {
 
 	Date dateCreated
@@ -13,9 +15,9 @@ class StudentCheckin {
 			course, 
 			teacher
 
-	String[] equipment
-
 	static hasOne = [checkout: StudentCheckout]
+
+	static hasMany = [equipment: Equipment]
 
 	static constraints = {
 		studentNumber size: 7..7, matches: "[0-9]+", blank: false
@@ -41,5 +43,6 @@ class StudentCheckin {
 	}
 
 	static mapping = {
+		equipment lazy: false
 	}
 }

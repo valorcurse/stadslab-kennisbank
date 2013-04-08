@@ -19,6 +19,7 @@ import org.springframework.context.MessageSource
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import com.vaadin.server.UserError
 import kennisbank.EmailService
+import kennisbank.equipment.Equipment
 
 
 class StudentCheckinWindow extends CheckinWindow {
@@ -93,13 +94,11 @@ class StudentCheckinWindow extends CheckinWindow {
 		equipmentLayout.addComponent(equipmentLabel)
 		equipmentLabel.setSizeUndefined()
 		
-		def equipmentList = [	
-		new CheckBox("3D printer"), 
-		new CheckBox("Laser snijder"), 
-		new CheckBox("Folie snijder"), 
-		new CheckBox("Elektronica"), 
-		new CheckBox("Gereedschap")
-		]
+		def equipmentList = []
+
+		for (def equipment : Equipment.list()) {
+			equipmentList.add(new CheckBox(equipment.name))
+		}
 
 		for (equipment in equipmentList) {
 			equipmentLayout.addComponent(equipment)
@@ -131,14 +130,6 @@ class StudentCheckinWindow extends CheckinWindow {
 					textField.setComponentError(null)
 				}
 
-				// Check which checkboxes were checked (Checkception o.O)
-				def equipmentValues = []
-				for (component in equipmentList) {
-					if (component.booleanValue()) {
-						equipmentValues.add(component.getCaption())
-					}
-				}	
-
 				StudentCheckin.withTransaction {
 					StudentCheckin checkin = new StudentCheckin(	
 						studentNumber: studentNumberTextField.getValue(),
@@ -148,9 +139,15 @@ class StudentCheckinWindow extends CheckinWindow {
 						institute: instituteTextField.getValue(),
 						study: studyTextField.getValue(),
 						course: courseTextField.getValue(),
-						teacher: teacherTextField.getValue(),
-						equipment: equipmentValues
+						teacher: teacherTextField.getValue()
 						)
+
+					// Check which checkboxes were checked (Checkception o.O)
+					for (component in equipmentList) {
+						if (component.booleanValue()) {
+							checkin.addToEquipment(Equipment.findByName(component.getCaption()))
+						}
+					}	
 					
 					if (checkin.save()) {
 						close()

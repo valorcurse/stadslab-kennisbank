@@ -19,10 +19,14 @@ import com.vaadin.ui.Notification
 import com.vaadin.ui.PopupDateField
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Component
+import com.vaadin.ui.TextField
+import com.vaadin.ui.Tree
+import com.vaadin.ui.Tree.ExpandEvent
 import kennisbank.fabtool.projects.ProjectLink
 import com.vaadin.server.FileResource
 import com.vaadin.server.ThemeResource
 import com.vaadin.ui.Upload.SucceededEvent
+import com.vaadin.ui.Upload.FailedEvent
 import com.vaadin.ui.Upload.Receiver
 import com.vaadin.data.Item
 import com.vaadin.data.util.HierarchicalContainer
@@ -50,7 +54,7 @@ class CheckoutWindow extends Window {
 
 	}
 
-	private Layout checkoutForm(Checkout project) { 
+	private Layout checkoutForm(Checkout checkout) { 
 
 		GridLayout formLayout = new GridLayout(2, 4)
 		formLayout.setSpacing(true)
@@ -58,15 +62,17 @@ class CheckoutWindow extends Window {
 
 		VerticalLayout titleLayout = new VerticalLayout()
 		formLayout.addComponent(titleLayout, 0, 0, 1, 0) // Column 0, Row 0 to Column 1, Row 0
-		Label titleLabel = new Label("<h1><b>"+project.uniqueID+"</b></h1>", ContentMode.HTML)
-		titleLayout.addComponent(titleLabel)
-		titleLayout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
-		titleLabel.setSizeUndefined()
+		
+		TextField titleTextField = new TextField()
+		titleLayout.addComponent(titleTextField)
+		titleLayout.setComponentAlignment(titleTextField, Alignment.TOP_CENTER)
+		titleTextField.setInputPrompt("Voeg een titel toe")
+		// titleTextField.setSizeUndefined()
 
 		Label madeByLabel = new Label("Gemaakt door: <br><i>" + 
-			project.checkin.firstName + " " + project.checkin.lastName + 
-			"<br>(<A HREF=\"mailto:" + project.checkin.email + "\">"+ project.checkin.email +"</A>)" +
-			"<br> op " + project.checkin.dateCreated.format('dd MMMM yyyy') + "</i>", ContentMode.HTML)
+			checkout.checkin.firstName + " " + checkout.checkin.lastName + 
+			"<br>(<A HREF=\"mailto:" + checkout.checkin.email + "\">"+ checkout.checkin.email +"</A>)" +
+			"<br> op " + checkout.checkin.dateCreated.format('dd MMMM yyyy') + "</i>", ContentMode.HTML)
 		
 		// Column 1, Row 1
 		formLayout.addComponent(madeByLabel, 1, 1)
@@ -79,43 +85,53 @@ class CheckoutWindow extends Window {
 		uploadLayout.setPrimaryStyleName("embedded-panel")
 		uploadLayout.setSpacing(true)
 
-		Button pictureButton = new Button();
+		Image pictureButton = new Image();
 		uploadLayout.addComponent(pictureButton);
-		pictureButton.setStyleName(Reindeer.BUTTON_LINK);
+		// pictureButton.setStyleName(Reindeer.BUTTON_LINK);
 		pictureButton.setId("picture");
-		pictureButton.setIcon((project.picturePath == "emptyImage.gif") ? new ThemeResource("emptyImage.gif") : new FileResource(new File(project.picturePath)));
+		pictureButton.setSource((checkout.picturePath == "emptyImage.gif") ? 
+			new ThemeResource("emptyImage.gif") :
+			new FileResource(new File(checkout.picturePath)));
 
-		UploadReceiver receiver = new UploadReceiver(project) // Receiver that handles the data stream
+		UploadReceiver receiver = new UploadReceiver(checkout) // Receiver that handles the data stream
 		Upload upload = new Upload(null, receiver) // Upload button
+		
 		upload.addSucceededListener(new Upload.SucceededListener() {
 			public void uploadSucceeded(SucceededEvent event) {
+				Checkout currentCheckout = Checkout.findByUniqueID(checkout.uniqueID)
+				pictureButton.setSource(new FileResource(new File(currentCheckout.picturePath)))
 				Notification.show("Uploaden geslaagd!")	
 			}
 			})
+		
+		upload.addFailedListener(new Upload.FailedListener() {
+			public void uploadFailed(FailedEvent event) {
+				Notification.show("Uploaden niet gelukt!")	
+			}
+			})
+
+
 		uploadLayout.setWidth("-1")
 		uploadLayout.addComponent(upload)
 		upload.setImmediate(true) // Starts to upload immediately after choosing file
 
 		// ------------------------------------------------------- Material -------------------------------------------------------
 		
-		//VerticalLayout materialLayout = new VerticalLayout()
-		//layout.addComponent(materialLayout, 0, 2, 1, 2) // Column 0, Row 2 to Column 1, Row 2
-		//materialLayout.setMargin(true)
-
 		TreeTable materialTreeTable = new TreeTable()
 		formLayout.addComponent(materialTreeTable, 0, 2, 1, 2) // Column 0, Row 2 to Column 1, Row 2
-		//materialLayout.addComponent(materialTreeTable)
 		materialTreeTable.setWidth("100%")
 		materialTreeTable.setPageLength(0)
-		
+
 		HierarchicalContainer container = new HierarchicalContainer()
 		container.addContainerProperty("Apparatuur", Component.class, "")
 		container.addContainerProperty("Instellingen", String.class, "")
 		materialTreeTable.setContainerDataSource(container)
+		materialTreeTable.setColumnExpandRatio("Apparatuur", 1)
 
-		for (def equipmentUsed : project.checkin.equipment) {
+
+		for (def equipmentUsed : checkout.checkin.equipment) {
 			Item item = container.addItem(equipmentUsed)
-			item.getItemProperty("Apparatuur").setValue(new AddMaterialButton(equipmentUsed, container))
+			item.getItemProperty("Apparatuur").setValue(new AddMaterialButton(equipmentUsed, materialTreeTable, checkout))
 		}
 
 		HorizontalLayout buttonsLayout = new HorizontalLayout()
@@ -128,10 +144,6 @@ class CheckoutWindow extends Window {
 		buttonsLayout.addComponent(saveButton)
 		buttonsLayout.setComponentAlignment(saveButton, Alignment.TOP_CENTER)		
 
-		Button saveDraftButton = new Button("Tijdelijk opslaan")
-		buttonsLayout.addComponent(saveDraftButton)
-		buttonsLayout.setComponentAlignment(saveDraftButton, Alignment.TOP_LEFT)
-
 		return formLayout
 	}
 
@@ -140,10 +152,10 @@ class CheckoutWindow extends Window {
 public class UploadReceiver implements Receiver {
 
 	OutputStream outputFile = null
-	Checkout project
+	Checkout checkout = null
 
-	public UploadReceiver(Checkout project) {
-		this.project = project
+	public UploadReceiver(Checkout checkout) {
+		this.checkout = checkout
 	}
 
 	@Override
@@ -152,22 +164,28 @@ public class UploadReceiver implements Receiver {
 
 		try {
 
-			new File('uploads/'+project.uniqueID).mkdirs()
-			file = new File("uploads/"+project.uniqueID+"/"+strFilename)
+			new File('uploads/'+checkout.uniqueID).mkdirs()
+			file = new File("uploads/"+checkout.uniqueID+"/"+strFilename)
+
+			print file.absolutePath
 
 			if(!file.exists()) {
 				file.createNewFile()
 				Checkout.withTransaction {
-					String oldPicturePath = project.picturePath
-					project.picturePath = file.absolutePath
-					project = project.merge()
-					project.save()
-					new File(oldPicturePath).delete()
+					String oldPicturePath = checkout.picturePath
+					checkout.picturePath = file.absolutePath
+					checkout = checkout.merge()
+					if (checkout.save(failOnError: true)) {
+						print checkout.picturePath
+						new File(oldPicturePath).delete()
+					}
+					else {
+						return null
+					}
 				}
 			}
 			else { 
-				Notification.show("This file has already been uploaded!") 
-				return
+				return null
 			}
 
 			outputFile =  new FileOutputStream(file)

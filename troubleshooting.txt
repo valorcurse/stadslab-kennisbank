@@ -3,3 +3,6 @@ Message: No such property: <property> for class: <class>
 
 Table/TreeTable not showing any columns when using a container.
 - Make sure you set the container as a datasource for the Table only AFTER adding properties to the container.
+
+Caused by NonUniqueObjectException: a different object with the same identifier value was already associated with the session
+- Merge the domain object with itself, i.e. domain = domain.merge()

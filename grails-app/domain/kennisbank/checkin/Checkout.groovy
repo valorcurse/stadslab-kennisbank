@@ -2,6 +2,8 @@ package kennisbank.checkin
 
 import kennisbank.project.Project
 import kennisbank.File
+import kennisbank.equipment.Material
+import kennisbank.equipment.Equipment
 import org.apache.commons.lang.RandomStringUtils
 
 class Checkout {
@@ -11,13 +13,14 @@ class Checkout {
 	Boolean idGenerated = false, published = false
 	String picturePath
 
-	static hasMany = [files: File]
+	static hasMany = [files: File, equipment: Equipment, materials: Material]
 
 	static constraints = {
 		picturePath nullable: true
 	}
 
 	static mapping = {
+		materials lazy: false
 	}
 
 	def beforeValidate() {

@@ -140,17 +140,6 @@ class CheckIn extends UI {
 
 		}
 
-		checkOutTable.addValueChangeListener(new ValueChangeListener() {
-			@Override
-			public void valueChange(final ValueChangeEvent event) {
-				Checkout checkout = event.getProperty().getValue()
-				if (checkout != null) {
-					CheckoutWindow window = new CheckoutWindow(checkout)
-					UI.getCurrent().addWindow(window)
-				}
-			}
-			})
-
 		// companyButton.addClickListener(new ClickListener() {
 		// 	@Override
 		// 	public void buttonClick(ClickEvent event) {

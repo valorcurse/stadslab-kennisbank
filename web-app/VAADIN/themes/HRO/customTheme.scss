@@ -207,10 +207,18 @@
 
 	.check-out {
 		#picture {
+			width: 260px;
+			height: 170px;
+			margin: 0px;
+			border-style: solid;
+			border-width: 1px;
+		}
+
+		#check-button {
 			.v-icon {
-				width: 260px;
-				height: 170px;
-				margin: 0px;
+				height: 13px;
+				width: 18px;
+				padding-top: 2.5px;
 			}
 		}
 	}
