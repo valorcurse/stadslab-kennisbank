@@ -1,26 +1,9 @@
 package kennisbank.checkin
 
-import com.vaadin.ui.Window
-import com.vaadin.ui.Layout
-import com.vaadin.ui.VerticalLayout
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.CssLayout
-import com.vaadin.ui.Table
+import com.vaadin.ui.*
 import com.vaadin.data.Property.ValueChangeListener
 import com.vaadin.data.Property.ValueChangeEvent
 import com.vaadin.ui.themes.Reindeer
-import com.vaadin.ui.Image
-import com.vaadin.ui.TreeTable
-import com.vaadin.ui.Button
-import com.vaadin.ui.Upload
-import com.vaadin.ui.Label
-import com.vaadin.ui.GridLayout
-import com.vaadin.ui.Notification
-import com.vaadin.ui.PopupDateField
-import com.vaadin.ui.Alignment
-import com.vaadin.ui.Component
-import com.vaadin.ui.TextField
-import com.vaadin.ui.Tree
 import com.vaadin.ui.Tree.ExpandEvent
 import kennisbank.fabtool.projects.ProjectLink
 import com.vaadin.server.FileResource
@@ -124,14 +107,14 @@ class CheckoutWindow extends Window {
 
 		HierarchicalContainer container = new HierarchicalContainer()
 		container.addContainerProperty("Apparatuur", Component.class, "")
-		container.addContainerProperty("Instellingen", String.class, "")
+		container.addContainerProperty("Instellingen", TextField.class, "")
 		materialTreeTable.setContainerDataSource(container)
 		materialTreeTable.setColumnExpandRatio("Apparatuur", 1)
 
 
 		for (def equipmentUsed : checkout.checkin.equipment) {
-			Item item = container.addItem(equipmentUsed)
-			item.getItemProperty("Apparatuur").setValue(new AddMaterialButton(equipmentUsed, materialTreeTable, checkout))
+			Item equipmentItem = container.addItem(equipmentUsed)
+			equipmentItem.getItemProperty("Apparatuur").setValue(new AddMaterialButton(equipmentUsed, materialTreeTable))
 		}
 
 		HorizontalLayout buttonsLayout = new HorizontalLayout()

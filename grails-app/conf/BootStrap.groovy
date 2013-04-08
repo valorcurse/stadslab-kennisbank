@@ -22,7 +22,7 @@ class BootStrap {
 			lastName: "Dias Avelino", email: "valorcurse@gmail.com", 
 			institute: "CMI", study: "Technische Informatica", 
 			course: "ICT-Lab", teacher: "Abd el Ghany").addToEquipment(
-			Equipment.findByName("Folie snijder")).addToEquipment(
+			Equipment.findByName("Laser snijder")).addToEquipment(
 			Equipment.findByName("3D printer")).save(flush: true, failOnError: true)
 
 		}

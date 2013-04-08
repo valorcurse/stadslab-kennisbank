@@ -13,7 +13,7 @@ class Checkout {
 	Boolean idGenerated = false, published = false
 	String picturePath
 
-	static hasMany = [files: File, equipment: Equipment, materials: Material]
+	static hasMany = [files: File, equipment: Equipment]
 
 	static constraints = {
 		picturePath nullable: true

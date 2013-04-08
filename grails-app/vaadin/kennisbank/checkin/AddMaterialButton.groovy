@@ -8,6 +8,7 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Notification
 import com.vaadin.ui.Window
 import com.vaadin.ui.ComboBox
+import com.vaadin.ui.TextField
 import com.vaadin.server.ThemeResource
 import com.vaadin.ui.themes.Reindeer
 import com.vaadin.ui.TreeTable
@@ -19,7 +20,7 @@ import kennisbank.equipment.Equipment
 
 class AddMaterialButton extends HorizontalLayout {
 
-	AddMaterialButton(Equipment equipment, TreeTable treeTable, Checkout checkout) {
+	AddMaterialButton(Equipment equipment, TreeTable treeTable) {
 
 		Container container = treeTable.getContainerDataSource()
 
@@ -49,6 +50,7 @@ class AddMaterialButton extends HorizontalLayout {
 
 				ComboBox materialComboBox = new ComboBox(null, materials)
 				chooseMaterialLayout.addComponent(materialComboBox)
+				materialComboBox.setNullSelectionAllowed(false);
 
 				Button acceptMaterial = new Button()
 				chooseMaterialLayout.addComponent(acceptMaterial)
@@ -56,18 +58,33 @@ class AddMaterialButton extends HorizontalLayout {
 				acceptMaterial.setDescription("Klik hier om dit materiaal te accepteren")
 				acceptMaterial.setIcon(new ThemeResource("check.jpg"))
 				acceptMaterial.setStyleName(Reindeer.BUTTON_LINK)
+
 				acceptMaterial.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event2) {
 
-						Checkout.withTransaction {
-							checkout.addToMaterials(Material.findByName(materialComboBox.getValue()))
+						Equipment.withTransaction {
+							equipment.addToMaterials(new Material(name: materialComboBox.getValue()))
 
-							checkout = checkout.merge()
-
-							if (checkout.save(flush: true, failOnError: true)) {
+							if (equipment.save()) {
 								chooseMaterialLayout.removeAllComponents()
 								chooseMaterialLayout.addComponent(new Label(materialComboBox.getValue()))
+								materials.remove(materials.indexOf(materialComboBox.getValue()))
 							}
+						}
+
+						for (def setting : equipment.settings.asList()) {
+							Label newSettingLabel = new Label(setting.name)
+							Item item = container.addItem(newSettingLabel)
+							item.getItemProperty("Apparatuur").setValue(newSettingLabel)
+							
+							TextField valueTextField = new TextField()
+							valueTextField.setWidth("99%")
+							
+							item.getItemProperty("Instellingen").setValue(valueTextField)
+							container.setParent(newSettingLabel, chooseMaterialLayout)
+							
+							treeTable.setCollapsed(chooseMaterialLayout, false)
+							treeTable.setChildrenAllowed(newSettingLabel, false)
 						}
 					}
 					})
