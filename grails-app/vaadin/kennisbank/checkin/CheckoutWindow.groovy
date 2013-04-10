@@ -19,25 +19,39 @@ import com.vaadin.ui.Upload.Receiver
 import com.vaadin.shared.ui.label.ContentMode
 import com.vaadin.event.ShortcutAction.KeyCode
 import com.vaadin.event.ShortcutListener
+import com.vaadin.ui.Button.ClickEvent
+import com.vaadin.ui.Button.ClickListener
+import kennisbank.equipment.*
+
+class Picture {
+
+	String picturePath
+
+}
 
 class CheckoutWindow extends Window {
 
-	CheckoutWindow(Checkout checkout) {
+	
+	Checkout checkout
+	Picture picture
 
-		setCaption("Check out")
+	CheckoutWindow(Checkin checkin) {
+
+		checkout = new Checkout()
+		picture = new Picture()
+
+		setCaption("Check out") 
 		setPrimaryStyleName("check-out")
 		setModal(true)
 		setStyleName(Reindeer.WINDOW_LIGHT)
 
 		setCloseShortcut(KeyCode.ESCAPE, null);
 
-		setContent(checkoutForm(checkout))
-
-		// ------------------------------------------------------- Checkout List -------------------------------------------------------
+		setContent(checkoutForm(checkin))
 
 	}
 
-	private Layout checkoutForm(Checkout checkout) { 
+	private Layout checkoutForm(Checkin checkin) { 
 
 		GridLayout formLayout = new GridLayout(2, 4)
 		formLayout.setSpacing(true)
@@ -53,9 +67,9 @@ class CheckoutWindow extends Window {
 		// titleTextField.setSizeUndefined()
 
 		Label madeByLabel = new Label("Gemaakt door: <br><i>" + 
-			checkout.checkin.firstName + " " + checkout.checkin.lastName + 
-			"<br>(<A HREF=\"mailto:" + checkout.checkin.email + "\">"+ checkout.checkin.email +"</A>)" +
-			"<br> op " + checkout.checkin.dateCreated.format('dd MMMM yyyy') + "</i>", ContentMode.HTML)
+			checkin.firstName + " " + checkin.lastName + 
+			"<br>(<A HREF=\"mailto:" + checkin.email + "\">"+ checkin.email +"</A>)" +
+			"<br> op " + checkin.dateCreated.format('dd MMMM yyyy') + "</i>", ContentMode.HTML)
 		
 		// Column 1, Row 1
 		formLayout.addComponent(madeByLabel, 1, 1)
@@ -76,13 +90,12 @@ class CheckoutWindow extends Window {
 			new ThemeResource("emptyImage.gif") :
 			new FileResource(new File(checkout.picturePath)));
 
-		UploadReceiver receiver = new UploadReceiver(checkout) // Receiver that handles the data stream
+		UploadReceiver receiver = new UploadReceiver(picture) // Receiver that handles the data stream
 		Upload upload = new Upload(null, receiver) // Upload button
 		
 		upload.addSucceededListener(new Upload.SucceededListener() {
 			public void uploadSucceeded(SucceededEvent event) {
-				Checkout currentCheckout = Checkout.findByUniqueID(checkout.uniqueID)
-				pictureButton.setSource(new FileResource(new File(currentCheckout.picturePath)))
+				pictureButton.setSource(new FileResource(new File(picture.picturePath)))
 				Notification.show("Uploaden geslaagd!")	
 			}
 			})
@@ -112,7 +125,7 @@ class CheckoutWindow extends Window {
 		materialTreeTable.setColumnExpandRatio("Apparatuur", 1)
 
 
-		for (def equipmentUsed : checkout.checkin.equipment) {
+		for (def equipmentUsed : checkin.equipment) {
 			Item equipmentItem = container.addItem(equipmentUsed)
 			equipmentItem.getItemProperty("Apparatuur").setValue(new AddMaterialButton(equipmentUsed, materialTreeTable))
 		}
@@ -126,6 +139,34 @@ class CheckoutWindow extends Window {
 		Button saveButton = new Button("Opslaan")
 		buttonsLayout.addComponent(saveButton)
 		buttonsLayout.setComponentAlignment(saveButton, Alignment.TOP_CENTER)		
+		saveButton.addClickListener(new ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {
+				Checkout.withTransaction {
+					checkout.title = titleTextField.getValue()
+
+					def treeTableContainer = materialTreeTable.getContainerDataSource()
+
+					for (equipment in treeTableContainer.rootItemIds()) {
+						print equipment
+						checkout.addToEquipment(new Equipment(name: equipment.name))
+
+						for (material in treeTableContainer.getChildren(equipment)) {
+							// checkout.equipment.addToMaterials(new Material(name: material.name))
+							for (setting in treeTableContainer.getChildren(material)) {
+								print setting
+							}
+						}
+					}
+
+					if (checkout.save()) {
+						print "Checkout saved"
+					}
+
+				}
+			}
+			})
+
 
 		return formLayout
 	}
@@ -135,46 +176,29 @@ class CheckoutWindow extends Window {
 public class UploadReceiver implements Receiver {
 
 	OutputStream outputFile = null
-	Checkout checkout = null
+	Picture picture
 
-	public UploadReceiver(Checkout checkout) {
-		this.checkout = checkout
+	public UploadReceiver(Picture picture) {
+		this.picture = picture
 	}
 
 	@Override
 	public OutputStream receiveUpload(String strFilename, String strMIMEType) {
+		
 		File file
 
 		try {
 
-			new File('uploads/'+checkout.uniqueID).mkdirs()
-			file = new File("uploads/"+checkout.uniqueID+"/"+strFilename)
+			file = File.createTempFile(strFilename, ".tmp")
 
-			print file.absolutePath
-
-			if(!file.exists()) {
-				file.createNewFile()
-				Checkout.withTransaction {
-					String oldPicturePath = checkout.picturePath
-					checkout.picturePath = file.absolutePath
-					checkout = checkout.merge()
-					if (checkout.save(failOnError: true)) {
-						print checkout.picturePath
-						new File(oldPicturePath).delete()
-					}
-					else {
-						return null
-					}
-				}
-			}
-			else { 
-				return null
-			}
+			picture.picturePath = file.absolutePath
 
 			outputFile =  new FileOutputStream(file)
+
 			} catch (IOException e) {
 				e.printStackTrace()
 			}
+
 			return outputFile
 		}
 

@@ -4,7 +4,7 @@ vaadin {
 	// The application will be available at e.g. http://localhost:8080/grails-vaadin7-demo/
 	mapping = [
 				"/*": "kennisbank.fabtool.MyUI",
-				"/checkin/*": "kennisbank.checkin.CheckIn"
+				"/checkinout/*": "kennisbank.checkin.CheckInOutView"
 			]
 
 	// This is optional because the servlet is provided by default.

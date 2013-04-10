@@ -26,8 +26,6 @@ class AddMaterialButton extends HorizontalLayout {
 
 		setSpacing(true)
 
-		def laserCutterSettings = ["Power", "Speed", "Passes"]
-
 		def materials = []
 
 		for (def material : Material.list()) {
@@ -47,6 +45,10 @@ class AddMaterialButton extends HorizontalLayout {
 			public void buttonClick(ClickEvent event) {
 
 				HorizontalLayout chooseMaterialLayout = new HorizontalLayout()
+				Item materialItem = container.addItem(chooseMaterialLayout)
+				materialItem.getItemProperty("Apparatuur").setValue(chooseMaterialLayout)
+				container.setParent(chooseMaterialLayout, equipment)
+				treeTable.setCollapsed(equipment, false)
 
 				ComboBox materialComboBox = new ComboBox(null, materials)
 				chooseMaterialLayout.addComponent(materialComboBox)
@@ -62,25 +64,22 @@ class AddMaterialButton extends HorizontalLayout {
 				acceptMaterial.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event2) {
 
-						Equipment.withTransaction {
-							equipment.addToMaterials(new Material(name: materialComboBox.getValue()))
+						// chooseMaterialLayout.removeAllComponents()
+						// chooseMaterialLayout.addComponent(new Label(materialComboBox.getValue()))
+						
 
-							if (equipment.save()) {
-								chooseMaterialLayout.removeAllComponents()
-								chooseMaterialLayout.addComponent(new Label(materialComboBox.getValue()))
-								materials.remove(materials.indexOf(materialComboBox.getValue()))
-							}
-						}
+
+						materials.remove(materials.indexOf(materialComboBox.getValue()))
 
 						for (def setting : equipment.settings.asList()) {
 							Label newSettingLabel = new Label(setting.name)
-							Item item = container.addItem(newSettingLabel)
-							item.getItemProperty("Apparatuur").setValue(newSettingLabel)
+							Item settingItem = container.addItem(newSettingLabel)
+							settingItem.getItemProperty("Apparatuur").setValue(newSettingLabel)
 							
 							TextField valueTextField = new TextField()
 							valueTextField.setWidth("99%")
 							
-							item.getItemProperty("Instellingen").setValue(valueTextField)
+							settingItem.getItemProperty("Instellingen").setValue(valueTextField)
 							container.setParent(newSettingLabel, chooseMaterialLayout)
 							
 							treeTable.setCollapsed(chooseMaterialLayout, false)
@@ -89,10 +88,7 @@ class AddMaterialButton extends HorizontalLayout {
 					}
 					})
 
-				Item item = container.addItem(chooseMaterialLayout)
-				item.getItemProperty("Apparatuur").setValue(chooseMaterialLayout)
-				container.setParent(chooseMaterialLayout, equipment)
-				treeTable.setCollapsed(equipment, false)
+				
 
 			}
 			})
