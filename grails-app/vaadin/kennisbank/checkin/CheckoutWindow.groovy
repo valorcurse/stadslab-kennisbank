@@ -115,14 +115,15 @@ class CheckoutWindow extends Window {
 		
 		TreeTable materialTreeTable = new TreeTable()
 		formLayout.addComponent(materialTreeTable, 0, 2, 1, 2) // Column 0, Row 2 to Column 1, Row 2
-		materialTreeTable.setWidth("100%")
+		materialTreeTable.setWidth("600px")
 		materialTreeTable.setPageLength(0)
 
 		HierarchicalContainer container = new HierarchicalContainer()
 		container.addContainerProperty("Apparatuur", Component.class, "")
+		container.addContainerProperty("Materiaal", Component.class, "")
 		container.addContainerProperty("Instellingen", TextField.class, "")
 		materialTreeTable.setContainerDataSource(container)
-		materialTreeTable.setColumnExpandRatio("Apparatuur", 1)
+		// materialTreeTable.setColumnExpandRatio("Apparatuur", 1)
 
 
 		for (def equipmentUsed : checkin.equipment) {

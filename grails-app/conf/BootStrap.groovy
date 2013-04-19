@@ -1,13 +1,15 @@
 import kennisbank.*
 import kennisbank.checkin.StudentCheckin
-import kennisbank.equipment.Material
-import kennisbank.equipment.Equipment
+import kennisbank.equipment.*
 
 class BootStrap {
 
 	def init = { servletContext ->
 
-		new Material(name: "Hout").save(flush: true, failOnError: true)
+		new Material(name: "Hout").save(flush: true, failOnError: true).
+			addToMaterialTypes(new MaterialType(name: "Duplex")).
+			addToMaterialTypes(new MaterialType(name: "Triplex"))
+		
 		new Material(name: "Glas").save(flush: true, failOnError: true)
 		new Material(name: "Leer").save(flush: true, failOnError: true)
 
