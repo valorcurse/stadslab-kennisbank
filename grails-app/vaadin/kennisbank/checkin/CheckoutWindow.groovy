@@ -23,22 +23,22 @@ import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
 import kennisbank.equipment.*
 
-class Picture {
+class CheckoutInfo {
 
-	String picturePath
-
+	String picturePath, title
+	String[][] equipmentInfo
 }
 
 class CheckoutWindow extends Window {
 
 	
 	Checkout checkout
-	Picture picture
+	CheckoutInfo checkoutInfo
 
 	CheckoutWindow(Checkin checkin) {
 
 		checkout = new Checkout()
-		picture = new Picture()
+		checkoutInfo = new CheckoutInfo()
 
 		setCaption("Check out") 
 		setPrimaryStyleName("check-out")
@@ -90,12 +90,12 @@ class CheckoutWindow extends Window {
 			new ThemeResource("emptyImage.gif") :
 			new FileResource(new File(checkout.picturePath)));
 
-		UploadReceiver receiver = new UploadReceiver(picture) // Receiver that handles the data stream
+		UploadReceiver receiver = new UploadReceiver(checkoutInfo) // Receiver that handles the data stream
 		Upload upload = new Upload(null, receiver) // Upload button
 		
 		upload.addSucceededListener(new Upload.SucceededListener() {
 			public void uploadSucceeded(SucceededEvent event) {
-				pictureButton.setSource(new FileResource(new File(picture.picturePath)))
+				pictureButton.setSource(new FileResource(new File(checkoutInfo.picturePath)))
 				Notification.show("Uploaden geslaagd!")	
 			}
 			})
@@ -123,13 +123,23 @@ class CheckoutWindow extends Window {
 		container.addContainerProperty("Materiaal", Component.class, "")
 		container.addContainerProperty("Instellingen", TextField.class, "")
 		materialTreeTable.setContainerDataSource(container)
-		// materialTreeTable.setColumnExpandRatio("Apparatuur", 1)
+		materialTreeTable.setColumnExpandRatio("Apparatuur", 0.5)
+		materialTreeTable.setColumnExpandRatio("Materiaal", 0.5)
 
 
 		for (def equipmentUsed : checkin.equipment) {
 			Item equipmentItem = container.addItem(equipmentUsed)
-			equipmentItem.getItemProperty("Apparatuur").setValue(new AddMaterialButton(equipmentUsed, materialTreeTable))
+			// settings.add(equipmentUsed.name)
+
+			// for (def material : equipmentUsed.materials) {
+			// 	def index = settings.indexOf(equipmentUsed.name)
+			// 	settings[index].add(setting)
+			// }
+
+			equipmentItem.getItemProperty("Apparatuur").setValue(new AddMaterialButton(equipmentUsed, materialTreeTable, checkoutInfo))
 		}
+
+		// print settings
 
 		HorizontalLayout buttonsLayout = new HorizontalLayout()
 		formLayout.addComponent(buttonsLayout, 0, 3, 1, 3)  // Column 0, Row 3 to Column 1, Row 3
@@ -177,10 +187,10 @@ class CheckoutWindow extends Window {
 public class UploadReceiver implements Receiver {
 
 	OutputStream outputFile = null
-	Picture picture
+	CheckoutInfo checkoutInfo
 
-	public UploadReceiver(Picture picture) {
-		this.picture = picture
+	public UploadReceiver(CheckoutInfo checkoutInfo) {
+		this.checkoutInfo = checkoutInfo
 	}
 
 	@Override
@@ -192,7 +202,7 @@ public class UploadReceiver implements Receiver {
 
 			file = File.createTempFile(strFilename, ".tmp")
 
-			picture.picturePath = file.absolutePath
+			checkoutInfo.picturePath = file.absolutePath
 
 			outputFile =  new FileOutputStream(file)
 
