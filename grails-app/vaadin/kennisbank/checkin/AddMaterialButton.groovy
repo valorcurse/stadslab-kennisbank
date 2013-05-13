@@ -23,6 +23,8 @@ class AddMaterialButton extends HorizontalLayout {
 
 	AddMaterialButton(Equipment equipment, TreeTable treeTable, CheckoutInfo checkoutInfo) {
 
+		boolean settingsAdded = false
+
 		Container container = treeTable.getContainerDataSource()
 
 		setSpacing(true)
@@ -89,30 +91,28 @@ class AddMaterialButton extends HorizontalLayout {
 
 								print treeTable.getChildren(materialComboBox)
 
-								for (item in treeTable.getChildren(materialComboBox)) {
-									Item currentItem = container.getItem(item)
-									print currentItem
-									treeTable.removeItem(currentItem)
-									// print currentItem.getItemProperty("Instellingen").getValue()
-									// print Item.getItemPropertyIds() 
-									// treeTable.removeAllItems()
-									// break
+								if (!settingsAdded) {
+									for (def setting : equipment.settings.asList()) {
+
+										Label newSettingLabel = new Label(setting.name)
+										Item settingItem = container.addItem(newSettingLabel)
+										settingItem.getItemProperty("Materiaal").setValue(newSettingLabel)
+
+										TextField valueTextField = new TextField()
+										valueTextField.setWidth("99%")
+
+										settingItem.getItemProperty("Instellingen").setValue(valueTextField)
+										container.setParent(newSettingLabel, materialComboBox)
+
+										treeTable.setChildrenAllowed(newSettingLabel, false)
+									}
+									settingsAdded = true
 								}
-
-
-								for (def setting : equipment.settings.asList()) {
-
-									Label newSettingLabel = new Label(setting.name)
-									Item settingItem = container.addItem(newSettingLabel)
-									settingItem.getItemProperty("Materiaal").setValue(newSettingLabel)
-
-									TextField valueTextField = new TextField()
-									valueTextField.setWidth("99%")
-
-									settingItem.getItemProperty("Instellingen").setValue(valueTextField)
-									container.setParent(newSettingLabel, materialComboBox)
-
-									treeTable.setChildrenAllowed(newSettingLabel, false)
+								else {
+									for (def child : treeTable.getChildren(materialComboBox)) {
+										Item item = container.getItem(child)
+										item.getItemProperty("Instellingen").getValue().setValue("")
+									}
 								}
 							}
 							})
