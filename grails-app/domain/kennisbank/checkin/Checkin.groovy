@@ -4,6 +4,8 @@ import kennisbank.equipment.Equipment
 
 class Checkin {
 
+	Date dateCreated
+
 	static hasMany = [equipment: Equipment]
 
 	static constraints = {
