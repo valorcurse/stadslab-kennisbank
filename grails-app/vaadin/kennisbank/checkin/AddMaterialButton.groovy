@@ -21,34 +21,43 @@ import kennisbank.equipment.*
 
 class AddMaterialButton extends HorizontalLayout {
 
+	Button button
+	String caption
+	Equipment equipment
+
 	AddMaterialButton(Equipment equipment, TreeTable treeTable, CheckoutInfo checkoutInfo) {
 
-		boolean settingsAdded = false
+		// boolean settingsAdded = false
+		// String chosenMaterial = ""
 
-		Container container = treeTable.getContainerDataSource()
+		// Container container = treeTable.getContainerDataSource()
 
 		setSpacing(true)
 
-		def materials = []
-		def info = [][]
+		// def materials = []
+		// checkoutInfo.equipmentInfo.add(equipment.name)
 
-		for (def material : Material.list()) {
-			materials.add(material.name)
-		}
+		// print checkoutInfo.equipmentInfo.getClass()
 
-		info.add(equipment)
+		// for (def material : Material.list()) {
+		// 	materials.add(material.name)
+		// }
 
-		Label label = new Label(equipment.name)
+		caption = equipment.name
+		this.equipment = equipment
+
+		Label label = new Label(caption)
 		addComponent(label)
 
-		Button addMaterial = new Button()
-		addComponent(addMaterial)
-		addMaterial.setId("Material-plus-icon")
-		addMaterial.setDescription("Klik hier om een materiaal aan dit apparaat toe te voegen")
-		addMaterial.setIcon(new ThemeResource("plus.png"))
-		addMaterial.setStyleName(Reindeer.BUTTON_LINK)
-		
-		addMaterial.addClickListener(new Button.ClickListener() {
+		button = new Button()
+		addComponent(button)
+		button.setId("Material-plus-icon")
+		button.setDescription("Klik hier om een materiaal aan dit apparaat toe te voegen")
+		button.setIcon(new ThemeResource("plus.png"))
+		button.setStyleName(Reindeer.BUTTON_LINK)
+	}
+
+		/*button.addClickListener(new Button.ClickListener() {
 			public void buttonClick(ClickEvent event) {
 
 				// ComboBox to choose kind of material used
@@ -66,10 +75,11 @@ class AddMaterialButton extends HorizontalLayout {
 					@Override
 					public void valueChange(final ValueChangeEvent comboEvent) {
 
-
 						def material = Material.findByName(comboEvent.getProperty().getValue())
 						def materialTypes = []
-						// info[0].add(material)
+
+						chosenMaterial = material.name
+						checkoutInfo.equipmentInfo.add(chosenMaterial)
 
 						for (def materialType : material.materialTypes) {
 							materialTypes.add(materialType.name)
@@ -79,17 +89,20 @@ class AddMaterialButton extends HorizontalLayout {
 						ComboBox materialTypeComboBox = new ComboBox(null, materialTypes)
 						materialTypeComboBox.setNullSelectionAllowed(false)
 						materialTypeComboBox.setImmediate(true)
+						treeTable.setCollapsed(materialComboBox, false)
 						
 						//  Add the ComboBox to the table
 						materialItem.getItemProperty("Materiaal").setValue(materialTypeComboBox)
-
-						treeTable.setCollapsed(materialComboBox, false)
 
 						materialTypeComboBox.addValueChangeListener(new ValueChangeListener() {
 							@Override
 							public void valueChange(final ValueChangeEvent comboTypeEvent) { 
 
-								print treeTable.getChildren(materialComboBox)
+								// print treeTable.getChildren(materialComboBox)
+								def materialType = comboTypeEvent.getProperty().getValue()
+								// checkoutInfo.equipmentInfo[0][0] = materialType
+
+								print checkoutInfo.equipmentInfo
 
 								if (!settingsAdded) {
 									for (def setting : equipment.settings.asList()) {
@@ -105,20 +118,24 @@ class AddMaterialButton extends HorizontalLayout {
 										container.setParent(newSettingLabel, materialComboBox)
 
 										treeTable.setChildrenAllowed(newSettingLabel, false)
+
 									}
+
 									settingsAdded = true
 								}
 								else {
+									// Reset the values on the settings' TextFields 
 									for (def child : treeTable.getChildren(materialComboBox)) {
 										Item item = container.getItem(child)
 										item.getItemProperty("Instellingen").getValue().setValue("")
 									}
 								}
 							}
-							})
+						}
+						)
 }
 })
 }
-})
-}
+})*/
+
 }

@@ -26,7 +26,13 @@ import kennisbank.equipment.*
 class CheckoutInfo {
 
 	String picturePath, title
-	String[][] equipmentInfo
+	def equipmentInfo
+
+	CheckoutInfo() {
+		picturePath = ""
+		title = ""
+		equipmentInfo = [][][]
+	}
 }
 
 class CheckoutWindow extends Window {
@@ -129,27 +135,89 @@ class CheckoutWindow extends Window {
 
 		for (def equipmentUsed : checkin.equipment) {
 			Item equipmentItem = container.addItem(equipmentUsed)
-			// settings.add(equipmentUsed.name)
 
-			// for (def material : equipmentUsed.materials) {
-			// 	def index = settings.indexOf(equipmentUsed.name)
-			// 	settings[index].add(setting)
-			// }
+			AddMaterialButton addMaterialButton = new AddMaterialButton(equipmentUsed, materialTreeTable, checkoutInfo)
+			equipmentItem.getItemProperty("Apparatuur").setValue(addMaterialButton)
 
-			equipmentItem.getItemProperty("Apparatuur").setValue(new AddMaterialButton(equipmentUsed, materialTreeTable, checkoutInfo))
+			addMaterialButton.button.addClickListener(new Button.ClickListener() {
+				@Override
+				public void buttonClick(ClickEvent event) {
+
+					def equipment = addMaterialButton.equipment
+					def materials = Material.list()*.name
+
+					// ComboBox to choose kind of material used
+					ComboBox materialComboBox = new ComboBox(null, materials)
+					materialComboBox.setNullSelectionAllowed(false)
+					materialComboBox.setImmediate(true)
+
+					// Add the ComboBox to the table
+					Item materialItem = container.addItem(materialComboBox)
+					materialItem.getItemProperty("Apparatuur").setValue(materialComboBox)
+					container.setParent(materialComboBox, equipment)
+					materialTreeTable.setCollapsed(equipment, false)
+					
+					materialComboBox.addValueChangeListener(new ValueChangeListener() {
+						@Override
+						public void valueChange(final ValueChangeEvent comboEvent) {
+
+							def material = Material.findByName(comboEvent.getProperty().getValue())
+							def materialTypes = []
+
+							def chosenMaterial = material.name
+
+							for (def materialType : material.materialTypes) {
+								materialTypes.add(materialType.name)
+							}
+
+							// ComboBox to choose the type of the material
+							ComboBox materialTypeComboBox = new ComboBox(null, materialTypes)
+							materialTypeComboBox.setNullSelectionAllowed(false)
+							materialTypeComboBox.setImmediate(true)
+							materialTreeTable.setCollapsed(materialComboBox, false)
+							
+							//  Add the ComboBox to the table
+							materialItem.getItemProperty("Materiaal").setValue(materialTypeComboBox)
+
+							materialTypeComboBox.addValueChangeListener(new ValueChangeListener() {
+								@Override
+								public void valueChange(final ValueChangeEvent comboTypeEvent) { 
+
+									def materialType = comboTypeEvent.getProperty().getValue()
+
+									if (!materialTreeTable.hasChildren(materialComboBox)) {
+										for (def setting : equipmentUsed.settings.asList()) {
+											Label newSettingLabel = new Label(setting.name)
+											Item settingItem = container.addItem(newSettingLabel)
+											settingItem.getItemProperty("Materiaal").setValue(newSettingLabel)
+
+											TextField valueTextField = new TextField()
+											valueTextField.setWidth("99%")
+
+											settingItem.getItemProperty("Instellingen").setValue(valueTextField)
+											container.setParent(newSettingLabel, materialComboBox)
+
+											materialTreeTable.setChildrenAllowed(newSettingLabel, false)
+										}
+									}
+									else {
+										// Reset the values on the settings' TextFields 
+										for (def child : materialTreeTable.getChildren(materialComboBox)) {
+											Item item = container.getItem(child)
+											item.getItemProperty("Instellingen").getValue().setValue("")
+										}
+									}
+								}
+							})
+						}
+					})
+				}
+			})
 		}
 
-		// print settings
-
-		HorizontalLayout buttonsLayout = new HorizontalLayout()
-		formLayout.addComponent(buttonsLayout, 0, 3, 1, 3)  // Column 0, Row 3 to Column 1, Row 3
-		formLayout.setComponentAlignment(buttonsLayout, Alignment.TOP_CENTER)
-		buttonsLayout.setSpacing(true)
-		buttonsLayout.setWidth("100%")
-
 		Button saveButton = new Button("Opslaan")
-		buttonsLayout.addComponent(saveButton)
-		buttonsLayout.setComponentAlignment(saveButton, Alignment.TOP_CENTER)		
+		formLayout.addComponent(saveButton, 0, 3, 1, 3)  // Column 0, Row 3 to Column 1, Row 3
+		formLayout.setComponentAlignment(saveButton, Alignment.TOP_CENTER)
 		saveButton.addClickListener(new ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
@@ -176,7 +244,7 @@ class CheckoutWindow extends Window {
 
 				}
 			}
-			})
+		})
 
 
 		return formLayout

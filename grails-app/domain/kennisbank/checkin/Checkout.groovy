@@ -10,13 +10,14 @@ class Checkout {
 
 	Date dateCreated
 	String title
-	Boolean idGenerated = false, published = false
+	Boolean published = false
 	String picturePath = "emptyImage.gif"
 
-	static hasMany = [files: File, equipment: Equipment]
+	static hasMany = [files: File, equipment: Equipment, materials: Material]
 
 	static constraints = {
 		picturePath nullable: true
+		title blank: false, nullable: false
 	}
 
 	static mapping = {

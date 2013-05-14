@@ -15,7 +15,9 @@ class BootStrap {
 
 		new Equipment(name: "Folie snijder").save(flush: true, failOnError: true)
 		new Equipment(name: "3D printer").save(flush: true, failOnError: true)
-		new Equipment(name: "Laser snijder").addToSettings(name: "Passes").addToSettings(name: "Power").addToSettings(name: "Dikte").save(flush: true, failOnError: true)
+		new Equipment(name: "Laser snijder").addToSettingTypes(new SettingType(name: "Passes"))
+										.addToSettingTypes(new SettingType(name: "Power"))
+										.addToSettingTypes(new SettingType(name: "Dikte")).save(flush: true, failOnError: true)
 
 		new StudentCheckin(studentNumber: "0840416", firstName: "Marcelo", 
 			lastName: "Dias Avelino", email: "valorcurse@gmail.com", 
