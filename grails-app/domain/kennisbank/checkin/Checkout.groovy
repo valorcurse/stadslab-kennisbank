@@ -4,6 +4,7 @@ import kennisbank.project.Project
 import kennisbank.File
 import kennisbank.equipment.Material
 import kennisbank.equipment.Equipment
+import kennisbank.equipment.Setting
 import org.apache.commons.lang.RandomStringUtils
 
 class Checkout {
@@ -12,8 +13,9 @@ class Checkout {
 	String title
 	Boolean published = false
 	String picturePath = "emptyImage.gif"
+	List settings
 
-	static hasMany = [files: File, equipment: Equipment, materials: Material]
+	static hasMany = [files: File, settings: Setting]
 
 	static constraints = {
 		picturePath nullable: true

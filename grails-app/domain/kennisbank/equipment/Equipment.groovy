@@ -16,14 +16,14 @@ class Equipment {
 	// 	hasSettings = true
 	// }
 
-	static hasMany = [settingTypes: SettingType]
+	static hasMany = [settingTypes: SettingType, materialTypes: MaterialType]
 
 	static constraints = {
 	}
 
 	static mapping = {
-		// materials lazy: false
-		// settings lazy: false
+		materialTypes lazy: false
+		settingTypes lazy: false
 	}
 
 }

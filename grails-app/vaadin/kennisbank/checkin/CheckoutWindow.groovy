@@ -19,32 +19,24 @@ import com.vaadin.ui.Upload.Receiver
 import com.vaadin.shared.ui.label.ContentMode
 import com.vaadin.event.ShortcutAction.KeyCode
 import com.vaadin.event.ShortcutListener
+import com.vaadin.event.FieldEvents.TextChangeListener
+import com.vaadin.event.FieldEvents.TextChangeEvent
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
 import kennisbank.equipment.*
-
-class CheckoutInfo {
-
-	String picturePath, title
-	def equipmentInfo
-
-	CheckoutInfo() {
-		picturePath = ""
-		title = ""
-		equipmentInfo = [][][]
-	}
-}
 
 class CheckoutWindow extends Window {
 
 	
 	Checkout checkout
 	CheckoutInfo checkoutInfo
+	def settings
 
 	CheckoutWindow(Checkin checkin) {
 
 		checkout = new Checkout()
-		checkoutInfo = new CheckoutInfo()
+		settings = []
+
 
 		setCaption("Check out") 
 		setPrimaryStyleName("check-out")
@@ -134,6 +126,14 @@ class CheckoutWindow extends Window {
 
 
 		for (def equipmentUsed : checkin.equipment) {
+			
+			for (def settingType : equipmentUsed.settingTypes) {
+				// def setting = new Setting(checkout: checkout, equipment: Equipment.findByName(equipmentUsed.name))
+				settings.add(new Setting(checkout: checkout, equipment: equipmentUsed, settingType: settingType))
+			}
+
+			print settings
+
 			Item equipmentItem = container.addItem(equipmentUsed)
 
 			AddMaterialButton addMaterialButton = new AddMaterialButton(equipmentUsed, materialTreeTable, checkoutInfo)
@@ -157,6 +157,7 @@ class CheckoutWindow extends Window {
 					container.setParent(materialComboBox, equipment)
 					materialTreeTable.setCollapsed(equipment, false)
 					
+					// ############################ Choose material ############################
 					materialComboBox.addValueChangeListener(new ValueChangeListener() {
 						@Override
 						public void valueChange(final ValueChangeEvent comboEvent) {
@@ -166,12 +167,12 @@ class CheckoutWindow extends Window {
 
 							def chosenMaterial = material.name
 
-							for (def materialType : material.materialTypes) {
-								materialTypes.add(materialType.name)
-							}
+							// for (def materialType : material.materialTypes) {
+							// 	materialTypes.add(materialType.name)
+							// }
 
 							// ComboBox to choose the type of the material
-							ComboBox materialTypeComboBox = new ComboBox(null, materialTypes)
+							ComboBox materialTypeComboBox = new ComboBox(null, material.materialTypes*.name)
 							materialTypeComboBox.setNullSelectionAllowed(false)
 							materialTypeComboBox.setImmediate(true)
 							materialTreeTable.setCollapsed(materialComboBox, false)
@@ -179,6 +180,7 @@ class CheckoutWindow extends Window {
 							//  Add the ComboBox to the table
 							materialItem.getItemProperty("Materiaal").setValue(materialTypeComboBox)
 
+							// ############################ Choose material type ############################
 							materialTypeComboBox.addValueChangeListener(new ValueChangeListener() {
 								@Override
 								public void valueChange(final ValueChangeEvent comboTypeEvent) { 
@@ -186,8 +188,8 @@ class CheckoutWindow extends Window {
 									def materialType = comboTypeEvent.getProperty().getValue()
 
 									if (!materialTreeTable.hasChildren(materialComboBox)) {
-										for (def setting : equipmentUsed.settings.asList()) {
-											Label newSettingLabel = new Label(setting.name)
+										for (def settingUsed : equipmentUsed.settingTypes.asList()) {
+											Label newSettingLabel = new Label(settingUsed.name)
 											Item settingItem = container.addItem(newSettingLabel)
 											settingItem.getItemProperty("Materiaal").setValue(newSettingLabel)
 
@@ -196,8 +198,14 @@ class CheckoutWindow extends Window {
 
 											settingItem.getItemProperty("Instellingen").setValue(valueTextField)
 											container.setParent(newSettingLabel, materialComboBox)
-
 											materialTreeTable.setChildrenAllowed(newSettingLabel, false)
+
+											valueTextField.addTextChangeListener(new TextChangeListener() {
+          										@Override
+									            public void textChange(final TextChangeEvent textChangeEvent) {
+									            	print textChangeEvent.getText()
+									            }
+									        })
 										}
 									}
 									else {
@@ -222,24 +230,16 @@ class CheckoutWindow extends Window {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				Checkout.withTransaction {
-					checkout.title = titleTextField.getValue()
 
-					def treeTableContainer = materialTreeTable.getContainerDataSource()
-
-					for (equipment in treeTableContainer.rootItemIds()) {
-						print equipment
-						checkout.addToEquipment(new Equipment(name: equipment.name))
-
-						for (material in treeTableContainer.getChildren(equipment)) {
-							// checkout.equipment.addToMaterials(new Material(name: material.name))
-							for (setting in treeTableContainer.getChildren(material)) {
-								print setting
-							}
-						}
+					for (def setting : settings) {
+						checkout.addToSettings(setting)
 					}
 
 					if (checkout.save()) {
 						print "Checkout saved"
+					}
+					else {
+						print "Ooops"
 					}
 
 				}
