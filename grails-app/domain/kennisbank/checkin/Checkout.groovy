@@ -19,7 +19,7 @@ class Checkout {
 
 	static constraints = {
 		picturePath nullable: true
-		title blank: false, nullable: false
+		title blank: false, nullable: true
 	}
 
 	static mapping = {

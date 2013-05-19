@@ -69,15 +69,19 @@ class CheckInOutView extends UI {
 		checkoutTable.setContainerDataSource(container)
 
 		for (def checkin : Checkin.list()) {
-			Item item = container.addItem(checkin)
-			item.getItemProperty("Naam").setValue(checkin.firstName + " " + checkin.lastName)
-			item.getItemProperty("E-mail").setValue(checkin.email)
-			item.getItemProperty("Datum").setValue(checkin.dateCreated.toString())
-			item.getItemProperty("").setValue(new Button("Uit checken", new Button.ClickListener() {
-				public void buttonClick(ClickEvent event) { 
-					CheckoutWindow window = new CheckoutWindow(checkin)
-					UI.getCurrent().addWindow(window)
-					} } ))
+			print checkin.checkout
+			if (!checkin.checkout.published) {
+				Item item = container.addItem(checkin)
+				item.getItemProperty("Naam").setValue(checkin.firstName + " " + checkin.lastName)
+				item.getItemProperty("E-mail").setValue(checkin.email)
+				item.getItemProperty("Datum").setValue(checkin.dateCreated.toString())
+				item.getItemProperty("").setValue(new Button("Uit checken", new Button.ClickListener() {
+					public void buttonClick(ClickEvent event) { 
+						CheckoutWindow window = new CheckoutWindow(checkin)
+						UI.getCurrent().addWindow(window)
+					} 
+				}))
+			}
 		}
 
 		// checkoutTable.setColumnExpandRatio("Apparatuur", 0.5)

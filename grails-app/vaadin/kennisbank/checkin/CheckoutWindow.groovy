@@ -35,7 +35,7 @@ class CheckoutWindow extends Window {
 
 	CheckoutWindow(Checkin checkin) {
 
-		checkout = new Checkout()
+		checkout = new Checkout(checkin: checkin)
 		settings = []
 
 
@@ -135,10 +135,6 @@ class CheckoutWindow extends Window {
 
 		for (def equipmentUsed : checkin.equipment) {
 			
-			// for (def settingType : equipmentUsed.settingTypes) {
-			// 	settings.add(new Setting(checkout: checkout, equipment: equipmentUsed, settingType: settingType))
-			// }
-
 			Item equipmentItem = container.addItem(equipmentUsed)
 
 			AddMaterialButton addMaterialButton = new AddMaterialButton(equipmentUsed, materialTreeTable, checkoutInfo)
@@ -254,22 +250,29 @@ class CheckoutWindow extends Window {
 		Button saveButton = new Button("Opslaan")
 		formLayout.addComponent(saveButton, 0, 3, 1, 3)  // Column 0, Row 3 to Column 1, Row 3
 		formLayout.setComponentAlignment(saveButton, Alignment.TOP_CENTER)
+		
 		saveButton.addClickListener(new ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
+				
 				Checkout.withTransaction {
 
-					for (def setting : settings) {
-						checkout.addToSettings(setting)
+					// Add all the settings to the checkout
+					settings.each {
+						it.each {
+							checkout.addToSettings(it) 
+						}
 					}
 
 					if (!checkout.save()) {
 						checkout.errors.each {
 							println it
-							println ""
 						}
 					}
-
+					else {
+						checkout.published = true
+						print "Checkout saved"
+					}
 				}
 			}
 		})

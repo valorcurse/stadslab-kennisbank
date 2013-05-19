@@ -5,7 +5,9 @@ import kennisbank.File
 
 class StudentCheckout extends Checkout {
 
-	StudentCheckin checkin
+	// StudentCheckin checkin
+
+	static belongsTo = [checkin: StudentCheckin]
 
 	static constraints = {
 		checkin nullable: true

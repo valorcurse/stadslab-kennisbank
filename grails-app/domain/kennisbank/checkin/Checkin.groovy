@@ -11,15 +11,6 @@ class Checkin {
 	static constraints = {
 	}
 
-	// def beforeInsert() {
-	// 	println "Creating checkout in StudentCheckin"
-	// 	checkout = new StudentCheckout()
-	// 	if (checkout.save()) {
-	// 		checkout.checkin = this
-	// 		println "Saved from domain: " + checkout.uniqueID
-	// 	}
-	// }
-
 	static mapping = {
 		equipment lazy: false
 	}

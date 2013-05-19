@@ -13,6 +13,10 @@ class StudentCheckin extends Checkin {
 			course, 
 			teacher
 
+	// StudentCheckout checkout
+
+	static hasOne = [checkout: StudentCheckout]
+
 	static hasMany = [equipment: Equipment]
 
 	static constraints = {
@@ -25,16 +29,15 @@ class StudentCheckin extends Checkin {
 		study blank: false
 		course blank: false
 		teacher blank: false
+		checkout nullable: true
 	}
 
-	// def beforeInsert() {
-	// 	println "Creating checkout in StudentCheckin"
-	// 	checkout = new StudentCheckout()
-	// 	if (checkout.save()) {
-	// 		checkout.checkin = this
-	// 		println "Saved from domain: " + checkout.uniqueID
-	// 	}
-	// }
+	def beforeInsert() {
+		checkout = new StudentCheckout()
+		if (checkout.save()) {
+			checkout.checkin = this
+		}
+	}
 
 	static mapping = {
 		equipment lazy: false
