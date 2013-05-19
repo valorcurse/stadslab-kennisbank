@@ -23,6 +23,7 @@ import com.vaadin.event.FieldEvents.TextChangeListener
 import com.vaadin.event.FieldEvents.TextChangeEvent
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
+import com.vaadin.ui.themes.Runo
 import kennisbank.equipment.*
 
 class CheckoutWindow extends Window {
@@ -46,7 +47,7 @@ class CheckoutWindow extends Window {
 		setCloseShortcut(KeyCode.ESCAPE, null);
 
 		setContent(checkoutForm(checkin))
-
+		// setContent(equipmentSection(checkin))
 	}
 
 	private Layout checkoutForm(Checkin checkin) { 
@@ -63,6 +64,13 @@ class CheckoutWindow extends Window {
 		titleLayout.setComponentAlignment(titleTextField, Alignment.TOP_CENTER)
 		titleTextField.setInputPrompt("Voeg een titel toe")
 		// titleTextField.setSizeUndefined()
+		titleTextField.addTextChangeListener(new TextChangeListener() {
+			@Override
+			public void textChange(final TextChangeEvent textChangeEvent) {
+					checkout.title = textChangeEvent.getText()
+				}
+			})
+
 
 		Label madeByLabel = new Label("Gemaakt door: <br><i>" + 
 			checkin.firstName + " " + checkin.lastName + 
@@ -127,12 +135,9 @@ class CheckoutWindow extends Window {
 
 		for (def equipmentUsed : checkin.equipment) {
 			
-			for (def settingType : equipmentUsed.settingTypes) {
-				// def setting = new Setting(checkout: checkout, equipment: Equipment.findByName(equipmentUsed.name))
-				settings.add(new Setting(checkout: checkout, equipment: equipmentUsed, settingType: settingType))
-			}
-
-			print settings
+			// for (def settingType : equipmentUsed.settingTypes) {
+			// 	settings.add(new Setting(checkout: checkout, equipment: equipmentUsed, settingType: settingType))
+			// }
 
 			Item equipmentItem = container.addItem(equipmentUsed)
 
@@ -145,6 +150,22 @@ class CheckoutWindow extends Window {
 
 					def equipment = addMaterialButton.equipment
 					def materials = Material.list()*.name
+
+					def equipmentUsedSettings = []
+
+					equipmentUsed.settingTypes.each {
+						def newSetting = new Setting(equipment: equipmentUsed, settingType: it)
+						// settings.add(newSetting)
+						equipmentUsedSettings.add(newSetting)
+					}
+
+					settings.add(equipmentUsedSettings)
+
+					print settings
+
+					def settingsList = settings
+
+					def currentCheckout = checkout
 
 					// ComboBox to choose kind of material used
 					ComboBox materialComboBox = new ComboBox(null, materials)
@@ -165,11 +186,8 @@ class CheckoutWindow extends Window {
 							def material = Material.findByName(comboEvent.getProperty().getValue())
 							def materialTypes = []
 
-							def chosenMaterial = material.name
 
-							// for (def materialType : material.materialTypes) {
-							// 	materialTypes.add(materialType.name)
-							// }
+							def chosenMaterial = material.name
 
 							// ComboBox to choose the type of the material
 							ComboBox materialTypeComboBox = new ComboBox(null, material.materialTypes*.name)
@@ -187,6 +205,10 @@ class CheckoutWindow extends Window {
 
 									def materialType = comboTypeEvent.getProperty().getValue()
 
+									equipmentUsedSettings.each { it.materialType = MaterialType.findByName(materialType) }
+
+									print equipmentUsedSettings*.materialType.name
+
 									if (!materialTreeTable.hasChildren(materialComboBox)) {
 										for (def settingUsed : equipmentUsed.settingTypes.asList()) {
 											Label newSettingLabel = new Label(settingUsed.name)
@@ -195,20 +217,26 @@ class CheckoutWindow extends Window {
 
 											TextField valueTextField = new TextField()
 											valueTextField.setWidth("99%")
+											valueTextField.setCaption(settingUsed.name)
 
 											settingItem.getItemProperty("Instellingen").setValue(valueTextField)
+ 
 											container.setParent(newSettingLabel, materialComboBox)
 											materialTreeTable.setChildrenAllowed(newSettingLabel, false)
 
 											valueTextField.addTextChangeListener(new TextChangeListener() {
-          										@Override
-									            public void textChange(final TextChangeEvent textChangeEvent) {
-									            	print textChangeEvent.getText()
-									            }
-									        })
+												@Override
+												public void textChange(final TextChangeEvent textChangeEvent) {
+													def currentSetting = equipmentUsedSettings.find {
+														it.settingType.name == textChangeEvent.getComponent().getCaption()
+													}
+
+													currentSetting.value = textChangeEvent.getText()
+
+												}
+											})
 										}
-									}
-									else {
+									} else {
 										// Reset the values on the settings' TextFields 
 										for (def child : materialTreeTable.getChildren(materialComboBox)) {
 											Item item = container.getItem(child)
@@ -235,19 +263,43 @@ class CheckoutWindow extends Window {
 						checkout.addToSettings(setting)
 					}
 
-					if (checkout.save()) {
-						print "Checkout saved"
-					}
-					else {
-						print "Ooops"
+					if (!checkout.save()) {
+						checkout.errors.each {
+							println it
+							println ""
+						}
 					}
 
 				}
 			}
 		})
 
-
 		return formLayout
+	}
+
+	private Layout equipmentSection(Checkin checkin) {
+		VerticalLayout layout = new VerticalLayout()
+		layout.setHeight("500px")
+		layout.setWidth("700px")
+		layout.setMargin(true)
+		layout.setSpacing(true)
+
+		Accordion accordion = new Accordion()
+		accordion.addStyleName(Runo.ACCORDION_LIGHT)
+		layout.addComponent(accordion)
+
+		// Layout tabLayout = checkoutForm(checkin)
+		// tabLayout.setSizeFull()
+		accordion.addTab(checkoutForm(checkin), "Tab 1")
+
+		// Layout tabLayout = checkoutForm(checkin)
+		// tabLayout.setSizeFull()
+		accordion.addTab(checkoutForm(checkin), "Tab 2")
+
+
+
+
+		return layout
 	}
 
 }
