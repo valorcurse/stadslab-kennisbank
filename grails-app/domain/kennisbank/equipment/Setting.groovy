@@ -8,7 +8,7 @@ class Setting {
 	SettingType settingType
 	MaterialType materialType
 	Equipment equipment
-	Date dateCreated
+	// Date dateCreated
 
 	static belongsTo = [checkout: Checkout]
 

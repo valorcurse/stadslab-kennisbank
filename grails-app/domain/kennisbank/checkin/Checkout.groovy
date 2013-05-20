@@ -24,6 +24,7 @@ class Checkout {
 
 	static mapping = {
 		materials lazy: false
+		settings lazy: false
 	}
 
 }

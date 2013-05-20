@@ -28,14 +28,13 @@ import kennisbank.equipment.*
 
 class CheckoutWindow extends Window {
 
-	
 	Checkout checkout
-	CheckoutInfo checkoutInfo
 	def settings
 
 	CheckoutWindow(Checkin checkin) {
 
-		checkout = new Checkout(checkin: checkin)
+		// checkout = new Checkout(checkin: checkin)
+		checkout = checkin.checkout
 		settings = []
 
 
@@ -96,12 +95,12 @@ class CheckoutWindow extends Window {
 			new ThemeResource("emptyImage.gif") :
 			new FileResource(new File(checkout.picturePath)));
 
-		UploadReceiver receiver = new UploadReceiver(checkoutInfo) // Receiver that handles the data stream
+		UploadReceiver receiver = new UploadReceiver(checkout) // Receiver that handles the data stream
 		Upload upload = new Upload(null, receiver) // Upload button
 		
 		upload.addSucceededListener(new Upload.SucceededListener() {
 			public void uploadSucceeded(SucceededEvent event) {
-				pictureButton.setSource(new FileResource(new File(checkoutInfo.picturePath)))
+				pictureButton.setSource(new FileResource(new File(checkout.picturePath)))
 				Notification.show("Uploaden geslaagd!")	
 			}
 			})
@@ -137,42 +136,34 @@ class CheckoutWindow extends Window {
 			
 			Item equipmentItem = container.addItem(equipmentUsed)
 
-			AddMaterialButton addMaterialButton = new AddMaterialButton(equipmentUsed, materialTreeTable, checkoutInfo)
+			AddMaterialButton addMaterialButton = new AddMaterialButton(equipmentUsed.name)
 			equipmentItem.getItemProperty("Apparatuur").setValue(addMaterialButton)
 
 			addMaterialButton.button.addClickListener(new Button.ClickListener() {
 				@Override
 				public void buttonClick(ClickEvent event) {
 
-					def equipment = addMaterialButton.equipment
-					def materials = Material.list()*.name
-
 					def equipmentUsedSettings = []
 
 					equipmentUsed.settingTypes.each {
 						def newSetting = new Setting(equipment: equipmentUsed, settingType: it)
-						// settings.add(newSetting)
 						equipmentUsedSettings.add(newSetting)
 					}
 
 					settings.add(equipmentUsedSettings)
 
-					print settings
-
 					def settingsList = settings
 
-					def currentCheckout = checkout
-
 					// ComboBox to choose kind of material used
-					ComboBox materialComboBox = new ComboBox(null, materials)
+					ComboBox materialComboBox = new ComboBox(null, Material.list()*.name)
 					materialComboBox.setNullSelectionAllowed(false)
 					materialComboBox.setImmediate(true)
 
 					// Add the ComboBox to the table
 					Item materialItem = container.addItem(materialComboBox)
 					materialItem.getItemProperty("Apparatuur").setValue(materialComboBox)
-					container.setParent(materialComboBox, equipment)
-					materialTreeTable.setCollapsed(equipment, false)
+					container.setParent(materialComboBox, equipmentUsed)
+					materialTreeTable.setCollapsed(equipmentUsed, false)
 					
 					// ############################ Choose material ############################
 					materialComboBox.addValueChangeListener(new ValueChangeListener() {
@@ -180,10 +171,6 @@ class CheckoutWindow extends Window {
 						public void valueChange(final ValueChangeEvent comboEvent) {
 
 							def material = Material.findByName(comboEvent.getProperty().getValue())
-							def materialTypes = []
-
-
-							def chosenMaterial = material.name
 
 							// ComboBox to choose the type of the material
 							ComboBox materialTypeComboBox = new ComboBox(null, material.materialTypes*.name)
@@ -202,8 +189,6 @@ class CheckoutWindow extends Window {
 									def materialType = comboTypeEvent.getProperty().getValue()
 
 									equipmentUsedSettings.each { it.materialType = MaterialType.findByName(materialType) }
-
-									print equipmentUsedSettings*.materialType.name
 
 									if (!materialTreeTable.hasChildren(materialComboBox)) {
 										for (def settingUsed : equipmentUsed.settingTypes.asList()) {
@@ -264,14 +249,17 @@ class CheckoutWindow extends Window {
 						}
 					}
 
-					if (!checkout.save()) {
+					if (checkout.validate()) {
+						checkout.published = true
+						checkout = checkout.merge()
+						checkout.save()
+						close()
+						print "Checkout saved"
+					}
+					else {
 						checkout.errors.each {
 							println it
 						}
-					}
-					else {
-						checkout.published = true
-						print "Checkout saved"
 					}
 				}
 			}
@@ -310,10 +298,10 @@ class CheckoutWindow extends Window {
 public class UploadReceiver implements Receiver {
 
 	OutputStream outputFile = null
-	CheckoutInfo checkoutInfo
+	Checkout checkout
 
-	public UploadReceiver(CheckoutInfo checkoutInfo) {
-		this.checkoutInfo = checkoutInfo
+	public UploadReceiver(Checkout checkout) {
+		this.checkout = checkout
 	}
 
 	@Override
@@ -325,7 +313,7 @@ public class UploadReceiver implements Receiver {
 
 			file = File.createTempFile(strFilename, ".tmp")
 
-			checkoutInfo.picturePath = file.absolutePath
+			checkout.picturePath = file.absolutePath
 
 			outputFile =  new FileOutputStream(file)
 
