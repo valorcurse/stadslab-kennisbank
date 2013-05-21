@@ -1,4 +1,4 @@
-package kennisbank.fabtool.projects
+package kennisbank.utils
 
 import com.vaadin.server.ExternalResource
 import com.vaadin.ui.Button

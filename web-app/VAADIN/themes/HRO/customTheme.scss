@@ -206,6 +206,8 @@
 	}
 
 	.check-out {
+		overflow-x: hidden;
+
 		#picture {
 			width: 260px;
 			height: 170px;
@@ -221,6 +223,11 @@
 				padding-top: 2.5px;
 			}
 		}
+
+		.v-tabsheet {
+			border-bottom: 1px solid #bfbfbf;
+		}
+
 	}
 
 	.image-button {

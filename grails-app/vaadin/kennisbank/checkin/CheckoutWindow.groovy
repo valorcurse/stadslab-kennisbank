@@ -24,103 +24,171 @@ import com.vaadin.event.FieldEvents.TextChangeEvent
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
 import com.vaadin.ui.themes.Runo
+import com.vaadin.ui.TabSheet.Tab
 import kennisbank.equipment.*
+import kennisbank.utils.*
 
 class CheckoutWindow extends Window {
 
-	Checkout checkout
-	def settings
+	def checkoutForms	
 
 	CheckoutWindow(Checkin checkin) {
 
-		// checkout = new Checkout(checkin: checkin)
-		checkout = checkin.checkout
-		settings = []
-
+		checkoutForms = []
 
 		setCaption("Check out") 
 		setPrimaryStyleName("check-out")
 		setModal(true)
+		setResizable(false)
 		setStyleName(Reindeer.WINDOW_LIGHT)
 
 		setCloseShortcut(KeyCode.ESCAPE, null);
 
-		setContent(checkoutForm(checkin))
-		// setContent(equipmentSection(checkin))
+		setContent(equipmentTab(checkin))
 	}
 
-	private Layout checkoutForm(Checkin checkin) { 
+	private Layout equipmentTab(Checkin checkin) {
+		VerticalLayout layout = new VerticalLayout()
+		layout.setWidth("700px")
+		layout.setMargin(true)
+		layout.setSpacing(true)
 
-		GridLayout formLayout = new GridLayout(2, 4)
-		formLayout.setSpacing(true)
-		formLayout.setMargin(true)
+		layout.addComponent(new Label("Voeg een project toe:"))
+
+		Button newProject = new Button("Nieuw project")
+		layout.addComponent(newProject)
+
+		TabSheet tabSheet = new TabSheet()
+		layout.addComponent(tabSheet)
+		tabSheet.addStyleName(Reindeer.TABSHEET_MINIMAL)
+		tabSheet.setSizeFull()
+
+		
+		CheckoutForm defaultCheckoutForm = new CheckoutForm(checkin)
+		checkoutForms.add(defaultCheckoutForm)
+		Tab defaultTab = tabSheet.addTab(defaultCheckoutForm, "Project")
+		defaultCheckoutForm.tab = defaultTab
+
+		newProject.addClickListener(new Button.ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {
+				CheckoutForm checkoutForm = new CheckoutForm(checkin)
+				checkoutForms.add(checkoutForm)
+				Tab tab = tabSheet.addTab(checkoutForm, "Project")
+				checkoutForm.tab = tab
+			}
+		})
+
+		return layout
+	}
+
+}
+
+class CheckoutForm extends Panel {
+	
+	Tab tab
+	def settings
+
+	CheckoutForm(Checkin checkin) { 
+
+		setStyleName(Reindeer.PANEL_LIGHT)
+		setHeight("600px")
+
+		settings = []
+
+		Checkout checkout = new Checkout(checkin: checkin)
+		UploadReceiver receiver = new UploadReceiver(checkout) // Receiver that handles the data stream
+
+		GridLayout gridLayout = new GridLayout(2, 5)
+		setContent(gridLayout)
+		gridLayout.setSpacing(true)
+		gridLayout.setMargin(true)
+		gridLayout.setWidth("100%")
+		gridLayout.setColumnExpandRatio(1, 1)
 
 		VerticalLayout titleLayout = new VerticalLayout()
-		formLayout.addComponent(titleLayout, 0, 0, 1, 0) // Column 0, Row 0 to Column 1, Row 0
+		gridLayout.addComponent(titleLayout, 0, 0, 1, 0) // Column 0, Row 0 to Column 1, Row 0
 		
 		TextField titleTextField = new TextField()
 		titleLayout.addComponent(titleTextField)
 		titleLayout.setComponentAlignment(titleTextField, Alignment.TOP_CENTER)
-		titleTextField.setInputPrompt("Voeg een titel toe")
-		// titleTextField.setSizeUndefined()
+		titleTextField.setInputPrompt("Kies een titel")
+		titleTextField.setImmediate(true)
 		titleTextField.addTextChangeListener(new TextChangeListener() {
 			@Override
 			public void textChange(final TextChangeEvent textChangeEvent) {
+					tab.setCaption(textChangeEvent.getText())
 					checkout.title = textChangeEvent.getText()
 				}
 			})
 
-
-		Label madeByLabel = new Label("Gemaakt door: <br><i>" + 
-			checkin.firstName + " " + checkin.lastName + 
-			"<br>(<A HREF=\"mailto:" + checkin.email + "\">"+ checkin.email +"</A>)" +
-			"<br> op " + checkin.dateCreated.format('dd MMMM yyyy') + "</i>", ContentMode.HTML)
-		
-		// Column 1, Row 1
-		formLayout.addComponent(madeByLabel, 1, 1)
-		madeByLabel.setWidth("-1")
-
 		// ------------------------------------------------------- Picture -------------------------------------------------------
 
-		VerticalLayout uploadLayout = new VerticalLayout()
-		formLayout.addComponent(uploadLayout, 0, 1) // Column 0, Row 1
-		uploadLayout.setPrimaryStyleName("embedded-panel")
-		uploadLayout.setSpacing(true)
+		VerticalLayout pictureLayout = new VerticalLayout()
+		gridLayout.addComponent(pictureLayout, 0, 1) // Column 0, Row 1
+		pictureLayout.setPrimaryStyleName("embedded-panel")
+		pictureLayout.setSpacing(true)
 
 		Image pictureButton = new Image();
-		uploadLayout.addComponent(pictureButton);
+		pictureLayout.addComponent(pictureButton);
 		// pictureButton.setStyleName(Reindeer.BUTTON_LINK);
 		pictureButton.setId("picture");
 		pictureButton.setSource((checkout.picturePath == "emptyImage.gif") ? 
 			new ThemeResource("emptyImage.gif") :
 			new FileResource(new File(checkout.picturePath)));
 
-		UploadReceiver receiver = new UploadReceiver(checkout) // Receiver that handles the data stream
-		Upload upload = new Upload(null, receiver) // Upload button
+		Upload pictureUpload = new Upload(null, receiver) // Upload button
 		
-		upload.addSucceededListener(new Upload.SucceededListener() {
+		pictureUpload.addSucceededListener(new Upload.SucceededListener() {
 			public void uploadSucceeded(SucceededEvent event) {
 				pictureButton.setSource(new FileResource(new File(checkout.picturePath)))
 				Notification.show("Uploaden geslaagd!")	
 			}
 			})
 		
-		upload.addFailedListener(new Upload.FailedListener() {
+		pictureUpload.addFailedListener(new Upload.FailedListener() {
 			public void uploadFailed(FailedEvent event) {
 				Notification.show("Uploaden niet gelukt!")	
 			}
 			})
 
 
-		uploadLayout.setWidth("-1")
-		uploadLayout.addComponent(upload)
-		upload.setImmediate(true) // Starts to upload immediately after choosing file
+		pictureLayout.setWidth("-1")
+		pictureLayout.addComponent(pictureUpload)
+		pictureUpload.setImmediate(true) // Starts to upload immediately after choosing file
+
+		// ------------------------------------------------------- Uploads -------------------------------------------------------
+
+		VerticalLayout uploadsLayout = new VerticalLayout()
+		gridLayout.addComponent(uploadsLayout, 1, 1)		
+		uploadsLayout.setSpacing(true)
+
+		Table uploadsTable = new Table()
+		uploadsLayout.addComponent(uploadsTable)
+		
+		uploadsTable.setWidth("100%")
+		uploadsTable.setHeight("170px")
+
+		Upload filesUpload = new Upload(null, receiver) // Upload button
+		uploadsLayout.addComponent(filesUpload)
+		filesUpload.setImmediate(true)
+
+		IndexedContainer uploadsContainer = new IndexedContainer()
+		uploadsContainer.addContainerProperty("Naam", Component.class, "")
+		uploadsContainer.addContainerProperty("Grootte", String.class, "")
+		uploadsTable.setContainerDataSource(uploadsContainer)
+
+		// ------------------------------------------------------- Description -------------------------------------------------------
+
+		TextArea descriptionTextArea = new TextArea("Korte omschrijving")
+		gridLayout.addComponent(descriptionTextArea, 0, 2, 1, 2) // Column 0, Row 2 to Column 1, Row 2
+		descriptionTextArea.setWidth("100%")
 
 		// ------------------------------------------------------- Material -------------------------------------------------------
 		
 		TreeTable materialTreeTable = new TreeTable()
-		formLayout.addComponent(materialTreeTable, 0, 2, 1, 2) // Column 0, Row 2 to Column 1, Row 2
-		materialTreeTable.setWidth("600px")
+		gridLayout.addComponent(materialTreeTable, 0, 3, 1, 3) // Column 0, Row 3 to Column 1, Row 3
+		materialTreeTable.setWidth("100%")
 		materialTreeTable.setPageLength(0)
 
 		HierarchicalContainer container = new HierarchicalContainer()
@@ -158,6 +226,7 @@ class CheckoutWindow extends Window {
 					ComboBox materialComboBox = new ComboBox(null, Material.list()*.name)
 					materialComboBox.setNullSelectionAllowed(false)
 					materialComboBox.setImmediate(true)
+					materialComboBox.setInputPrompt("Kies een materiaal")
 
 					// Add the ComboBox to the table
 					Item materialItem = container.addItem(materialComboBox)
@@ -165,7 +234,7 @@ class CheckoutWindow extends Window {
 					container.setParent(materialComboBox, equipmentUsed)
 					materialTreeTable.setCollapsed(equipmentUsed, false)
 					
-					// ############################ Choose material ############################
+					// ---------------------------- Choose material ----------------------------
 					materialComboBox.addValueChangeListener(new ValueChangeListener() {
 						@Override
 						public void valueChange(final ValueChangeEvent comboEvent) {
@@ -176,12 +245,14 @@ class CheckoutWindow extends Window {
 							ComboBox materialTypeComboBox = new ComboBox(null, material.materialTypes*.name)
 							materialTypeComboBox.setNullSelectionAllowed(false)
 							materialTypeComboBox.setImmediate(true)
+							materialTypeComboBox.setInputPrompt("Kies een materiaal type")
+
 							materialTreeTable.setCollapsed(materialComboBox, false)
 							
 							//  Add the ComboBox to the table
 							materialItem.getItemProperty("Materiaal").setValue(materialTypeComboBox)
 
-							// ############################ Choose material type ############################
+							// ---------------------------- Choose material type ----------------------------
 							materialTypeComboBox.addValueChangeListener(new ValueChangeListener() {
 								@Override
 								public void valueChange(final ValueChangeEvent comboTypeEvent) { 
@@ -232,67 +303,43 @@ class CheckoutWindow extends Window {
 			})
 		}
 
-		Button saveButton = new Button("Opslaan")
-		formLayout.addComponent(saveButton, 0, 3, 1, 3)  // Column 0, Row 3 to Column 1, Row 3
-		formLayout.setComponentAlignment(saveButton, Alignment.TOP_CENTER)
+		// ------------------------------------------------------- Made By Label -------------------------------------------------------
+
+		Label madeByLabel = new Label("Gemaakt door: <i>" + 
+			checkin.firstName + " " + checkin.lastName + 
+			" (<a href=\"mailto:" + checkin.email + "\">"+ checkin.email +"</a>)" +
+			" op " + checkin.dateCreated.format('dd MMMM yyyy') + "</i>", ContentMode.HTML)
 		
-		saveButton.addClickListener(new ClickListener() {
-			@Override
-			public void buttonClick(ClickEvent event) {
-				
-				Checkout.withTransaction {
+		gridLayout.addComponent(madeByLabel, 0, 4, 1, 4) // Column 1, Row 1
+		gridLayout.setComponentAlignment(madeByLabel, Alignment.TOP_CENTER)
+		madeByLabel.setWidth("-1")
 
-					// Add all the settings to the checkout
-					settings.each {
-						it.each {
-							checkout.addToSettings(it) 
-						}
-					}
+	}
+	
+	public boolean save() {
+		Checkout.withTransaction {
 
-					if (checkout.validate()) {
-						checkout.published = true
-						checkout = checkout.merge()
-						checkout.save()
-						close()
-						print "Checkout saved"
-					}
-					else {
-						checkout.errors.each {
-							println it
-						}
-					}
+			// Add all the settings to the checkout
+			settings.each {
+				it.each {
+					checkout.addToSettings(it) 
 				}
 			}
-		})
 
-		return formLayout
+			if (checkout.validate()) {
+				checkout.published = true
+				checkout = checkout.merge()
+				checkout.save()
+				close()
+				print "Checkout saved"
+			}
+			else {
+				checkout.errors.each {
+					println it
+				}
+			}
+		}
 	}
-
-	private Layout equipmentSection(Checkin checkin) {
-		VerticalLayout layout = new VerticalLayout()
-		layout.setHeight("500px")
-		layout.setWidth("700px")
-		layout.setMargin(true)
-		layout.setSpacing(true)
-
-		Accordion accordion = new Accordion()
-		accordion.addStyleName(Runo.ACCORDION_LIGHT)
-		layout.addComponent(accordion)
-
-		// Layout tabLayout = checkoutForm(checkin)
-		// tabLayout.setSizeFull()
-		accordion.addTab(checkoutForm(checkin), "Tab 1")
-
-		// Layout tabLayout = checkoutForm(checkin)
-		// tabLayout.setSizeFull()
-		accordion.addTab(checkoutForm(checkin), "Tab 2")
-
-
-
-
-		return layout
-	}
-
 }
 
 public class UploadReceiver implements Receiver {

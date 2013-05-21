@@ -8,11 +8,8 @@ class Setting {
 	SettingType settingType
 	MaterialType materialType
 	Equipment equipment
-	// Date dateCreated
 
 	static belongsTo = [checkout: Checkout]
-
-	// static hasOne = [settingType: SettingType, materialType: MaterialType]
 
 	static constraints = {
 		value nullable: true
