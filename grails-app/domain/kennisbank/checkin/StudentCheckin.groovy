@@ -4,6 +4,7 @@ class StudentCheckin {
 
 	Date dateCreated
 	
+	
 	String 	studentNumber, 
 			firstName, 
 			lastName, 
@@ -29,4 +30,6 @@ class StudentCheckin {
 
 	static mapping = {
 	}
+	
+	
 }

@@ -12,6 +12,7 @@ import com.vaadin.ui.*
 import kennisbank.*
 import kennisbank.project.Project;
 import kennisbank.project.ProjectMember;
+import com.vaadin.shared.ui.label.ContentMode
 
 
 class ProjectsOverview extends VerticalLayout {
@@ -108,7 +109,7 @@ class ProjectsOverview extends VerticalLayout {
 		projectsTable.addContainerProperty("Project name", ProjectLink.class, null)
 		projectsTable.addContainerProperty("Course", String.class, null)
 		projectsTable.addContainerProperty("Date created", String.class, null)
-
+		
 		projectsTable.setColumnWidth("Project name", 200)
 
 		List<Project> projects = Project.list()
