@@ -1,7 +1,7 @@
 package kennisbank.checkin
 
 import kennisbank.project.Project
-import kennisbank.File
+import kennisbank.AttachedFile
 import kennisbank.equipment.Material
 import kennisbank.equipment.Equipment
 import kennisbank.equipment.Setting
@@ -15,7 +15,7 @@ class Checkout {
 	String picturePath = "emptyImage.gif"
 	List settings
 
-	static hasMany = [files: File, settings: Setting]
+	static hasMany = [files: AttachedFile, settings: Setting]
 
 	static constraints = {
 		picturePath nullable: true

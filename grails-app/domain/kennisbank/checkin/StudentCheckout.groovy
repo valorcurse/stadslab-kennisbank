@@ -1,7 +1,6 @@
 package kennisbank.checkin
 
 import kennisbank.project.Project
-import kennisbank.File
 
 class StudentCheckout extends Checkout {
 

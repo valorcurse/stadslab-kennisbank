@@ -197,6 +197,50 @@
 		
 	}
 
+	.embedded-panel {
+
+		@include styled-nativebutton;
+
+		.v-panel-caption-light {
+			margin: 8px;
+			color: #707070;
+			border-bottom: 1px solid #707070;
+		}
+
+		.v-scrollable {
+			overflow: hidden;
+		}
+
+		.v-layout.v-margin-left {
+			padding-left: 8px;
+		}
+		.v-layout.v-margin-top {
+			padding-top: 0px;
+		}
+
+		.v-panel-content-novscroll {
+			overflow-y: hidden !important;
+			overflow-x: hidden !important;
+		}
+
+		.picture-button {
+			border: 1px solid #AEAEAE;
+
+			.v-icon {
+				max-width: 227px;
+				max-height: 170px;
+				margin: 0px;
+			}
+
+		}
+
+		.updates-panel {
+			border-width: 1px;
+			border-style: solid;
+			border-color: gainsboro;
+		}
+	}
+
 	.check-in {
 		background-image: url(textures/dark_fish_skin.png);
 		background-repeat: repeat;

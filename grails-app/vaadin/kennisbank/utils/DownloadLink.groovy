@@ -18,20 +18,17 @@ import com.vaadin.server.FileDownloader
 
 class DownloadLink extends Button implements Button.ClickListener {
 
-	String documentName
-	Document document
-	FileDownloader downloader
-	FileResource file
-
-	DownloadLink(Document document) {
+	DownloadLink(String path, String name) {
 		addClickListener(this)
-		file = new FileResource(new File(document.getPath()))
-		downloader = new FileDownloader(file)
-		downloader.extend(this)
 		setStyleName(Reindeer.BUTTON_LINK)
-		setCaption(document.getTitle())
-		this.document = document
-		documentName = document.getTitle()
+
+		File file = new File(path)
+		setCaption(name)
+
+		FileResource fileResource = new FileResource(file)
+		FileDownloader downloader = new FileDownloader(fileResource)
+		downloader.extend(this)
+
 	}
 
 	public void buttonClick(ClickEvent event) {

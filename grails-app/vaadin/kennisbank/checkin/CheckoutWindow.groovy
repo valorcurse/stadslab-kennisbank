@@ -7,6 +7,7 @@ import com.vaadin.ui.themes.Reindeer
 import com.vaadin.ui.Tree.ExpandEvent
 import kennisbank.fabtool.projects.ProjectLink
 import com.vaadin.server.FileResource
+import java.nio.channels.FileChannel
 import com.vaadin.server.ThemeResource
 import com.vaadin.ui.Upload.SucceededEvent
 import com.vaadin.ui.Upload.FailedEvent
@@ -26,15 +27,12 @@ import com.vaadin.ui.Button.ClickListener
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.TabSheet.Tab
 import kennisbank.equipment.*
+import kennisbank.*
 import kennisbank.utils.*
 
 
 
 class CheckoutWindow extends Window {
-
-	class UploadHelper {
-		String uploadPath
-	}
 
 	def checkoutForms
 
@@ -59,7 +57,7 @@ class CheckoutWindow extends Window {
 		layout.setMargin(true)
 		layout.setSpacing(true)
 
-		layout.addComponent(new Label("Voeg een project toe:"))
+		layout.addComponent(new Label("Als je aan meer dan één project hebt gewerkt, voeg een nieuw project toe met deze knop"))
 
 		Button newProject = new Button("Nieuw project")
 		layout.addComponent(newProject)
@@ -81,18 +79,28 @@ class CheckoutWindow extends Window {
 				CheckoutForm checkoutForm = new CheckoutForm(checkin)
 				checkoutForms.add(checkoutForm)
 				Tab tab = tabSheet.addTab(checkoutForm, "Project")
+				tab.setClosable(true)
 				checkoutForm.tab = tab
 			}
 		})
+
+		Button saveButton = new Button("Opslaan")
+		layout.addComponent(saveButton)
+		layout.setComponentAlignment(saveButton, Alignment.TOP_CENTER)
 
 		return layout
 	}
 
 }
 
+class UploadHelper {
+	String uploadPath, name, size
+}
+
 class CheckoutForm extends Panel {
 	
 	Tab tab
+	UploadHelper uploadHelper
 	def settings
 
 	CheckoutForm(Checkin checkin) { 
@@ -104,8 +112,10 @@ class CheckoutForm extends Panel {
 
 		String uploadPath = ""
 
+		uploadHelper = new UploadHelper()
+
 		Checkout checkout = new Checkout(checkin: checkin)
-		UploadReceiver receiver = new UploadReceiver(uploadPath) // Receiver that handles the data stream
+		UploadReceiver receiver = new UploadReceiver(uploadHelper) // Receiver that handles the data stream
 
 		GridLayout gridLayout = new GridLayout(2, 5)
 		setContent(gridLayout)
@@ -149,18 +159,18 @@ class CheckoutForm extends Panel {
 		
 		pictureUpload.addSucceededListener(new Upload.SucceededListener() {
 			public void uploadSucceeded(SucceededEvent event) {
-				checkout.picturePath = uploadPath
-				print "Picture path: " + uploadPath
+				checkout.picturePath = uploadHelper.uploadPath
+				print "Picture path: " + uploadHelper.uploadPath
 				pictureButton.setSource(new FileResource(new File(checkout.picturePath)))
-				Notification.show("Uploaden geslaagd!")	
+				Notification.show("Uploaden geslaagd!", Notification.TYPE_TRAY_NOTIFICATION)	
 			}
-			})
+		})
 		
 		pictureUpload.addFailedListener(new Upload.FailedListener() {
 			public void uploadFailed(FailedEvent event) {
-				Notification.show("Uploaden niet gelukt!")	
+				Notification.show("Uploaden niet gelukt!", Notification.TYPE_TRAY_NOTIFICATION)	
 			}
-			})
+		})
 
 
 		pictureLayout.setWidth("-1")
@@ -190,14 +200,18 @@ class CheckoutForm extends Panel {
 
 		filesUpload.addSucceededListener(new Upload.SucceededListener() {
 			public void uploadSucceeded(SucceededEvent event) {
+				checkout.addToFiles(new AttachedFile(name: uploadHelper.name, path: uploadHelper.uploadPath))
 
-				Notification.show("Uploaden geslaagd!")
+				Item uploadItem = uploadsContainer.addItem(uploadHelper.uploadPath)
+				uploadItem.getItemProperty("Naam").setValue(new DownloadLink(uploadHelper.uploadPath, uploadHelper.name))
+				uploadItem.getItemProperty("Grootte").setValue(uploadHelper.size)
+				Notification.show("Uploaden geslaagd!", Notification.TYPE_TRAY_NOTIFICATION)
 			}
 		})
 		
 		filesUpload.addFailedListener(new Upload.FailedListener() {
 			public void uploadFailed(FailedEvent event) {
-				Notification.show("Uploaden niet gelukt!")
+				Notification.show("Uploaden niet gelukt!", Notification.TYPE_TRAY_NOTIFICATION)
 			}
 		})
 
@@ -399,10 +413,10 @@ class CheckoutForm extends Panel {
 public class UploadReceiver implements Receiver {
 
 	OutputStream outputFile = null
-	String uploadPath
+	UploadHelper uploadHelper
 
-	public UploadReceiver(String uploadPath) {
-		this.uploadPath = uploadPath
+	public UploadReceiver(UploadHelper uploadHelper) {
+		this.uploadHelper = uploadHelper
 	}
 
 	@Override
@@ -414,9 +428,12 @@ public class UploadReceiver implements Receiver {
 
 			file = File.createTempFile(strFilename, ".tmp")
 
-			uploadPath = file.absolutePath
+			uploadHelper.uploadPath = file.absolutePath
+			uploadHelper.name = strFilename
 
 			outputFile =  new FileOutputStream(file)
+			
+			// finalize()
 
 		} catch (IOException e) {
 			e.printStackTrace()
@@ -426,9 +443,16 @@ public class UploadReceiver implements Receiver {
 	}
 
 	protected void finalize() {
+		print "test"
 		try {
+			print "Got so far"
 			super.finalize()
+
 			if(outputFile != null) {
+				// FileChannel fc = outputFile.getChannel()
+				// print "Size: " + fc.size()
+
+				// uploadHelper.size = fc.size()
 				outputFile.close()
 			}
 		} catch (Throwable exception) {
