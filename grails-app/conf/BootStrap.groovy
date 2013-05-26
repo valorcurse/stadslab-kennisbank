@@ -1,5 +1,6 @@
 import kennisbank.*
 import kennisbank.checkin.StudentCheckin
+<<<<<<< HEAD
 import kennisbank.equipment.*
 
 class BootStrap {

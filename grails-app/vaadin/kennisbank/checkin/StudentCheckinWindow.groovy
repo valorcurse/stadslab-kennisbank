@@ -122,7 +122,6 @@ class StudentCheckinWindow extends CheckinWindow {
 				}
 				*/
 
-
 				// Set components back to default, i.e. no error messages
 				warningsLabel.setValue(warningsDefaultMessage)
 				equipmentLabel.setComponentError(null)

@@ -40,4 +40,6 @@ class StudentCheckin extends Checkin {
 	static mapping = {
 		equipment lazy: false
 	}
+	
+	
 }

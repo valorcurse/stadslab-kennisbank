@@ -13,6 +13,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 
 import kennisbank.User;
 import kennisbank.UserService;
+import kennisbank.checkin.Administration
 import kennisbank.fabtool.home.*
 import kennisbank.project.*;
 import kennisbank.fabtool.projects.*
@@ -114,7 +115,6 @@ class MainView extends Panel implements View {
 		leftMenuPanel.setPrimaryStyleName("sidebar-panel")
 
 		leftMenuPanel.setWidth("100%")
-		leftMenuPanel.setHeight("70px")
 		VerticalLayout leftMenuLayout = new VerticalLayout()
 		leftMenuLayout.setSizeFull()
 		leftMenuLayout.setSpacing(true)
@@ -123,16 +123,30 @@ class MainView extends Panel implements View {
 		NativeButton projectButton = new NativeButton("Projects")
 		projectButton.setWidth("90%")
 		projectButton.addClickListener(new Button.ClickListener() {
+
+
 			public void buttonClick(ClickEvent event) {
 				Tab tab = topTabs.addTab(new ProjectsOverview(), "Projects")
 				tab.setClosable(true)
 				topTabs.setSelectedTab(tab)
 			}
 			})
-
+		
+		NativeButton adminButton = new NativeButton("Administration")
+		adminButton.setWidth("90%")
+		//adminButton.setHeight("50px")
+		adminButton.addClickListener(new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				Tab tab = topTabs.addTab(new Administration(), "Administrati")
+				tab.setClosable(true)
+				topTabs.setSelectedTab(tab)
+			}
+			})
 		leftMenuPanel.setContent(leftMenuLayout)
 		leftMenuLayout.addComponent(projectButton)
+		leftMenuLayout.addComponent(adminButton)
 		leftMenuLayout.setComponentAlignment(projectButton, Alignment.MIDDLE_CENTER)
+		leftMenuLayout.setComponentAlignment(adminButton, Alignment.BOTTOM_CENTER)
 
 		// ------------------------------------------------------- Login -------------------------------------------------------
 		

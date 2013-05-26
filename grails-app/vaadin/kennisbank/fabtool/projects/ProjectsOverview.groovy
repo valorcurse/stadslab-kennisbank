@@ -15,6 +15,7 @@ import kennisbank.project.Project
 import kennisbank.project.ProjectMember
 import kennisbank.checkin.Checkout
 
+
 class ProjectsOverview extends VerticalLayout {
 
 	String uriFragment
@@ -109,7 +110,7 @@ class ProjectsOverview extends VerticalLayout {
 		projectsTable.addContainerProperty("Project name", ProjectLink.class, null)
 		projectsTable.addContainerProperty("Course", String.class, null)
 		projectsTable.addContainerProperty("Date created", String.class, null)
-
+		
 		projectsTable.setColumnWidth("Project name", 200)
 */
 		List<Project> projects = Checkout.list()
