@@ -5,6 +5,7 @@ import kennisbank.equipment.Equipment
 class Checkin {
 
 	Date dateCreated
+	Set equipment
 
 	static hasMany = [equipment: Equipment]
 

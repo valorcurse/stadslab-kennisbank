@@ -1,22 +1,16 @@
 package kennisbank.fabtool.projects
 
 import java.rmi.server.UID;
-<<<<<<< HEAD
-=======
 import com.vaadin.shared.ui.label.ContentMode
->>>>>>> nilson
 import com.vaadin.ui.*
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
-<<<<<<< HEAD
 import kennisbank.checkin.Checkout
-=======
 import kennisbank.ProjectMemberService
 import kennisbank.ProjectService
 import kennisbank.project.*
 import kennisbank.fabtool.*
->>>>>>> nilson
 import com.vaadin.ui.TabSheet.Tab
 import com.vaadin.ui.Upload.Receiver
 import com.vaadin.ui.Upload.StartedEvent

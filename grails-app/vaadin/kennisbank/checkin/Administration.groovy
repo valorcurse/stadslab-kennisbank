@@ -195,9 +195,9 @@ class Administration extends VerticalLayout{
 			println check.studentNumber
 			println check.dateCreated
 			
-			println checkedInTable.getItem(check.equipment[0]).toString()
+			// println checkedInTable.getItem(check.equipment[0]).toString()
 			checkedInTable.addItem(	[check.studentNumber, check.firstName, check.lastName, check.email,
-				check.institute, check.study, check.course, check.teacher,  check.equipment[0], check.dateCreated.toString()
+				check.institute, check.study, check.course, check.teacher,  check.equipment*.name.toString(), check.dateCreated.toString()
 			] as Object[],
 			new Integer(checkedInTable.size()+1))
 		}
