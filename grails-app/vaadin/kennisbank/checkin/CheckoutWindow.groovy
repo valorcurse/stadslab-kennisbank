@@ -245,22 +245,34 @@ class CheckoutForm extends Panel {
 			public void buttonClick(ClickEvent event) {
 
 				def settingsList = settings
+				def materialComboBoxesToRemove = []
+				def materialSettingsToRemove = []
 
  				// ComboBox to choose kind of material used
-				ComboBox equipmentComboBox = new ComboBox(null, Equipment.list()*.name)
-				equipmentComboBox.setNullSelectionAllowed(false)
-				equipmentComboBox.setImmediate(true)
-				equipmentComboBox.setInputPrompt("Kies een apparaat")
+				ExtendedComboBox equipmentComboBox = new ExtendedComboBox(Equipment.list()*.name)
+				equipmentComboBox.comboBox.setNullSelectionAllowed(false)
+				equipmentComboBox.comboBox.setImmediate(true)
+				equipmentComboBox.comboBox.setInputPrompt("Kies een apparaat")
 
 				// Add the ComboBox to the table
 				Item equipmentItem = materialContainer.addItem(equipmentComboBox)
 				equipmentItem.getItemProperty("Apparatuur").setValue(equipmentComboBox)
 				materialContainer.setParent(equipmentComboBox, rootAddMaterialButton)
 				materialTreeTable.setCollapsed(rootAddMaterialButton, false)
-
-				equipmentComboBox.addValueChangeListener(new ValueChangeListener() {
+						
+				// ---------------------------- Choose equipment ----------------------------
+				equipmentComboBox.comboBox.addValueChangeListener(new ValueChangeListener() {
 					@Override
 					public void valueChange(final ValueChangeEvent equipmentComboEvent) {
+
+						// Remove previous added comboboxes if equipment selection changed
+						for (comboBox in materialComboBoxesToRemove) {
+							materialContainer.removeItem(comboBox)
+						}
+						for (setting in materialSettingsToRemove) {
+							materialContainer.removeItem(setting)
+						}
+
 						def equipmentUsedSettings = []
 
 						def equipment = Equipment.findByName(equipmentComboEvent.getProperty().getValue())
@@ -273,7 +285,8 @@ class CheckoutForm extends Panel {
 						settingsList.add(equipmentUsedSettings)
 
 						// ComboBox to choose kind of material used
-						ComboBox materialComboBox = new ComboBox(null, Material.list()*.name)
+						ComboBox materialComboBox = new ComboBox(null, equipment.materialTypes*.material.name)
+						materialComboBoxesToRemove.add(materialComboBox)
 						materialComboBox.setNullSelectionAllowed(false)
 						materialComboBox.setImmediate(true)
 						materialComboBox.setInputPrompt("Kies een materiaal")
@@ -288,6 +301,10 @@ class CheckoutForm extends Panel {
 						materialComboBox.addValueChangeListener(new ValueChangeListener() {
 							@Override
 							public void valueChange(final ValueChangeEvent comboEvent) {
+
+								for (setting in materialSettingsToRemove) {
+									materialContainer.removeItem(setting)
+								}
 
 								def material = Material.findByName(comboEvent.getProperty().getValue())
 
@@ -315,6 +332,7 @@ class CheckoutForm extends Panel {
 											for (def settingUsed : equipment.settingTypes.asList()) {
 												Label newSettingLabel = new Label(settingUsed.name)
 												Item settingItem = materialContainer.addItem(newSettingLabel)
+												materialSettingsToRemove.add(newSettingLabel)
 												settingItem.getItemProperty("Materiaal").setValue(newSettingLabel)
 
 												TextField valueTextField = new TextField()
@@ -334,13 +352,13 @@ class CheckoutForm extends Panel {
 														}
 
 														currentSetting.value = textChangeEvent.getText()
-
 													}
 												})
 											}
 										} else {
 											// Reset the values on the settings' TextFields 
-											for (def child : materialTreeTable.getChildren(materialComboBox)) {
+											for (child in materialTreeTable.getChildren(materialComboBox)) {
+												print child.getType()
 												Item item = materialContainer.getItem(child)
 												item.getItemProperty("Instellingen").getValue().setValue("")
 											}

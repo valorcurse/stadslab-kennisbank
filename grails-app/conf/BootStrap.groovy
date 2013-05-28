@@ -9,9 +9,15 @@ class BootStrap {
 		Material glas = new Material(name: "Glas").save(flush: true, failOnError: true)
 		Material leer = new Material(name: "Leer").save(flush: true, failOnError: true)
 		Material hout = new Material(name: "Hout").save(flush: true, failOnError: true)
+		Material karton = new Material(name: "Karton").save(flush: true, failOnError: true)
 
+		// Hout
 		MaterialType duplex = new MaterialType(name: "Duplex", material: Material.findByName("Hout")).save(flush: true, failOnError: true)
 		MaterialType triplex = new MaterialType(name: "Triplex", material: Material.findByName("Hout")).save(flush: true, failOnError: true)
+		// Karton
+		MaterialType massiefKarton = new MaterialType(name: "Massief Karton", material: Material.findByName("Karton")).save(flush: true, failOnError: true)
+		MaterialType golfKarton = new MaterialType(name: "Golfkarton", material: Material.findByName("Karton")).save(flush: true, failOnError: true)
+
 
 		hout.addToMaterialTypes(duplex)
 			.addToMaterialTypes(triplex)
@@ -23,6 +29,8 @@ class BootStrap {
 											.addToSettingTypes(new SettingType(name: "Dikte"))
 											.addToMaterialTypes(duplex)
 											.addToMaterialTypes(triplex)
+											.addToMaterialTypes(massiefKarton)
+											.addToMaterialTypes(golfKarton)
 											.save(flush: true, failOnError: true)
 
 		new StudentCheckin(

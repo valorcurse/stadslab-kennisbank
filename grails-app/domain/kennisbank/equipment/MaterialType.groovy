@@ -13,6 +13,7 @@ class MaterialType {
 	}
 
 	static mapping = {
+		material lazy: false
 	}
 
 }

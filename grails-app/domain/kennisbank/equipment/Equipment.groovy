@@ -4,7 +4,7 @@ class Equipment {
 
 	String name
 	// Boolean hasSettings = false, hasMaterials = false
-	// List materials, settings
+	Set materialTypes, settingTypes
 
 	// void addToMaterials(Material material) {
 	// 	materials.add(material)
