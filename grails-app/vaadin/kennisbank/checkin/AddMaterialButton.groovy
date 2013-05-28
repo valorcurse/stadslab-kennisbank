@@ -13,13 +13,13 @@ class AddMaterialButton extends HorizontalLayout {
 	AddMaterialButton(String caption) {
 
 		setSpacing(true)
+		setStyleName("addmaterialbutton")
 
 		Label label = new Label(caption)
 		addComponent(label)
 
 		button = new Button()
 		addComponent(button)
-		button.setId("Material-plus-icon")
 		button.setDescription("Klik hier om een materiaal aan dit apparaat toe te voegen")
 		button.setIcon(new ThemeResource("plus.png"))
 		button.setStyleName(Reindeer.BUTTON_LINK)

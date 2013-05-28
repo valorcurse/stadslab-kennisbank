@@ -265,7 +265,7 @@ class CheckoutForm extends Panel {
 					@Override
 					public void valueChange(final ValueChangeEvent equipmentComboEvent) {
 
-						// Remove previous added comboboxes if equipment selection changed
+						// Remove previously added children if equipment selection changed
 						for (comboBox in materialComboBoxesToRemove) {
 							materialContainer.removeItem(comboBox)
 						}
@@ -301,95 +301,25 @@ class CheckoutForm extends Panel {
 						materialComboBox.addValueChangeListener(new ValueChangeListener() {
 							@Override
 							public void valueChange(final ValueChangeEvent comboEvent) {
-
 								for (setting in materialSettingsToRemove) {
 									materialContainer.removeItem(setting)
 								}
-
 								def material = Material.findByName(comboEvent.getProperty().getValue())
 
-								// ComboBox to choose the type of the material
-								ComboBox materialTypeComboBox = new ComboBox(null, material.materialTypes*.name)
-								materialTypeComboBox.setNullSelectionAllowed(false)
-								materialTypeComboBox.setImmediate(true)
-								materialTypeComboBox.setInputPrompt("Kies een materiaal type")
-
-								materialTreeTable.setCollapsed(materialComboBox, false)
-								
-								//  Add the ComboBox to the table
-								materialItem.getItemProperty("Materiaal").setValue(materialTypeComboBox)
-
-								// ---------------------------- Choose material type ----------------------------
-								materialTypeComboBox.addValueChangeListener(new ValueChangeListener() {
-									@Override
-									public void valueChange(final ValueChangeEvent comboTypeEvent) { 
-
-										def materialType = comboTypeEvent.getProperty().getValue()
-
-										equipmentUsedSettings.each { it.materialType = MaterialType.findByName(materialType) }
-
-										if (!materialTreeTable.hasChildren(materialComboBox)) {
-											for (def settingUsed : equipment.settingTypes.asList()) {
-												Label newSettingLabel = new Label(settingUsed.name)
-												Item settingItem = materialContainer.addItem(newSettingLabel)
-												materialSettingsToRemove.add(newSettingLabel)
-												settingItem.getItemProperty("Materiaal").setValue(newSettingLabel)
-
-												TextField valueTextField = new TextField()
-												valueTextField.setWidth("99%")
-												valueTextField.setCaption(settingUsed.name)
-
-												settingItem.getItemProperty("Instellingen").setValue(valueTextField)
-	 
-												materialContainer.setParent(newSettingLabel, materialComboBox)
-												materialTreeTable.setChildrenAllowed(newSettingLabel, false)
-
-												valueTextField.addTextChangeListener(new TextChangeListener() {
-													@Override
-													public void textChange(final TextChangeEvent textChangeEvent) {
-														def currentSetting = equipmentUsedSettings.find {
-															it.settingType.name == textChangeEvent.getComponent().getCaption()
-														}
-
-														currentSetting.value = textChangeEvent.getText()
-													}
-												})
-											}
-										} else {
-											// Reset the values on the settings' TextFields 
-											for (child in materialTreeTable.getChildren(materialComboBox)) {
-												print child.getType()
-												Item item = materialContainer.getItem(child)
-												item.getItemProperty("Instellingen").getValue().setValue("")
-											}
-										}
-									}
-								})
+								comboBoxContent(material, materialTreeTable, 
+												materialComboBox, materialItem, 
+												equipmentUsedSettings, equipment)
 							}
 						})
 					}
 				})
 
+
+
 			}
 		})
 
-		// for (def equipmentUsed : checkin.equipment) {
-			
-			// Item equipmentItem = container.addItem(equipmentUsed)
-
-			// AddMaterialButton addMaterialButton = new AddMaterialButton(equipmentUsed.name)
-			// equipmentItem.getItemProperty("Apparatuur").setValue(addMaterialButton)
-
-			// addMaterialButton.button.addClickListener(new Button.ClickListener() {
-			// 	@Override
-			// 	public void buttonClick(ClickEvent event) {
-
-					
-			// 	}
-			// })
-		// }
-
-		// ------------------------------------------------------- Made By Label -------------------------------------------------------
+		// --------------------------------- Made By Label ---------------------------------
 
 		Label madeByLabel = new Label("Gemaakt door: <i>" + 
 			checkin.firstName + " " + checkin.lastName + 
@@ -402,7 +332,72 @@ class CheckoutForm extends Panel {
 
 	}
 	
-	public boolean save() {
+	private void comboBoxContent(Material material, TreeTable materialTreeTable, 
+								ComboBox materialComboBox, Item materialItem, 
+								List equipmentUsedSettings, Equipment equipment) {
+
+		HierarchicalContainer materialContainer = materialTreeTable.getContainerDataSource()
+
+		// ComboBox to choose the type of the material
+		ComboBox materialTypeComboBox = new ComboBox(null, material.materialTypes*.name)
+		materialTypeComboBox.setNullSelectionAllowed(false)
+		materialTypeComboBox.setImmediate(true)
+		materialTypeComboBox.setInputPrompt("Kies een materiaal type")
+
+		materialTreeTable.setCollapsed(materialComboBox, false)
+								
+		//  Add the ComboBox to the table
+		materialItem.getItemProperty("Materiaal").setValue(materialTypeComboBox)
+
+		// ---------------------------- Choose material type ----------------------------
+		materialTypeComboBox.addValueChangeListener(new ValueChangeListener() {
+			@Override
+			public void valueChange(final ValueChangeEvent comboTypeEvent) { 
+
+				def materialType = comboTypeEvent.getProperty().getValue()
+
+				equipmentUsedSettings.each { it.materialType = MaterialType.findByName(materialType) }
+
+				if (!materialTreeTable.hasChildren(materialComboBox)) {
+					for (def settingUsed : equipment.settingTypes.asList()) {
+						Label newSettingLabel = new Label(settingUsed.name)
+						Item settingItem = materialContainer.addItem(newSettingLabel)
+						materialSettingsToRemove.add(newSettingLabel)
+						settingItem.getItemProperty("Materiaal").setValue(newSettingLabel)
+
+						TextField valueTextField = new TextField()
+						valueTextField.setWidth("99%")
+						valueTextField.setCaption(settingUsed.name)
+
+						settingItem.getItemProperty("Instellingen").setValue(valueTextField)
+	 
+						materialContainer.setParent(newSettingLabel, materialComboBox)
+						materialTreeTable.setChildrenAllowed(newSettingLabel, false)
+
+						valueTextField.addTextChangeListener(new TextChangeListener() {
+							@Override
+							public void textChange(final TextChangeEvent textChangeEvent) {
+								def currentSetting = equipmentUsedSettings.find {
+									it.settingType.name == textChangeEvent.getComponent().getCaption()
+								}
+
+								currentSetting.value = textChangeEvent.getText()
+							}
+						})
+					}
+				} else {
+					// Reset the values on the settings' TextFields 
+					for (child in materialTreeTable.getChildren(materialComboBox)) {
+						print child.getType()
+						Item item = materialContainer.getItem(child)
+						item.getItemProperty("Instellingen").getValue().setValue("")
+					}
+				}
+			}
+		})
+	}
+
+	private boolean save() {
 		Checkout.withTransaction {
 
 			// Add all the settings to the checkout

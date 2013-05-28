@@ -288,11 +288,19 @@
 		}
 	}
 
-	#Material-plus-icon { 
+	.addmaterialbutton { 
 		.v-icon {
 			height: 10px;
 			width: 10px;
 			padding-bottom: 1.5px;
+		}
+	}
+
+	.embeddedcombobox {
+		.v-icon {
+			height: 11px;
+			width: 11px;
+			padding-top: 6px;
 		}
 	}
 }
