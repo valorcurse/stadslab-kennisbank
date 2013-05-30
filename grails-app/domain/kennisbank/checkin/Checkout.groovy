@@ -9,22 +9,26 @@ import org.apache.commons.lang.RandomStringUtils
 
 class Checkout {
 
-	Date dateCreated
+	// Date dateCreated
 	String title
 	Boolean published = false
-	String picturePath = "emptyImage.gif"
+	String description
+	String picturePath
 	List settings
 
 	static hasMany = [files: AttachedFile, settings: Setting]
 
 	static constraints = {
-		picturePath nullable: true
-		title blank: false, nullable: true
+		picturePath nullable: false
+		title blank: false, nullable: false
+		settings nullable: false
+		files nullable: false
+		description nullable: false, blank: false
 	}
 
 	static mapping = {
-		materials lazy: false
 		settings lazy: false
+		description type: "text"
 	}
 
 }

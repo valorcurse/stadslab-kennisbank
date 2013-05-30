@@ -6,7 +6,7 @@ class StudentCheckout extends Checkout {
 
 	// StudentCheckin checkin
 
-	static belongsTo = [checkin: StudentCheckin]
+	static hasOne = [checkin: StudentCheckin]
 
 	static constraints = {
 		checkin nullable: true
