@@ -26,6 +26,9 @@ import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.TabSheet.Tab
+import org.springframework.context.MessageSource
+import org.codehaus.groovy.grails.commons.ApplicationHolder
+import com.vaadin.server.UserError
 import kennisbank.equipment.*
 import kennisbank.*
 import kennisbank.utils.*
@@ -104,17 +107,6 @@ class CheckoutWindow extends Window {
 
 				Checkout checkout = form.checkout
 
-				// print checkout.title
-				// Add all the settings to the checkout
-				// settings.each {
-				// 	it.each {
-				// 		checkout.addToSettings(it) 
-				// 	}
-				// }
-				// checkout.settings.each {
-				// 	print "Equipment: " + it.equipment.name + " MaterialType: " + it.materialType.name + 
-				// 		" SettingType: " + it.settingType.name + " Value: " + it.value
-				// }
 				if (checkout.validate()) {
 					checkout.published = true
 					checkout = checkout.merge()
@@ -123,10 +115,43 @@ class CheckoutWindow extends Window {
 					print "Checkout saved"
 				}
 				else {
-					checkout.errors.each {
-						println it
-						println ""
+
+					def errorComponents = [form.titleTextField, form.pictureUpload, form.filesUpload, 
+											form.descriptionTextArea, form.rootAddMaterialButton.button]
+
+					for (component in errorComponents) {
+						component.setComponentError(null)
 					}
+
+					MessageSource messageSource = ApplicationHolder.application.mainContext.getBean('messageSource')
+
+					checkout.errors.allErrors.each {
+						println it.getField()
+						if (it.getField() == "title") {
+							form.titleTextField.setComponentError(new UserError("Er moet een titel ingevuld worden."))
+						}
+
+						if (it.getField() == "picturePath") {
+							form.pictureUpload.setComponentError(new UserError("Er moet een foto geüpload worden."))
+						}
+
+						if (it.getField() == "files") {
+							form.filesUpload.setComponentError(new UserError("Er moeten bestanden geüpload worden."))
+						}
+
+						if (it.getField() == "description") {
+							form.descriptionTextArea.setComponentError(new UserError("Er moet een korte beschrijving ingevoerd worden."))
+						}
+
+						if (it.getField() == "settings") {
+							form.rootAddMaterialButton.button.setComponentError(new UserError("Er moeten instellingen worden toegevoegd."))
+						}
+						if (it.getField() ==~ /settings.*/) {
+							form.rootAddMaterialButton.button.setComponentError(new UserError("Er zijn verkeerd ingevuld of lege velden."))
+						}
+					}
+
+
 				}
 			}
 		}
@@ -143,6 +168,11 @@ class CheckoutForm extends Panel {
 	UploadHelper uploadHelper
 	def settings
 	Checkout checkout
+
+	TextField titleTextField
+	Upload pictureUpload, filesUpload
+	TextArea descriptionTextArea
+	AddMaterialButton rootAddMaterialButton
 
 	CheckoutForm(Checkin checkin) { 
 
@@ -169,7 +199,7 @@ class CheckoutForm extends Panel {
 		gridLayout.addComponent(titleLayout, 0, 0, 1, 0) // Column 0, Row 0 to Column 1, Row 0
 
 		// ------------------------------------------------------- Title -------------------------------------------------------		
-		TextField titleTextField = new TextField()
+		titleTextField = new TextField()
 		titleLayout.addComponent(titleTextField)
 		titleLayout.setComponentAlignment(titleTextField, Alignment.TOP_CENTER)
 		titleTextField.setInputPrompt("Kies een titel")
@@ -195,8 +225,11 @@ class CheckoutForm extends Panel {
 		pictureButton.setId("picture");
 		pictureButton.setSource(new ThemeResource("emptyImage.gif"))
 
-		Upload pictureUpload = new Upload(null, receiver) // Upload button
-		
+		pictureUpload = new Upload(null, receiver) // Upload button
+		pictureLayout.addComponent(pictureUpload)
+		pictureLayout.setWidth("-1")
+		pictureUpload.setImmediate(true) // Starts to upload immediately after choosing file
+
 		pictureUpload.addSucceededListener(new Upload.SucceededListener() {
 			public void uploadSucceeded(SucceededEvent event) {
 				checkout.picturePath = uploadHelper.uploadPath
@@ -213,9 +246,6 @@ class CheckoutForm extends Panel {
 		})
 
 
-		pictureLayout.setWidth("-1")
-		pictureLayout.addComponent(pictureUpload)
-		pictureUpload.setImmediate(true) // Starts to upload immediately after choosing file
 
 		// ------------------------------------------------------- Uploads -------------------------------------------------------
 
@@ -229,7 +259,7 @@ class CheckoutForm extends Panel {
 		uploadsTable.setWidth("100%")
 		uploadsTable.setHeight("170px")
 
-		Upload filesUpload = new Upload(null, receiver) // Upload button
+		filesUpload = new Upload(null, receiver) // Upload button
 		uploadsLayout.addComponent(filesUpload)
 		filesUpload.setImmediate(true)
 
@@ -257,7 +287,7 @@ class CheckoutForm extends Panel {
 
 		// ------------------------------------------------------- Description -------------------------------------------------------
 
-		TextArea descriptionTextArea = new TextArea("Korte omschrijving")
+		descriptionTextArea = new TextArea("Korte omschrijving")
 		gridLayout.addComponent(descriptionTextArea, 0, 2, 1, 2) // Column 0, Row 2 to Column 1, Row 2
 		descriptionTextArea.setWidth("100%")
 		descriptionTextArea.addTextChangeListener(new TextChangeListener() {
@@ -269,20 +299,20 @@ class CheckoutForm extends Panel {
 
 		// ------------------------------------------------------- Material -------------------------------------------------------
 		
-		TreeTable materialTreeTable = new TreeTable()
-		gridLayout.addComponent(materialTreeTable, 0, 3, 1, 3) // Column 0, Row 3 to Column 1, Row 3
-		materialTreeTable.setWidth("100%")
-		materialTreeTable.setPageLength(0)
+		TreeTable settingsTreeTable = new TreeTable()
+		gridLayout.addComponent(settingsTreeTable, 0, 3, 1, 3) // Column 0, Row 3 to Column 1, Row 3
+		settingsTreeTable.setWidth("100%")
+		settingsTreeTable.setPageLength(0)
 
 		HierarchicalContainer materialContainer = new HierarchicalContainer()
 		materialContainer.addContainerProperty("Apparatuur", Component.class, "")
 		materialContainer.addContainerProperty("Materiaal", Component.class, "")
 		materialContainer.addContainerProperty("Instellingen", TextField.class, "")
-		materialTreeTable.setContainerDataSource(materialContainer)
-		materialTreeTable.setColumnExpandRatio("Apparatuur", 0.6)
-		materialTreeTable.setColumnExpandRatio("Materiaal", 0.4)
+		settingsTreeTable.setContainerDataSource(materialContainer)
+		settingsTreeTable.setColumnExpandRatio("Apparatuur", 0.6)
+		settingsTreeTable.setColumnExpandRatio("Materiaal", 0.4)
 
-		AddMaterialButton rootAddMaterialButton = new AddMaterialButton("Voeg een apparaat toe")
+		rootAddMaterialButton = new AddMaterialButton("Voeg een apparaat toe")
 		Item rootItem = materialContainer.addItem(rootAddMaterialButton)
 		rootItem.getItemProperty("Apparatuur").setValue(rootAddMaterialButton)
 
@@ -305,7 +335,7 @@ class CheckoutForm extends Panel {
 				Item equipmentItem = materialContainer.addItem(equipmentComboBox)
 				equipmentItem.getItemProperty("Apparatuur").setValue(equipmentComboBox)
 				materialContainer.setParent(equipmentComboBox, rootAddMaterialButton)
-				materialTreeTable.setCollapsed(rootAddMaterialButton, false)
+				settingsTreeTable.setCollapsed(rootAddMaterialButton, false)
 				
 				def equipment
 
@@ -330,7 +360,7 @@ class CheckoutForm extends Panel {
 						equipmentComboBox.children.clear()
 
 						comboBoxContent(equipment, settingsList,
-										materialTreeTable, equipmentComboBox,
+										settingsTreeTable, equipmentComboBox,
 										checkout)
 					}
 				})
@@ -343,7 +373,7 @@ class CheckoutForm extends Panel {
 						}
 						else {
 							comboBoxContent(equipment, settingsList,
-											materialTreeTable, equipmentComboBox,
+											settingsTreeTable, equipmentComboBox,
 											checkout)
 						}
 					}
@@ -365,10 +395,10 @@ class CheckoutForm extends Panel {
 	}
 	
 	private void comboBoxContent(Equipment equipment, List settingsList,
-								TreeTable materialTreeTable, ExtendedComboBox equipmentComboBox,
+								TreeTable settingsTreeTable, ExtendedComboBox equipmentComboBox,
 								Checkout checkout) {
 		
-		IndexedContainer materialContainer = materialTreeTable.getContainerDataSource()
+		IndexedContainer materialContainer = settingsTreeTable.getContainerDataSource()
 
 		def equipmentUsedSettings = []
 		equipment.settingTypes.each {
@@ -390,7 +420,7 @@ class CheckoutForm extends Panel {
 		Item materialItem = materialContainer.addItem(materialComboBox)
 		materialItem.getItemProperty("Apparatuur").setValue(materialComboBox)
 		materialContainer.setParent(materialComboBox, equipmentComboBox)
-		materialTreeTable.setCollapsed(equipmentComboBox, false)
+		settingsTreeTable.setCollapsed(equipmentComboBox, false)
 		
 		// ---------------------------- Choose material ----------------------------
 		materialComboBox.comboBox.addValueChangeListener(new ValueChangeListener() {
@@ -408,7 +438,7 @@ class CheckoutForm extends Panel {
 				materialTypeComboBox.setImmediate(true)
 				materialTypeComboBox.setInputPrompt("Kies een materiaal type")
 
-				materialTreeTable.setCollapsed(materialComboBox, false)
+				settingsTreeTable.setCollapsed(materialComboBox, false)
 										
 				//  Add the ComboBox to the table
 				materialItem.getItemProperty("Materiaal").setValue(materialTypeComboBox)
@@ -422,7 +452,7 @@ class CheckoutForm extends Panel {
 
 						equipmentUsedSettings.each { it.materialType = MaterialType.findByName(materialType) }
 
-						if (!materialTreeTable.hasChildren(materialComboBox)) {
+						if (!settingsTreeTable.hasChildren(materialComboBox)) {
 							for (def settingUsed : equipment.settingTypes.asList()) {
 								Label newSettingLabel = new Label(settingUsed.name)
 								Item settingItem = materialContainer.addItem(newSettingLabel)
@@ -437,7 +467,7 @@ class CheckoutForm extends Panel {
 								settingItem.getItemProperty("Instellingen").setValue(valueTextField)
 			 
 								materialContainer.setParent(newSettingLabel, materialComboBox)
-								materialTreeTable.setChildrenAllowed(newSettingLabel, false)
+								settingsTreeTable.setChildrenAllowed(newSettingLabel, false)
 
 								valueTextField.addTextChangeListener(new TextChangeListener() {
 									@Override
@@ -452,7 +482,7 @@ class CheckoutForm extends Panel {
 							}
 						} else {
 							// Reset the values on the settings' TextFields 
-							for (child in materialTreeTable.getChildren(materialComboBox)) {
+							for (child in settingsTreeTable.getChildren(materialComboBox)) {
 								Item item = materialContainer.getItem(child)
 								item.getItemProperty("Instellingen").getValue().setValue("")
 							}
