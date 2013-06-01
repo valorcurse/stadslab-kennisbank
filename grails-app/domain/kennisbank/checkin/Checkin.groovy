@@ -6,6 +6,7 @@ class Checkin {
 
 	Date dateCreated
 	Set equipment
+	Boolean closed = false
 
 	static hasMany = [equipment: Equipment]
 

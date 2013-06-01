@@ -12,7 +12,7 @@ class Setting {
 	static belongsTo = [checkout: Checkout]
 
 	static constraints = {
-		value nullable: false
+		value nullable: false, blank: false
 		settingType nullable: false
 		materialType nullable: false
 		equipment nullable: false

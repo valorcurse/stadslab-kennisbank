@@ -69,7 +69,7 @@ class CheckInOutView extends UI {
 		checkoutTable.setContainerDataSource(container)
 
 		for (def checkin : Checkin.list()) {
-			// if (!checkin.checkout.published) {
+			if (!checkin.closed) {
 				Item item = container.addItem(checkin)
 				item.getItemProperty("Naam").setValue(checkin.firstName + " " + checkin.lastName)
 				item.getItemProperty("E-mail").setValue(checkin.email)
@@ -80,7 +80,7 @@ class CheckInOutView extends UI {
 						UI.getCurrent().addWindow(window)
 					} 
 				}))
-			// }
+			}
 		}
 
 		// checkoutTable.setColumnExpandRatio("Apparatuur", 0.5)

@@ -18,11 +18,10 @@ import com.vaadin.server.FileDownloader
 
 class DownloadLink extends Button implements Button.ClickListener {
 
-	DownloadLink(String path, String name) {
+	DownloadLink(File file, String name) {
 		addClickListener(this)
 		setStyleName(Reindeer.BUTTON_LINK)
 
-		File file = new File(path)
 		setCaption(name)
 
 		FileResource fileResource = new FileResource(file)

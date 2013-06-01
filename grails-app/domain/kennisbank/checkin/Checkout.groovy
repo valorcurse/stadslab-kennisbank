@@ -13,13 +13,14 @@ class Checkout {
 	String title
 	Boolean published = false
 	String description
-	String picturePath
+	// String picturePath
+	byte[] picture
 	List settings
 
 	static hasMany = [files: AttachedFile, settings: Setting]
 
 	static constraints = {
-		picturePath nullable: false
+		// picturePath nullable: false
 		title blank: false, nullable: false
 		settings nullable: false
 		files nullable: false

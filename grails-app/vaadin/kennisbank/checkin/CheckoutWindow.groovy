@@ -22,12 +22,14 @@ import com.vaadin.event.ShortcutAction.KeyCode
 import com.vaadin.event.ShortcutListener
 import com.vaadin.event.FieldEvents.TextChangeListener
 import com.vaadin.event.FieldEvents.TextChangeEvent
+import com.vaadin.ui.TabSheet.SelectedTabChangeEvent
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.TabSheet.Tab
 import org.springframework.context.MessageSource
 import org.codehaus.groovy.grails.commons.ApplicationHolder
+import com.vaadin.server.DefaultErrorHandler
 import com.vaadin.server.UserError
 import kennisbank.equipment.*
 import kennisbank.*
@@ -38,10 +40,12 @@ import kennisbank.utils.*
 class CheckoutWindow extends Window {
 
 	def checkoutForms
+	Checkin checkin
 
 	CheckoutWindow(Checkin checkin) {
 
 		checkoutForms = []
+		this.checkin = checkin
 
 		setCaption("Check out") 
 		setPrimaryStyleName("check-out")
@@ -70,6 +74,12 @@ class CheckoutWindow extends Window {
 		tabSheet.addStyleName(Reindeer.TABSHEET_MINIMAL)
 		tabSheet.setSizeFull()
 
+		tabSheet.setCloseHandler(new TabSheet.CloseHandler() {
+			public void onTabClose(TabSheet tabsheet, Component tabContent) {
+				checkoutForms.remove(tabContent)
+				tabsheet.removeComponent(tabContent)
+			}
+		})
 		
 		CheckoutForm defaultCheckoutForm = new CheckoutForm(checkin)
 		checkoutForms.add(defaultCheckoutForm)
@@ -93,7 +103,13 @@ class CheckoutWindow extends Window {
 		saveButton.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
-				save()
+				if (save()) {
+					Checkin.withTransaction {
+					checkin.closed = true
+					checkin.save()
+					close()
+					}
+				}
 			}
 		})
 
@@ -101,32 +117,35 @@ class CheckoutWindow extends Window {
 	}
 
 	private boolean save() {
+		def checkouts = []
 
 		for (form in checkoutForms) {
 			Checkout.withTransaction {
 
 				Checkout checkout = form.checkout
+				checkouts.add(checkout)
+
+				def errorComponents = [form.titleTextField, form.pictureUpload, form.filesUpload, 
+										form.descriptionTextArea, form.rootAddMaterialButton.button,
+										form.tab]
+
+				for (component in errorComponents) {
+					component.setComponentError(null)
+				}
 
 				if (checkout.validate()) {
 					checkout.published = true
-					checkout = checkout.merge()
+					File newFile = new File(checkout.path)
 					checkout.save()
-					close()
-					print "Checkout saved"
-				}
-				else {
-
-					def errorComponents = [form.titleTextField, form.pictureUpload, form.filesUpload, 
-											form.descriptionTextArea, form.rootAddMaterialButton.button]
-
-					for (component in errorComponents) {
-						component.setComponentError(null)
-					}
-
+				
+				} else {
 					MessageSource messageSource = ApplicationHolder.application.mainContext.getBean('messageSource')
 
 					checkout.errors.allErrors.each {
 						println it.getField()
+
+						form.tab.setComponentError(new UserError("Er is een fout in dit project."))
+
 						if (it.getField() == "title") {
 							form.titleTextField.setComponentError(new UserError("Er moet een titel ingevuld worden."))
 						}
@@ -146,20 +165,27 @@ class CheckoutWindow extends Window {
 						if (it.getField() == "settings") {
 							form.rootAddMaterialButton.button.setComponentError(new UserError("Er moeten instellingen worden toegevoegd."))
 						}
+
 						if (it.getField() ==~ /settings.*/) {
 							form.rootAddMaterialButton.button.setComponentError(new UserError("Er zijn verkeerd ingevuld of lege velden."))
 						}
 					}
-
-
 				}
 			}
 		}
+
+		for (checkout in checkouts) {
+			if (!checkout.published) {
+				return false
+			}
+		}
+		return true
 	}
 }
 
 class UploadHelper {
-	String uploadPath, name, size
+	String name, size
+	File file
 }
 
 class CheckoutForm extends Panel {
@@ -232,9 +258,9 @@ class CheckoutForm extends Panel {
 
 		pictureUpload.addSucceededListener(new Upload.SucceededListener() {
 			public void uploadSucceeded(SucceededEvent event) {
-				checkout.picturePath = uploadHelper.uploadPath
-				print "Picture path: " + uploadHelper.uploadPath
-				pictureButton.setSource(new FileResource(new File(checkout.picturePath)))
+				checkout.picture = uploadHelper.file.getBytes()
+				// print "Picture path: " + uploadHelper.uploadPath
+				pictureButton.setSource(new FileResource(uploadHelper.file))
 				Notification.show("Uploaden geslaagd!", Notification.TYPE_TRAY_NOTIFICATION)	
 			}
 		})
@@ -270,10 +296,10 @@ class CheckoutForm extends Panel {
 
 		filesUpload.addSucceededListener(new Upload.SucceededListener() {
 			public void uploadSucceeded(SucceededEvent event) {
-				checkout.addToFiles(new AttachedFile(name: uploadHelper.name, path: uploadHelper.uploadPath))
+				checkout.addToFiles(new AttachedFile(name: uploadHelper.name, files: uploadHelper.file.getBytes()))
 
-				Item uploadItem = uploadsContainer.addItem(uploadHelper.uploadPath)
-				uploadItem.getItemProperty("Naam").setValue(new DownloadLink(uploadHelper.uploadPath, uploadHelper.name))
+				Item uploadItem = uploadsContainer.addItem(uploadHelper.file.getCanonicalPath())
+				uploadItem.getItemProperty("Naam").setValue(new DownloadLink(uploadHelper.file, uploadHelper.name))
 				uploadItem.getItemProperty("Grootte").setValue(uploadHelper.size)
 				Notification.show("Uploaden geslaagd!", Notification.TYPE_TRAY_NOTIFICATION)
 			}
@@ -506,16 +532,16 @@ public class UploadReceiver implements Receiver {
 	@Override
 	public OutputStream receiveUpload(String strFilename, String strMIMEType) {
 		
-		File file
+		// File file
 
 		try {
 
-			file = File.createTempFile(strFilename, ".tmp")
+			uploadHelper.file = File.createTempFile(strFilename, ".tmp")
 
-			uploadHelper.uploadPath = file.absolutePath
+			// uploadHelper.uploadPath = file.absolutePath
 			uploadHelper.name = strFilename
 
-			outputFile =  new FileOutputStream(file)
+			outputFile =  new FileOutputStream(uploadHelper.file)
 			
 			// finalize()
 
