@@ -1,6 +1,6 @@
 package kennisbank.project
 
-import kennisbank.checkin.StudentCheckout
+// import kennisbank.checkin.StudentCheckout
 
 class Project {
 
