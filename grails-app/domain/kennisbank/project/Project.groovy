@@ -1,6 +1,5 @@
 package kennisbank.project
 
-
 class Project {
 
 	String title, summary, course
