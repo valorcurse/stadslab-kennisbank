@@ -545,8 +545,12 @@ class UploadReceiver implements Receiver {
 		File file
 
 		try {
-
-			file = File.createTempFile(strFilename, ".tmp")
+			try {
+				file = File.createTempFile(strFilename, ".tmp")
+				file.deleteOnExit()
+			} catch (IOException ex) {
+    			System.err.println("Temp file could not be created")
+			}
 
 			uploadHelper.filePath = file.absolutePath
 			uploadHelper.name = strFilename
