@@ -1,36 +1,39 @@
  package kennisbank.checkin
 
 import com.vaadin.ui.*
-import com.vaadin.data.Property.ValueChangeListener
-import com.vaadin.data.Property.ValueChangeEvent
-import com.vaadin.ui.themes.Reindeer
-import com.vaadin.ui.Tree.ExpandEvent
-import kennisbank.fabtool.projects.ProjectLink
-import com.vaadin.server.FileResource
-import java.nio.channels.FileChannel
-import com.vaadin.server.ThemeResource
-import com.vaadin.ui.Upload.SucceededEvent
-import com.vaadin.ui.Upload.FailedEvent
-import com.vaadin.ui.Upload.Receiver
-import com.vaadin.data.Item
-import com.vaadin.data.util.HierarchicalContainer
-import com.vaadin.data.util.IndexedContainer
-import com.vaadin.ui.Button.ClickEvent
-import com.vaadin.ui.Upload.Receiver
-import com.vaadin.shared.ui.label.ContentMode
-import com.vaadin.event.ShortcutAction.KeyCode
-import com.vaadin.event.ShortcutListener
-import com.vaadin.event.FieldEvents.TextChangeListener
-import com.vaadin.event.FieldEvents.TextChangeEvent
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.TabSheet.Tab
-import org.springframework.context.MessageSource
-import org.codehaus.groovy.grails.commons.ApplicationHolder
+import com.vaadin.ui.themes.Reindeer
+import com.vaadin.ui.Tree.ExpandEvent
+import com.vaadin.ui.Upload.SucceededEvent
+import com.vaadin.ui.Upload.FailedEvent
+import com.vaadin.ui.Upload.Receiver
+import com.vaadin.ui.Button.ClickEvent
+
+import com.vaadin.data.Property.ValueChangeListener
+import com.vaadin.data.Property.ValueChangeEvent
+import com.vaadin.data.Item
+import com.vaadin.data.util.HierarchicalContainer
+import com.vaadin.data.util.IndexedContainer
+
+import com.vaadin.server.FileResource
 import com.vaadin.server.DefaultErrorHandler
 import com.vaadin.server.UserError
+import com.vaadin.server.ThemeResource
+
+import com.vaadin.event.ShortcutAction.KeyCode
+import com.vaadin.event.ShortcutListener
+import com.vaadin.event.FieldEvents.TextChangeListener
+import com.vaadin.event.FieldEvents.TextChangeEvent
+
+import java.nio.channels.FileChannel
+import com.vaadin.shared.ui.label.ContentMode
+import org.springframework.context.MessageSource
+import org.codehaus.groovy.grails.commons.ApplicationHolder
+
 import kennisbank.equipment.*
 import kennisbank.*
 import kennisbank.utils.*
@@ -104,11 +107,7 @@ class CheckoutWindow extends Window {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				if (save()) {
-					Checkin.withTransaction {
-					checkin.closed = true
-					checkin.save()
 					close()
-					}
 				}
 			}
 		})
@@ -135,7 +134,6 @@ class CheckoutWindow extends Window {
 
 				if (checkout.validate()) {
 					checkout.published = true
-					File newFile = new File(checkout.path)
 					checkout.save()
 				
 				} else {
@@ -175,17 +173,14 @@ class CheckoutWindow extends Window {
 		}
 
 		for (checkout in checkouts) {
-			if (!checkout.published) {
+			if (checkout.published) {
+				checkin.addToCheckouts(checkout)
+			} else {
 				return false
 			}
 		}
 		return true
 	}
-}
-
-class UploadHelper {
-	String name, size
-	File file
 }
 
 class CheckoutForm extends Panel {
@@ -258,9 +253,9 @@ class CheckoutForm extends Panel {
 
 		pictureUpload.addSucceededListener(new Upload.SucceededListener() {
 			public void uploadSucceeded(SucceededEvent event) {
-				checkout.picture = uploadHelper.file.getBytes()
+				checkout.picturePath = uploadHelper.filePath
 				// print "Picture path: " + uploadHelper.uploadPath
-				pictureButton.setSource(new FileResource(uploadHelper.file))
+				pictureButton.setSource(new FileResource(new File(checkout.picturePath)))
 				Notification.show("Uploaden geslaagd!", Notification.TYPE_TRAY_NOTIFICATION)	
 			}
 		})
@@ -296,10 +291,10 @@ class CheckoutForm extends Panel {
 
 		filesUpload.addSucceededListener(new Upload.SucceededListener() {
 			public void uploadSucceeded(SucceededEvent event) {
-				checkout.addToFiles(new AttachedFile(name: uploadHelper.name, files: uploadHelper.file.getBytes()))
+				checkout.addToFiles(new AttachedFile(name: uploadHelper.name, path: uploadHelper.filePath))
 
-				Item uploadItem = uploadsContainer.addItem(uploadHelper.file.getCanonicalPath())
-				uploadItem.getItemProperty("Naam").setValue(new DownloadLink(uploadHelper.file, uploadHelper.name))
+				Item uploadItem = uploadsContainer.addItem(uploadHelper.filePath)
+				uploadItem.getItemProperty("Naam").setValue(new DownloadLink(uploadHelper.filePath, uploadHelper.name))
 				uploadItem.getItemProperty("Grootte").setValue(uploadHelper.size)
 				Notification.show("Uploaden geslaagd!", Notification.TYPE_TRAY_NOTIFICATION)
 			}
@@ -364,6 +359,20 @@ class CheckoutForm extends Panel {
 				settingsTreeTable.setCollapsed(rootAddMaterialButton, false)
 				
 				def equipment
+				def removeChildren = {
+					def childrenToDelete = []
+					for (child in equipmentComboBox.children) {
+						materialContainer.removeItem(child)
+						childrenToDelete.add(child)
+						for (secondChild in child.children) {
+							materialContainer.removeItem(secondChild)
+						}
+					}
+					for (child in childrenToDelete) {
+						child.children.clear()
+					}
+					equipmentComboBox.children.clear()
+				}
 
 				// ---------------------------- Choose equipment ----------------------------
 				equipmentComboBox.comboBox.addValueChangeListener(new ValueChangeListener() {
@@ -372,18 +381,7 @@ class CheckoutForm extends Panel {
 						equipment = Equipment.findByName(equipmentComboEvent.getProperty().getValue())
 
 						// Remove previously added child components if equipment selection changed
-						def childrenToDelete = []
-						for (child in equipmentComboBox.children) {
-							materialContainer.removeItem(child)
-							childrenToDelete.add(child)
-							for (secondChild in child.children) {
-								materialContainer.removeItem(secondChild)
-							}
-						}
-						for (child in childrenToDelete) {
-							child.children.clear()
-						}
-						equipmentComboBox.children.clear()
+						removeChildren()
 
 						comboBoxContent(equipment, settingsList,
 										settingsTreeTable, equipmentComboBox,
@@ -402,6 +400,14 @@ class CheckoutForm extends Panel {
 											settingsTreeTable, equipmentComboBox,
 											checkout)
 						}
+					}
+				})
+
+				equipmentComboBox.removeButton.addClickListener(new Button.ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent equipmentButtonEvent) {
+						removeChildren()
+						settingsTreeTable.removeItem(equipmentComboBox)
 					}
 				})
 			}
@@ -520,7 +526,11 @@ class CheckoutForm extends Panel {
 	}
 }
 
-public class UploadReceiver implements Receiver {
+class UploadHelper {
+	String name, size, filePath
+}
+
+class UploadReceiver implements Receiver {
 
 	OutputStream outputFile = null
 	UploadHelper uploadHelper
@@ -532,19 +542,17 @@ public class UploadReceiver implements Receiver {
 	@Override
 	public OutputStream receiveUpload(String strFilename, String strMIMEType) {
 		
-		// File file
+		File file
 
 		try {
 
-			uploadHelper.file = File.createTempFile(strFilename, ".tmp")
+			file = File.createTempFile(strFilename, null)
 
-			// uploadHelper.uploadPath = file.absolutePath
+			uploadHelper.filePath = file.absolutePath
 			uploadHelper.name = strFilename
 
-			outputFile =  new FileOutputStream(uploadHelper.file)
+			outputFile =  new FileOutputStream(file)
 			
-			// finalize()
-
 		} catch (IOException e) {
 			e.printStackTrace()
 		}
@@ -557,10 +565,6 @@ public class UploadReceiver implements Receiver {
 			super.finalize()
 
 			if(outputFile != null) {
-				// FileChannel fc = outputFile.getChannel()
-				// print "Size: " + fc.size()
-
-				// uploadHelper.size = fc.size()
 				outputFile.close()
 			}
 		} catch (Throwable exception) {

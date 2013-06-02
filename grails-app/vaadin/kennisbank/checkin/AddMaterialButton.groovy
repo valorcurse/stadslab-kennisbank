@@ -20,7 +20,7 @@ class AddMaterialButton extends HorizontalLayout {
 
 		button = new Button()
 		addComponent(button)
-		button.setDescription("Klik hier om een materiaal aan dit apparaat toe te voegen")
+		button.setDescription("Klik hier om een apparaat toe te voegen")
 		button.setIcon(new ThemeResource("plus.png"))
 		button.setStyleName(Reindeer.BUTTON_LINK)
 	}

@@ -4,9 +4,11 @@ import java.util.Date
 
 class AttachedFile {
 
-	String name
-	byte[] file
+	String name, path
 
     static constraints = {
+    }
+
+    static mapping = {
     }
 }

@@ -13,9 +13,7 @@ class StudentCheckin extends Checkin {
 			course, 
 			teacher
 
-	// StudentCheckout checkout
-
-	static hasMany = [equipment: Equipment, checkouts: StudentCheckout]
+	static hasMany = [equipment: Equipment, checkouts: Checkout]
 
 	static constraints = {
 		studentNumber size: 7..7, matches: "[0-9]+", blank: false
@@ -27,18 +25,11 @@ class StudentCheckin extends Checkin {
 		study blank: false
 		course blank: false
 		teacher blank: false
-		// checkouts nullable: true
-	}
-
-	def beforeInsert() {
-		// checkout = new StudentCheckout()
-		// if (checkout.save()) {
-		// 	checkout.checkin = this
-		// }
 	}
 
 	static mapping = {
 		equipment lazy: false
+		checkouts lazy: false
 	}
 	
 	
