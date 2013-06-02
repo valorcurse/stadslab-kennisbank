@@ -1,6 +1,5 @@
 package kennisbank.project
 
-import kennisbank.checkin.StudentCheckout
 
 class Project {
 
