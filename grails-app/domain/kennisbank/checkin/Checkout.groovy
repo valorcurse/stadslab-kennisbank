@@ -23,7 +23,7 @@ class Checkout {
 
 	static constraints = {
 		picturePath nullable: false
-		title blank: false, nullable: false, unique: true
+		title blank: false, nullable: false
 		settings nullable: false
 		files nullable: false
 		description nullable: false, blank: false

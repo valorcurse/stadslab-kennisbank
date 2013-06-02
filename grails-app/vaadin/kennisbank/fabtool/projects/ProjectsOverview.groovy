@@ -102,12 +102,42 @@ class ProjectsOverview extends VerticalLayout {
 		existingProjectsLayout.setMargin(true)
 		existingProjectsLayout.setSpacing(true)
 
+		/*Table projectsTable = new Table()
+		//projectsTable.addStyleName(Reindeer.TABLE_BORDERLESS)
+		projectsTable.setHeight("350px")
+		projectsTable.setWidth("100%")
+
+		projectsTable.addContainerProperty("Project name", ProjectLink.class, null)
+		projectsTable.addContainerProperty("Course", String.class, null)
+		projectsTable.addContainerProperty("Date created", String.class, null)
+		
+		projectsTable.setColumnWidth("Project name", 200)
+*/
 		List<Project> projects = Checkout.list()
 
 		for (def project : projects) {
 			if (project.published) existingProjectsLayout.addComponent(new ProjectLink(project.uniqueID))
 		}
 
+		/*TextField searchProjectsTextField = new TextField()
+		searchProjectsTextField.setInputPrompt("Search")
+		searchProjectsTextField.addTextChangeListener(new TextChangeListener() {
+					public void textChange(TextChangeEvent event) {
+						def filteredProjects = searchableService.search(event.getText(),
+								[offset: 0, max: 20])
+						projectsTable.removeAllItems()
+
+						for (Project project : filteredProjects) {
+							projectsTable.addItem(	[new Link(project.getTitle(), new ExternalResource("http://localhost:8080/kennisbank/#!/project/" + project.getTitle())),
+								project.getCourse(), project.getDateCreated().toString()] as Object[],
+							new Integer(projectsTable.size()+1));
+						}
+					}
+				})
+
+		existingProjectsLayout.addComponent(searchProjectsTextField)
+		//existingProjectsLayout.addComponent(projectsTable)
+*/
 		layout.addComponent(titleLabel)
 		layout.addComponent(createNewProjectPanel)
 		layout.addComponent(existingProjectsPanel)
