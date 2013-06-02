@@ -546,7 +546,7 @@ class UploadReceiver implements Receiver {
 
 		try {
 
-			file = File.createTempFile(strFilename, null)
+			file = File.createTempFile(strFilename, ".tmp")
 
 			uploadHelper.filePath = file.absolutePath
 			uploadHelper.name = strFilename
