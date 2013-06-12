@@ -13,7 +13,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 
 import kennisbank.User;
 import kennisbank.UserService;
-import kennisbank.checkin.Administration
+import kennisbank.fabtool.administration.Administration
 import kennisbank.fabtool.home.*
 import kennisbank.project.*;
 import kennisbank.fabtool.projects.*

@@ -307,4 +307,36 @@
 			padding-top: 6px;
 		}
 	}
-}
+
+	.projectButton {
+		img {
+			width: 195px;
+			height: 128px;
+			margin-bottom: 5px;
+			padding: 4px;
+			opacity: 0.8;
+
+			-webkit-box-shadow: 3px 3px 8px rgba(50, 50, 50, 0.75);
+			-moz-box-shadow:    3px 3px 8px rgba(50, 50, 50, 0.75);
+			box-shadow:         3px 3px 8px rgba(50, 50, 50, 0.75);
+		}
+
+		.v-label {
+			color: grey;
+		}
+
+
+		&:hover {
+			cursor: hand;
+			cursor: pointer;
+			
+			img {
+				opacity: 1;
+			}
+
+			.v-label {
+				color: black;
+			}
+		}
+	}
+}	

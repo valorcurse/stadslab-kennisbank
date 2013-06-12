@@ -1,7 +1,5 @@
 package kennisbank.project
 
-import kennisbank.checkin.StudentCheckout
-
 class Project {
 
 	String title, summary, course

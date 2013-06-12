@@ -9,12 +9,10 @@ import org.apache.commons.lang.RandomStringUtils
 
 class Checkout {
 
-	// Date dateCreated
 	String title
 	Boolean published = false
 	String description
 	String picturePath
-	// byte[] picture
 	List settings
 
 	static hasMany = [files: AttachedFile, settings: Setting]

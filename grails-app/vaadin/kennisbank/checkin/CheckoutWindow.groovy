@@ -242,7 +242,6 @@ class CheckoutForm extends Panel {
 
 		Image pictureButton = new Image();
 		pictureLayout.addComponent(pictureButton);
-		// pictureButton.setStyleName(Reindeer.BUTTON_LINK);
 		pictureButton.setId("picture");
 		pictureButton.setSource(new ThemeResource("emptyImage.gif"))
 
@@ -254,7 +253,6 @@ class CheckoutForm extends Panel {
 		pictureUpload.addSucceededListener(new Upload.SucceededListener() {
 			public void uploadSucceeded(SucceededEvent event) {
 				checkout.picturePath = uploadHelper.filePath
-				// print "Picture path: " + uploadHelper.uploadPath
 				pictureButton.setSource(new FileResource(new File(checkout.picturePath)))
 				Notification.show("Uploaden geslaagd!", Notification.TYPE_TRAY_NOTIFICATION)	
 			}
@@ -359,6 +357,8 @@ class CheckoutForm extends Panel {
 				settingsTreeTable.setCollapsed(rootAddMaterialButton, false)
 				
 				def equipment
+				
+				// Remove previously added child components if equipment selection changed
 				def removeChildren = {
 					def childrenToDelete = []
 					for (child in equipmentComboBox.children) {
@@ -380,7 +380,6 @@ class CheckoutForm extends Panel {
 					public void valueChange(final ValueChangeEvent equipmentComboEvent) {
 						equipment = Equipment.findByName(equipmentComboEvent.getProperty().getValue())
 
-						// Remove previously added child components if equipment selection changed
 						removeChildren()
 
 						comboBoxContent(equipment, settingsList,
@@ -487,6 +486,7 @@ class CheckoutForm extends Panel {
 						if (!settingsTreeTable.hasChildren(materialComboBox)) {
 							for (def settingUsed : equipment.settingTypes.asList()) {
 								Label newSettingLabel = new Label(settingUsed.name)
+								
 								Item settingItem = materialContainer.addItem(newSettingLabel)
 								materialComboBox.children.add(newSettingLabel)
 								settingItem.getItemProperty("Materiaal").setValue(newSettingLabel)
