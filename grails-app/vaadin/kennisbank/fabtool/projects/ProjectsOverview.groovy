@@ -55,7 +55,8 @@ class ProjectsOverview extends VerticalLayout {
 		existingProjectsPanel.setPrimaryStyleName("embedded-panel")
 		existingProjectsPanel.addStyleName(Runo.PANEL_LIGHT)
 
-		VerticalLayout existingProjectsLayout = new VerticalLayout()
+		GridLayout existingProjectsLayout = new GridLayout()
+		existingProjectsLayout.setColumns(6)
 		existingProjectsPanel.setContent(existingProjectsLayout)
 		existingProjectsLayout.setMargin(true)
 		existingProjectsLayout.setSpacing(true)

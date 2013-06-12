@@ -41,7 +41,6 @@ class ProjectView extends VerticalLayout {
 
 		this.project = Checkout.findByUniqueID(project.uniqueID)
 		hiddenComponents = []
-		updates = new Update()
 		
 		updates.addSystemMessage("Project created")
 		
