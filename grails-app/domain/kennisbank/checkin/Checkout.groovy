@@ -21,7 +21,7 @@ class Checkout {
 
 	static constraints = {
 		picturePath nullable: false
-		title blank: false, nullable: false
+		title blank: false, nullable: false, unique: true
 		settings nullable: false
 		files nullable: false
 		description nullable: false, blank: false
@@ -35,7 +35,7 @@ class Checkout {
 	def afterInsert() {
 		checkin.closed = true
 
-		def rootDir = new File("/var/stadslab/checkouts/" + title)							
+		def rootDir = new File("/var/stadslab/checkouts/" + title)
 		rootDir.mkdirs()
 
 		def pictureSource = new File (picturePath)

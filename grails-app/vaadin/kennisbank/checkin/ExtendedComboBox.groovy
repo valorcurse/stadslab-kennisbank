@@ -1,4 +1,4 @@
-package kennisbank.checkin
+package kennisbank.utils
 
 import com.vaadin.server.ThemeResource
 import com.vaadin.ui.themes.Reindeer
@@ -10,23 +10,25 @@ class ExtendedComboBox extends HorizontalLayout {
 	ComboBox comboBox
 	List children
 
-	ExtendedComboBox(List list, Boolean parent) {
+	ExtendedComboBox(String caption, List list, Boolean removeIcon, Boolean plusIcon) {
 
 		setSpacing(true)
 		setStyleName("extendedcombobox")
 
 		children = []
 
-		comboBox = new ComboBox(null, list)
+		comboBox = new ComboBox(caption, list)
 		addComponent(comboBox)
 
-		if (parent) {
+		if (removeIcon) {
 			removeButton = new Button()
 			addComponent(removeButton)
 			removeButton.setDescription("Klik hier om dit apparaat weg te halen")
 			removeButton.setIcon(new ThemeResource("Red-X.svg"))
 			removeButton.setStyleName(Reindeer.BUTTON_LINK)
+		}
 
+		if (plusIcon) {
 			plusButton = new Button()
 			addComponent(plusButton)
 			plusButton.setDescription("Klik hier om een materiaal aan dit apparaat toe te voegen")

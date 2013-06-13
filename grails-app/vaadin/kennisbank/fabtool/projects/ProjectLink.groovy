@@ -41,12 +41,4 @@ class ProjectLink extends VerticalLayout implements LayoutClickListener {
 		tabs.setSelectedTab(tab)
 	}
 
-	// public void buttonClick(ClickEvent event) {
-	// 	TabSheet tabs = UI.getCurrent().mainView.topTabs
-	// 	Tab tab = tabs.addTab(
-	// 			new ProjectView(checkout, "Project: " + checkout.title)
-	// 	tab.setClosable(true)
-	// 	tabs.setSelectedTab(tab)
-	// }
-
 }
