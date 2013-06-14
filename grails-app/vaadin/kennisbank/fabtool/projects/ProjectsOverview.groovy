@@ -75,7 +75,7 @@ class ProjectsOverview extends VerticalLayout {
 		ExtendedComboBox materialComboBox = new ExtendedComboBox("Materiaal", Material.list()*.name, false, false)
 		searchLayout.addComponent(materialComboBox)
 
-		materialComboBox.comboBox.addValueChangedListener
+		// materialComboBox.comboBox.addValueChangedListener
 
 
 		def material = Material.findByName(materialComboBox.comboBox.getValue())
