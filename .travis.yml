@@ -9,4 +9,4 @@ before_install:
 - sudo apt-get install grails-2.2.0
 
 
-script: grails test-app
+script: grails run-app
