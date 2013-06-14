@@ -1,0 +1,432 @@
+@import url(../reindeer/legacy-styles.css);
+
+.v-app {
+	width: 100%;
+	background: whiteSmoke;
+}
+
+.v-splitpanel-first-container {
+	background: #EEE;
+}
+
+.v-tabsheet-borderless-spacertd {
+	background-image: none;
+}
+
+#top-tabs .v-tabsheet-tabsheetpanel {
+	background-image: url(textures/dark_fish_skin.png);
+	background-repeat: repeat;
+	position: absolute;
+}
+
+#project-tabs .v-tabsheet-tabsheetpanel {
+	background-image: none;
+}
+
+.sidebar-panel {
+	padding-left: 9px;
+	padding-right: 9px;
+}
+
+.sidebar-panel .logo-label {
+	padding-left: 5px;
+	color: #707070;
+	font-size: 15px;
+}
+
+.sidebar-panel .welcome-label {
+	text-align: center;
+}
+
+.sidebar-panel .v-panel-caption-light {
+	margin-bottom: 8px;
+	margin-top: 8px;
+	color: #707070;
+	border-bottom: 1px solid #707070;
+}
+
+.sidebar-panel .v-panel-light {
+	border: solid 1px #000000;
+}
+
+.sidebar-panel .v-scrollable {
+	overflow: hidden;
+}
+
+.sidebar-panel .v-layout.v-margin-left {
+	padding-left: 8px;
+}
+
+.sidebar-panel .v-layout.v-margin-top {
+	padding-top: 8px;
+}
+
+.sidebar-panel .v-layout.v-margin-right {
+	padding-right: 8px;
+}
+
+.sidebar-panel .v-panel-content-novscroll {
+	overflow-y: hidden !important;
+	overflow-x: hidden !important;
+}
+
+.sidebar-panel .v-nativebutton {
+	padding-left: 9px;
+	padding-right: 9px;
+	padding-bottom: 3px;
+	border: 1px solid #AEAEAE;
+	border-bottom-color: #959595;
+	line-height: 17px;
+	font-family: "Lucida Grande", Tahoma, Verdana, Helvetica, sans-serif;
+	background-color: #666666;
+}
+
+.sidebar-panel .v-nativebutton .v-nativebutton-caption {
+	color: #FFFFFF;
+}
+
+.sidebar-panel .v-nativebutton:hover {
+	background-color: #336699;
+}
+
+.sidebar-panel .v-nativebutton:hover .v-nativebutton-caption {
+	color: #FFFFFF;
+}
+
+.sidebar-panel .v-nativebutton:active {
+	-moz-box-shadow: inset 3px 3px 9px #3b3a3b;
+	-webkit-box-shadow: inset 3px 3px 9px #3b3a3b;
+	box-shadow: inset 3px 3px 9px #3b3a3b;
+}
+
+.sidebar-panel .v-nativebutton-caption {
+	color: #707070;
+	font-weight: bold;
+}
+
+.island-panel {
+	background: #F8F8F8;
+	margin: 5px;
+	box-shadow: 1px 1px 3px RGBA(0, 0, 0, 0.15);
+}
+
+.island-panel .v-nativebutton {
+	padding-left: 9px;
+	padding-right: 9px;
+	padding-bottom: 3px;
+	border: 1px solid #AEAEAE;
+	border-bottom-color: #959595;
+	line-height: 17px;
+	font-family: "Lucida Grande", Tahoma, Verdana, Helvetica, sans-serif;
+	background-color: #666666;
+}
+
+.island-panel .v-nativebutton .v-nativebutton-caption {
+	color: #FFFFFF;
+}
+
+.island-panel .v-nativebutton:hover {
+	background-color: #336699;
+}
+
+.island-panel .v-nativebutton:hover .v-nativebutton-caption {
+	color: #FFFFFF;
+}
+
+.island-panel .v-nativebutton:active {
+	-moz-box-shadow: inset 3px 3px 9px #3b3a3b;
+	-webkit-box-shadow: inset 3px 3px 9px #3b3a3b;
+	box-shadow: inset 3px 3px 9px #3b3a3b;
+}
+
+.island-panel .v-nativebutton-caption {
+	color: #707070;
+	font-weight: bold;
+}
+
+.island-panel .embedded-panel .v-nativebutton {
+	padding-left: 9px;
+	padding-right: 9px;
+	padding-bottom: 3px;
+	border: 1px solid #AEAEAE;
+	border-bottom-color: #959595;
+	line-height: 17px;
+	font-family: "Lucida Grande", Tahoma, Verdana, Helvetica, sans-serif;
+	background-color: #666666;
+}
+
+.island-panel .embedded-panel .v-nativebutton .v-nativebutton-caption {
+	color: #FFFFFF;
+}
+
+.island-panel .embedded-panel .v-nativebutton:hover {
+	background-color: #336699;
+}
+
+.island-panel .embedded-panel .v-nativebutton:hover .v-nativebutton-caption {
+	color: #FFFFFF;
+}
+
+.island-panel .embedded-panel .v-nativebutton:active {
+	-moz-box-shadow: inset 3px 3px 9px #3b3a3b;
+	-webkit-box-shadow: inset 3px 3px 9px #3b3a3b;
+	box-shadow: inset 3px 3px 9px #3b3a3b;
+}
+
+.island-panel .embedded-panel .v-nativebutton-caption {
+	color: #707070;
+	font-weight: bold;
+}
+
+.island-panel .embedded-panel .v-panel-caption-light {
+	margin: 8px;
+	color: #707070;
+	border-bottom: 1px solid #707070;
+}
+
+.island-panel .embedded-panel .v-scrollable {
+	overflow: hidden;
+}
+
+.island-panel .embedded-panel .v-layout.v-margin-left {
+	padding-left: 8px;
+}
+
+.island-panel .embedded-panel .v-panel-content-novscroll {
+	overflow-y: hidden !important;
+	overflow-x: hidden !important;
+}
+
+.island-panel .embedded-panel .picture-button {
+	border: 1px solid #AEAEAE;
+}
+
+.island-panel .embedded-panel .picture-button .v-icon {
+	max-width: 227px;
+	max-height: 170px;
+	margin: 0px;
+}
+
+.island-panel .embedded-panel .updates-panel {
+	border-width: 1px;
+	border-style: solid;
+	border-color: gainsboro;
+}
+
+.island-panel .v-panel-caption-light {
+	padding: 8px;
+}
+
+.island-panel .v-scrollable {
+	overflow: hidden;
+}
+
+.island-panel .v-layout.v-margin-top {
+	padding-top: 8px;
+}
+
+.island-panel .v-layout.v-margin-right {
+	padding-right: 8px;
+}
+
+.island-panel .v-layout.v-margin-bottom {
+	padding-bottom: 18px;
+}
+
+.island-panel .v-panel-content-novscroll {
+	overflow-y: hidden !important;
+	overflow-x: hidden !important;
+}
+
+.embedded-panel .v-nativebutton {
+	padding-left: 9px;
+	padding-right: 9px;
+	padding-bottom: 3px;
+	border: 1px solid #AEAEAE;
+	border-bottom-color: #959595;
+	line-height: 17px;
+	font-family: "Lucida Grande", Tahoma, Verdana, Helvetica, sans-serif;
+	background-color: #666666;
+}
+
+.embedded-panel .v-nativebutton .v-nativebutton-caption {
+	color: #FFFFFF;
+}
+
+.embedded-panel .v-nativebutton:hover {
+	background-color: #336699;
+}
+
+.embedded-panel .v-nativebutton:hover .v-nativebutton-caption {
+	color: #FFFFFF;
+}
+
+.embedded-panel .v-nativebutton:active {
+	-moz-box-shadow: inset 3px 3px 9px #3b3a3b;
+	-webkit-box-shadow: inset 3px 3px 9px #3b3a3b;
+	box-shadow: inset 3px 3px 9px #3b3a3b;
+}
+
+.embedded-panel .v-nativebutton-caption {
+	color: #707070;
+	font-weight: bold;
+}
+
+.embedded-panel .v-panel-caption-light {
+	margin: 8px;
+	color: #707070;
+	border-bottom: 1px solid #707070;
+}
+
+.embedded-panel .v-scrollable {
+	overflow: hidden;
+}
+
+.embedded-panel .v-layout.v-margin-left {
+	padding-left: 8px;
+}
+
+.embedded-panel .v-layout.v-margin-top {
+	padding-top: 0px;
+}
+
+.embedded-panel .v-panel-content-novscroll {
+	overflow-y: hidden !important;
+	overflow-x: hidden !important;
+}
+
+.embedded-panel .picture-button {
+	border: 1px solid #AEAEAE;
+}
+
+.embedded-panel .picture-button .v-icon {
+	max-width: 227px;
+	max-height: 170px;
+	margin: 0px;
+}
+
+.embedded-panel .updates-panel {
+	border-width: 1px;
+	border-style: solid;
+	border-color: gainsboro;
+}
+
+.check-in {
+	background-image: url(textures/dark_fish_skin.png);
+	background-repeat: repeat;
+	position: absolute;
+}
+
+.check-in .v-nativebutton {
+	padding-left: 9px;
+	padding-right: 9px;
+	padding-bottom: 3px;
+	border: 1px solid #AEAEAE;
+	border-bottom-color: #959595;
+	line-height: 17px;
+	font-family: "Lucida Grande", Tahoma, Verdana, Helvetica, sans-serif;
+	background-color: #666666;
+}
+
+.check-in .v-nativebutton .v-nativebutton-caption {
+	color: #FFFFFF;
+}
+
+.check-in .v-nativebutton:hover {
+	background-color: #336699;
+}
+
+.check-in .v-nativebutton:hover .v-nativebutton-caption {
+	color: #FFFFFF;
+}
+
+.check-in .v-nativebutton:active {
+	-moz-box-shadow: inset 3px 3px 9px #3b3a3b;
+	-webkit-box-shadow: inset 3px 3px 9px #3b3a3b;
+	box-shadow: inset 3px 3px 9px #3b3a3b;
+}
+
+.check-in .v-nativebutton-caption {
+	color: #707070;
+	font-weight: bold;
+}
+
+.check-out {
+	overflow-x: hidden;
+}
+
+.check-out #picture {
+	width: 260px;
+	height: 170px;
+	margin: 0px;
+	border-style: solid;
+	border-width: 1px;
+}
+
+.check-out #check-button .v-icon {
+	height: 13px;
+	width: 18px;
+	padding-top: 2.5px;
+}
+
+.check-out .error {
+	border: solid 1px red;
+}
+
+.check-out .v-tabsheet {
+	border-bottom: 1px solid #bfbfbf;
+}
+
+.image-button {
+	border: 2px solid #AEAEAE;
+}
+
+.image-button .v-icon {
+	width: 260px;
+	height: 170px;
+	margin: 0px;
+}
+
+.image-button:hover {
+	border: 2px solid #1B9EE0;
+}
+
+.addmaterialbutton .v-icon {
+	height: 10px;
+	width: 10px;
+	padding-bottom: 1.5px;
+}
+
+.extendedcombobox .v-icon {
+	height: 11px;
+	width: 11px;
+	padding-top: 6px;
+}
+
+.projectButton img {
+	width: 195px;
+	height: 128px;
+	margin-bottom: 5px;
+	padding: 4px;
+	opacity: 0.8;
+	-webkit-box-shadow: 3px 3px 8px rgba(50, 50, 50, 0.75);
+	-moz-box-shadow: 3px 3px 8px rgba(50, 50, 50, 0.75);
+	box-shadow: 3px 3px 8px rgba(50, 50, 50, 0.75);
+}
+
+.projectButton .v-label {
+	color: grey;
+}
+
+.projectButton:hover {
+	cursor: hand;
+	cursor: pointer;
+}
+
+.projectButton:hover img {
+	opacity: 1;
+}
+
+.projectButton:hover .v-label {
+	color: black;
+}

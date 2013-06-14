@@ -12,6 +12,7 @@ import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.*
 import kennisbank.*
 import kennisbank.project.*
+import kennisbank.equipment.*
 import kennisbank.checkin.Checkout
 import kennisbank.utils.*
 
@@ -68,16 +69,21 @@ class ProjectsOverview extends VerticalLayout {
 		TextField searchTextField = new TextField("Zoek")
 		searchLayout.addComponent(searchTextField)
 
-		ExtendedComboBox equipmentComboBox = new ExtendedComboBox("Apparaat", [], false, true)
+		ExtendedComboBox equipmentComboBox = new ExtendedComboBox("Apparaat", Equipment.list()*.name, false, true)
 		searchLayout.addComponent(equipmentComboBox)
 
-		ExtendedComboBox materialComboBox = new ExtendedComboBox("Materiaal", [], false, false)
+		ExtendedComboBox materialComboBox = new ExtendedComboBox("Materiaal", Material.list()*.name, false, false)
 		searchLayout.addComponent(materialComboBox)
 
-		ExtendedComboBox materialTypeComboBox = new ExtendedComboBox("Material type", [], false, true)
+		materialComboBox.comboBox.addValueChangedListener
+
+
+		def material = Material.findByName(materialComboBox.comboBox.getValue())
+		ExtendedComboBox materialTypeComboBox = new ExtendedComboBox("Materiaal type", material*.materialType.name, false, true)
 		searchLayout.addComponent(materialTypeComboBox)
 
-		ExtendedComboBox 
+		ExtendedComboBox settingTypeComboBox = new ExtendedComboBox("Instelling", [], false, false)
+		searchLayout.addComponent(settingTypeComboBox)
 
 		// ------------------------------------------------------- Content -------------------------------------------------------
 
