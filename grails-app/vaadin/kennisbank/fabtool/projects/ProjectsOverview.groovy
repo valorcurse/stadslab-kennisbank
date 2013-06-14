@@ -10,6 +10,7 @@ import com.vaadin.ui.Field.ValueChangeEvent
 import com.vaadin.ui.themes.Reindeer
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.*
+import com.vaadin.shared.ui.combobox.FilteringMode
 import kennisbank.*
 import kennisbank.project.*
 import kennisbank.equipment.*
@@ -71,18 +72,22 @@ class ProjectsOverview extends VerticalLayout {
 
 		ExtendedComboBox equipmentComboBox = new ExtendedComboBox("Apparaat", Equipment.list()*.name, false, true)
 		searchLayout.addComponent(equipmentComboBox)
+		// equipmentComboBox.comboBox
 
-		ExtendedComboBox materialComboBox = new ExtendedComboBox("Materiaal", Material.list()*.name, false, false)
+		def materials = [:]
+
+		Material.list().each() {
+			materials[(it)] = it.name
+			it.materialTypes.each { 	
+				materials[(it)] = " - " + it.name
+			}
+		}
+
+		ExtendedComboBox materialComboBox = new ExtendedComboBox("Materiaal", materials.values().toList() , false, true)
 		searchLayout.addComponent(materialComboBox)
+		materialComboBox.comboBox.setFilteringMode(FilteringMode.CONTAINS)
 
-		// materialComboBox.comboBox.addValueChangedListener
-
-
-		// def material = Material.findByName(materialComboBox.comboBox.getValue())
-		ExtendedComboBox materialTypeComboBox = new ExtendedComboBox("Materiaal type", [], false, true)
-		searchLayout.addComponent(materialTypeComboBox)
-
-		ExtendedComboBox settingTypeComboBox = new ExtendedComboBox("Instelling", [], false, false)
+		ExtendedComboBox settingTypeComboBox = new ExtendedComboBox("Instelling", SettingType.list()*.name, false, true)
 		searchLayout.addComponent(settingTypeComboBox)
 
 		// ------------------------------------------------------- Content -------------------------------------------------------
