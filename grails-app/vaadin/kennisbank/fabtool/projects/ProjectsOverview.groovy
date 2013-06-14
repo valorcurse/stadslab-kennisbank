@@ -21,6 +21,7 @@ import kennisbank.utils.*
 class ProjectsOverview extends VerticalLayout {
 
 	String uriFragment
+	GridLayout existingProjectsLayout
 
 	def hiddenComponents
 
@@ -72,20 +73,67 @@ class ProjectsOverview extends VerticalLayout {
 
 		ExtendedComboBox equipmentComboBox = new ExtendedComboBox("Apparaat", Equipment.list()*.name, false, true)
 		searchLayout.addComponent(equipmentComboBox)
-		// equipmentComboBox.comboBox
+		// equipmentComboBox.plusButton.addClickListener(new Button.ClickListener() {
+		// 			@Override
+		// 			public void buttonClick(ClickEvent equipmentButtonEvent) {
+		// 				existingProjectsLayout.removeComponents()
+
+		// 				def checkouts = Checkout.findAll {
+		// 					settings.settings.equipment.name == equipmentComboBox.comboBox.getValue()
+		// 				}
+
+
+		// 				for (def checkout : checkouts) {
+		// 					existingProjectsLayout.addComponent(new ProjectLink(checkout))
+		// 				}
+		// 			}
+		// 		})
 
 		def materials = [:]
 
 		Material.list().each() {
-			materials[(it)] = it.name
+			materials[(it.name)] = it
 			it.materialTypes.each { 	
-				materials[(it)] = " - " + it.name
+				materials[(" - " + it.name)] = it
 			}
 		}
 
-		ExtendedComboBox materialComboBox = new ExtendedComboBox("Materiaal", materials.values().toList() , false, true)
+		ExtendedComboBox materialComboBox = new ExtendedComboBox("Materiaal", materials.keySet().toList() , false, true)
 		searchLayout.addComponent(materialComboBox)
 		materialComboBox.comboBox.setFilteringMode(FilteringMode.CONTAINS)
+		materialComboBox.plusButton.addClickListener(new Button.ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent equipmentButtonEvent) {
+				if (materialComboBox.comboBox.getValue() != null) {
+					existingProjectsLayout.removeAllComponents()
+
+					Checkout.withTransaction {
+						
+						def value = materials.get(materialComboBox.comboBox.getValue()).name
+
+						def checkouts = Checkout.createCriteria().listDistinct {
+							settings {
+								or {
+									materialType {
+										eq("name", value)
+									}
+									materialType {
+										material {
+											eq("name", value)
+										}
+									}
+								}
+							}
+						}
+
+
+						for (def checkout : checkouts) {
+							existingProjectsLayout.addComponent(new ProjectLink(checkout))
+						}
+					}
+				}
+			}
+		})
 
 		ExtendedComboBox settingTypeComboBox = new ExtendedComboBox("Instelling", SettingType.list()*.name, false, true)
 		searchLayout.addComponent(settingTypeComboBox)
@@ -95,7 +143,7 @@ class ProjectsOverview extends VerticalLayout {
 		VerticalLayout contentLayout = new VerticalLayout()
 		mainLayout.addComponent(contentLayout)
 
-		GridLayout existingProjectsLayout = new GridLayout()
+		existingProjectsLayout = new GridLayout()
 		contentLayout.addComponent(existingProjectsLayout)
 		existingProjectsLayout.setColumns(6)
 		existingProjectsLayout.setMargin(true)
