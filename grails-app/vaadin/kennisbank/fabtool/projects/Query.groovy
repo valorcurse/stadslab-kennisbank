@@ -1,22 +1,30 @@
-package kennisbank.fabtool.projecs
+package kennisbank.fabtool.projects
+
+import kennisbank.checkin.Checkout
 
 class Query {
 
-	enum QueryType {
-		EQUIPMENT, MATERIAL, SETTING
+	static enum QueryType {
+		EQUIPMENT("Apparaat"), 
+		MATERIAL("Materiaal"), 
+		SETTING("Instelling")
+
+		String caption
+
+		QueryType(String caption) {
+			this.caption = caption
+		}
 	}
 
 	QueryType queryType
-	List checkouts
 	String value
 
-	Query(QueryType queryType, List checkouts, String value) {
+	Query(QueryType queryType, String value) {
 		this.queryType = queryType
-		this.checkouts = checkouts
 		this.value = value
 	}
 
-	List executeQuery() {
+	List executeQuery(List checkouts) {
 		def results = []
 
 		switch (queryType) {
@@ -25,14 +33,17 @@ class Query {
 
 			case QueryType.MATERIAL:
 				results = Checkout.createCriteria().listDistinct {
-					settings {
-						or {
-							materialType {
-								eq("name", value)
-							}
-							materialType {
-								material {
+					and {
+						'in'("id", checkouts*.id)
+						settings {
+							or {
+								materialType {
 									eq("name", value)
+								}
+								materialType {
+									material {
+										eq("name", value)
+									}
 								}
 							}
 						}

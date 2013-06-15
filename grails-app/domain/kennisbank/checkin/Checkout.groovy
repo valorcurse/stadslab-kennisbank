@@ -10,7 +10,6 @@ import org.apache.commons.lang.RandomStringUtils
 class Checkout {
 
 	String title
-	Boolean published = false
 	String description
 	String picturePath
 	List settings

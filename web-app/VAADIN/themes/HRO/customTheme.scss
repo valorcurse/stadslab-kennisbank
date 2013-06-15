@@ -316,6 +316,27 @@
 		}
 	}
 
+	.projectQueryTag {
+		
+		border: 1px solid #AEAEAE;
+		border-bottom-color: #959595;
+		
+		background-color: #666666;
+		
+		.v-label {
+			font-weight: bold;
+			font-family: "Lucida Grande",Tahoma,Verdana,Helvetica,sans-serif;
+			color: #FFFFFF;
+			padding-left: 3px;
+		}
+
+		.v-icon {
+			height: 11px;
+			width: 11px;
+			padding-top: 2px;
+		}
+	}
+
 	.projectButton {
 		img {
 			width: 195px;

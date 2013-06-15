@@ -5,6 +5,7 @@ import com.vaadin.event.FieldEvents.TextChangeEvent
 import com.vaadin.event.FieldEvents.TextChangeListener
 import com.vaadin.shared.ui.label.ContentMode
 import com.vaadin.server.ExternalResource
+import com.vaadin.server.ThemeResource
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Field.ValueChangeEvent
 import com.vaadin.ui.themes.Reindeer
@@ -12,7 +13,7 @@ import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.*
 import com.vaadin.shared.ui.combobox.FilteringMode
 import kennisbank.*
-import kennisbank.project.*
+import kennisbank.projects.*
 import kennisbank.equipment.*
 import kennisbank.checkin.Checkout
 import kennisbank.utils.*
@@ -20,8 +21,69 @@ import kennisbank.utils.*
 
 class ProjectsOverview extends VerticalLayout {
 
+	class Queries {
+		def queries
+
+		Queries() {
+			queries = [:]
+		}
+
+		void add(Query query) {
+			QueryTag newTag = new QueryTag(query)
+			queries[query] = newTag
+			queriesLayout.addComponent(newTag)
+			executeQueries()
+
+			newTag.removeButton.addClickListener(new Button.ClickListener() {
+				@Override
+				public void buttonClick(ClickEvent event) {
+					remove(query)
+					removeQueryTag(newTag)
+				}
+			})
+		}
+
+		void remove(Query query) {
+			queries.remove(query)
+			executeQueries()
+		}
+
+		List executeQueries() {
+			def checkouts = Checkout.createCriteria().list(max: 20) { }
+			queries.keySet().toList().each {
+				checkouts = it.executeQuery(checkouts)
+			}
+
+			updateProjectsList(checkouts)
+		}
+	}
+
+	class QueryTag extends HorizontalLayout {
+
+		Button removeButton
+		Query query
+
+		QueryTag(Query query) {
+			setStyleName("projectQueryTag")
+			setSpacing(true)
+
+			this.query = query
+
+			addComponent(new Label(query.queryType.caption + ": " + query.value))
+			
+			removeButton = new Button()
+			addComponent(removeButton)
+			removeButton.setIcon(new ThemeResource("Red-X.svg"))
+			removeButton.setStyleName(Reindeer.BUTTON_LINK)
+
+			
+		}
+	}
+
 	String uriFragment
 	GridLayout existingProjectsLayout
+	HorizontalLayout queriesLayout
+	Queries queries
 
 	def hiddenComponents
 
@@ -38,6 +100,8 @@ class ProjectsOverview extends VerticalLayout {
 
 		uriFragment = "#!/project"
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
+
+		queries = new Queries()
 
 		Panel panel = new Panel()
 		panel.setPrimaryStyleName("island-panel")
@@ -90,7 +154,6 @@ class ProjectsOverview extends VerticalLayout {
 		// 		})
 
 		def materials = [:]
-
 		Material.list().each() {
 			materials[(it.name)] = it
 			it.materialTypes.each { 	
@@ -105,32 +168,10 @@ class ProjectsOverview extends VerticalLayout {
 			@Override
 			public void buttonClick(ClickEvent equipmentButtonEvent) {
 				if (materialComboBox.comboBox.getValue() != null) {
-					existingProjectsLayout.removeAllComponents()
-
-					Checkout.withTransaction {
 						
-						def value = materials.get(materialComboBox.comboBox.getValue()).name
+					def value = materials.get(materialComboBox.comboBox.getValue()).name
 
-						def checkouts = Checkout.createCriteria().listDistinct {
-							settings {
-								or {
-									materialType {
-										eq("name", value)
-									}
-									materialType {
-										material {
-											eq("name", value)
-										}
-									}
-								}
-							}
-						}
-
-
-						for (def checkout : checkouts) {
-							existingProjectsLayout.addComponent(new ProjectLink(checkout))
-						}
-					}
+					queries.add(new Query(Query.QueryType.MATERIAL, value))
 				}
 			}
 		})
@@ -143,6 +184,11 @@ class ProjectsOverview extends VerticalLayout {
 		VerticalLayout contentLayout = new VerticalLayout()
 		mainLayout.addComponent(contentLayout)
 
+		queriesLayout = new HorizontalLayout()
+		contentLayout.addComponent(queriesLayout)
+		queriesLayout.setSpacing(true)
+		queriesLayout.setMargin(true)
+
 		existingProjectsLayout = new GridLayout()
 		contentLayout.addComponent(existingProjectsLayout)
 		existingProjectsLayout.setColumns(6)
@@ -150,9 +196,7 @@ class ProjectsOverview extends VerticalLayout {
 		existingProjectsLayout.setSpacing(true)
 		existingProjectsLayout.setSizeUndefined()
 
-		for (def checkout : Checkout.list()) {
-			if (checkout.published) existingProjectsLayout.addComponent(new ProjectLink(checkout))
-		}
+		updateProjectsList(Checkout.list())
 
 		if(UI.getCurrent().loggedIn) {
 			revealHiddenComponents()
@@ -160,6 +204,18 @@ class ProjectsOverview extends VerticalLayout {
 		else {
 			hideRevealedComponents()
 		}
+	}
+
+	void updateProjectsList(List checkouts) {
+		existingProjectsLayout.removeAllComponents()
+
+		for (checkout in checkouts) {
+			existingProjectsLayout.addComponent(new ProjectLink(checkout))
+		}
+	}
+
+	void removeQueryTag(QueryTag tag) {
+		queriesLayout.removeComponent(tag)		
 	}
 
 	void revealHiddenComponents() {
