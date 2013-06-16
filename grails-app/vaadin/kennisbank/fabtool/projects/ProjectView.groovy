@@ -31,7 +31,6 @@ class ProjectView extends VerticalLayout {
 	String uriFragment, oldPicturePath
 	Checkout project
 	def hiddenComponents
-	Update updates
 
 	String tabName() {
 		return uriFragment
@@ -41,8 +40,6 @@ class ProjectView extends VerticalLayout {
 
 		this.project = Checkout.findByUniqueID(project.uniqueID)
 		hiddenComponents = []
-		
-		updates.addSystemMessage("Project created")
 		
 		uriFragment = "#!/project/" + project.uniqueID
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
