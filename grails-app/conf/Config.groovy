@@ -74,22 +74,9 @@ log4j = {
     // Example of changing the log pattern for the default console appender:
     //
     appenders {
-      environments {
-          development {
-              console name: 'stdout', layout: pattern(conversionPattern: '%-5p %d{HH:mm:ss,SSS} %c{2} %m%n')
-          }
-
-          production {
-              appender new org.apache.log4j.DailyRollingFileAppender(
-                      name: 'file',
-                      datePattern: "'.'yyyy-MM-dd",
-                      file: System.properties['catalina.base'] + "/logs/mylog-web.log",
-                      layout: pattern(conversionPattern: '%d [%t] %-5p %c{2} %x - %m%n')
-              )
-              rollingFile name: "stacktrace", maxFileSize: 1024 * 10,
-                      file: System.properties['catalina.base'] + "/logs/mylog-web-stacktrace.log"
-          }
-      }
+    //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+      // rollingFile name: "stacktrace", maxFileSize: 1024, file: "/var/logs/piws-stacktrace.log"
+      'null' name:'stacktrace'
     }
 
 
