@@ -369,12 +369,33 @@
 		}
 	}
 
-	.addTextQueryButton {
+	.searchSettingLayout {
+		.v-horizontallayout {
+			left: 20px;
+		}
+		
+		.v-label {
+			margin-top: 4px;
+		}
+
+		.v-icon {
+			height: 11px;
+			width: 11px;
+			padding-top: 6px;
+			padding-left: 7px;
+		}
+	}
+
+	.searchTextLayout {
 		.v-icon {
 			height: 11px;
 			width: 11px;
 			padding-top: 20px;
 			padding-left: 7px;
+		}
+
+		.v-textfield {
+			width: 175px;
 		}
 	}
 }	

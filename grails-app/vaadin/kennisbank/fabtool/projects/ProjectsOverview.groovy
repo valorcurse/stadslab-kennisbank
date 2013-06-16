@@ -69,7 +69,8 @@ class ProjectsOverview extends VerticalLayout {
 
 			this.query = query
 
-			addComponent(new Label(query.queryType.caption + ": " + (query.extraValue ? query.value + " - " + query.extraValue : query.value)))
+			addComponent(new Label(query.queryType.caption + ": " + 
+				(query.extraValue ? query.value + " - " + query.extraValue : query.value)))
 			
 			removeButton = new Button()
 			addComponent(removeButton)
@@ -131,6 +132,8 @@ class ProjectsOverview extends VerticalLayout {
 
 		HorizontalLayout searchTextLayout = new HorizontalLayout()
 		searchLayout.addComponent(searchTextLayout)
+		searchTextLayout.setStyleName("searchTextLayout")
+
 		TextField searchTextField = new TextField("Zoek")
 		searchTextLayout.addComponent(searchTextField)
 
@@ -203,17 +206,29 @@ class ProjectsOverview extends VerticalLayout {
 			settingTypes[(it.name)] = it
 		}
 
-		HorizontalLayout searchSettingLayout = new HorizontalLayout()
+		VerticalLayout searchSettingLayout = new VerticalLayout()
 		searchLayout.addComponent(searchSettingLayout)
+		searchSettingLayout.setSpacing(true)
+		searchSettingLayout.setStyleName("searchSettingLayout")
 
 		ComboBox settingTypeComboBox = new ComboBox("Instelling", settingTypes.keySet().toList())
 		searchSettingLayout.addComponent(settingTypeComboBox)
 
+		HorizontalLayout searchSettingBottomLayout = new HorizontalLayout()
+		searchSettingLayout.addComponent(searchSettingBottomLayout)
+		searchSettingLayout.setComponentAlignment(searchSettingBottomLayout, Alignment.MIDDLE_RIGHT)
+		// searchSettingBottomLayout.setWidth("100%")
+		searchSettingBottomLayout.setSpacing(true)
+
+		Label settingValueLabel = new Label("Waarde")
+		searchSettingBottomLayout.addComponent(settingValueLabel)
+
 		TextField settingValueTextField = new TextField()
-		searchSettingLayout.addComponent(settingValueTextField)
+		searchSettingBottomLayout.addComponent(settingValueTextField)
+		settingValueTextField.setWidth("50px")
 
 		Button addSettingTypeQueryButton = new Button()
-		searchSettingLayout.addComponent(addSettingTypeQueryButton)
+		searchSettingBottomLayout.addComponent(addSettingTypeQueryButton)
 		addSettingTypeQueryButton.setDescription("Klik hier om een tekst query term to te voegen")
 		addSettingTypeQueryButton.setIcon(new ThemeResource("plus.png"))
 		addSettingTypeQueryButton.setStyleName(Reindeer.BUTTON_LINK)
@@ -223,7 +238,8 @@ class ProjectsOverview extends VerticalLayout {
 			@Override
 			public void buttonClick(ClickEvent equipmentButtonEvent) {
 				if (settingTypeComboBox.getValue() != null) {
-					queries.add(new Query(Query.QueryType.SETTING, settingTypes.get(settingTypeComboBox.getValue()).name, settingValueTextField.getValue()?.trim() ? settingValueTextField.getValue() : null))
+					queries.add(new Query(Query.QueryType.SETTING, settingTypes.get(settingTypeComboBox.getValue()).name, 
+						settingValueTextField.getValue()?.trim() ? settingValueTextField.getValue() : null))
 				}
 			}
 		})
