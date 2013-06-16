@@ -69,7 +69,7 @@ class ProjectsOverview extends VerticalLayout {
 
 			this.query = query
 
-			addComponent(new Label(query.queryType.caption + ": " + query.value))
+			addComponent(new Label(query.queryType.caption + ": " + (query.extraValue ? query.value + " - " + query.extraValue : query.value)))
 			
 			removeButton = new Button()
 			addComponent(removeButton)
@@ -81,8 +81,7 @@ class ProjectsOverview extends VerticalLayout {
 	}
 
 	String uriFragment
-	GridLayout existingProjectsLayout
-	HorizontalLayout queriesLayout
+	GridLayout projectsLayout, queriesLayout
 	Queries queries
 
 	def hiddenComponents
@@ -118,45 +117,66 @@ class ProjectsOverview extends VerticalLayout {
 		layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
 		titleLabel.setWidth("100%")
 
-		
-
-		// ------------------------------------------------------- Projects -------------------------------------------------------
-		
 		HorizontalLayout mainLayout = new HorizontalLayout()
 		layout.addComponent(mainLayout)
 
-		// ------------------------------------------------------- Search -------------------------------------------------------
+		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Search >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 		VerticalLayout searchLayout = new VerticalLayout()
 		mainLayout.addComponent(searchLayout)
 		searchLayout.setMargin(true)
 		searchLayout.setSpacing(true)
 
+		// ------------------------------------------------------- Text -------------------------------------------------------
+
+		HorizontalLayout searchTextLayout = new HorizontalLayout()
+		searchLayout.addComponent(searchTextLayout)
 		TextField searchTextField = new TextField("Zoek")
-		searchLayout.addComponent(searchTextField)
+		searchTextLayout.addComponent(searchTextField)
 
-		ExtendedComboBox equipmentComboBox = new ExtendedComboBox("Apparaat", Equipment.list()*.name, false, true)
+		Button addTextQueryButton = new Button()
+		searchTextLayout.addComponent(addTextQueryButton)
+		addTextQueryButton.setDescription("Klik hier om een tekst query term to te voegen")
+		addTextQueryButton.setIcon(new ThemeResource("plus.png"))
+		addTextQueryButton.setStyleName(Reindeer.BUTTON_LINK)
+		addTextQueryButton.addStyleName("addTextQueryButton")
+
+		addTextQueryButton.addClickListener(new Button.ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent equipmentButtonEvent) {
+				if (searchTextField.getValue() != "") {
+					queries.add(new Query(Query.QueryType.TEXT, searchTextField.getValue()))
+				}
+			}
+		})
+
+		// ------------------------------------------------------- Equipment -------------------------------------------------------
+
+		def equipment = [:]
+		Equipment.list().each() {
+			equipment[(it.name)] = it
+		}
+
+		ExtendedComboBox equipmentComboBox = new ExtendedComboBox("Apparaat", equipment.keySet().toList(), false, true)
 		searchLayout.addComponent(equipmentComboBox)
-		// equipmentComboBox.plusButton.addClickListener(new Button.ClickListener() {
-		// 			@Override
-		// 			public void buttonClick(ClickEvent equipmentButtonEvent) {
-		// 				existingProjectsLayout.removeComponents()
+		equipmentComboBox.plusButton.addClickListener(new Button.ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent equipmentButtonEvent) {
+				if (equipmentComboBox.comboBox.getValue() != null) {
+				
+					def value = equipment.get(equipmentComboBox.comboBox.getValue()).name
 
-		// 				def checkouts = Checkout.findAll {
-		// 					settings.settings.equipment.name == equipmentComboBox.comboBox.getValue()
-		// 				}
+					queries.add(new Query(Query.QueryType.EQUIPMENT, value))
+				}
+			}
+		})
 
-
-		// 				for (def checkout : checkouts) {
-		// 					existingProjectsLayout.addComponent(new ProjectLink(checkout))
-		// 				}
-		// 			}
-		// 		})
+		// ------------------------------------------------------- Materials -------------------------------------------------------
 
 		def materials = [:]
 		Material.list().each() {
 			materials[(it.name)] = it
-			it.materialTypes.each { 	
+			it.materialTypes.each {
 				materials[(" - " + it.name)] = it
 			}
 		}
@@ -176,25 +196,61 @@ class ProjectsOverview extends VerticalLayout {
 			}
 		})
 
-		ExtendedComboBox settingTypeComboBox = new ExtendedComboBox("Instelling", SettingType.list()*.name, false, true)
-		searchLayout.addComponent(settingTypeComboBox)
+		// ------------------------------------------------------- Setting Types -------------------------------------------------------
 
-		// ------------------------------------------------------- Content -------------------------------------------------------
+		def settingTypes = [:]
+		SettingType.list().each() {
+			settingTypes[(it.name)] = it
+		}
+
+		HorizontalLayout searchSettingLayout = new HorizontalLayout()
+		searchLayout.addComponent(searchSettingLayout)
+
+		ComboBox settingTypeComboBox = new ComboBox("Instelling", settingTypes.keySet().toList())
+		searchSettingLayout.addComponent(settingTypeComboBox)
+
+		TextField settingValueTextField = new TextField()
+		searchSettingLayout.addComponent(settingValueTextField)
+
+		Button addSettingTypeQueryButton = new Button()
+		searchSettingLayout.addComponent(addSettingTypeQueryButton)
+		addSettingTypeQueryButton.setDescription("Klik hier om een tekst query term to te voegen")
+		addSettingTypeQueryButton.setIcon(new ThemeResource("plus.png"))
+		addSettingTypeQueryButton.setStyleName(Reindeer.BUTTON_LINK)
+		addSettingTypeQueryButton.addStyleName("addTextQueryButton")
+
+		addSettingTypeQueryButton.addClickListener(new Button.ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent equipmentButtonEvent) {
+				if (settingTypeComboBox.getValue() != null) {
+					queries.add(new Query(Query.QueryType.SETTING, settingTypes.get(settingTypeComboBox.getValue()).name, settingValueTextField.getValue()?.trim() ? settingValueTextField.getValue() : null))
+				}
+			}
+		})
+
+
+
+		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Content >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 		VerticalLayout contentLayout = new VerticalLayout()
 		mainLayout.addComponent(contentLayout)
 
-		queriesLayout = new HorizontalLayout()
+		// ------------------------------------------------------- Queries -------------------------------------------------------
+
+		queriesLayout = new GridLayout()
 		contentLayout.addComponent(queriesLayout)
 		queriesLayout.setSpacing(true)
 		queriesLayout.setMargin(true)
+		queriesLayout.setColumns(8)
 
-		existingProjectsLayout = new GridLayout()
-		contentLayout.addComponent(existingProjectsLayout)
-		existingProjectsLayout.setColumns(6)
-		existingProjectsLayout.setMargin(true)
-		existingProjectsLayout.setSpacing(true)
-		existingProjectsLayout.setSizeUndefined()
+		// ------------------------------------------------------- Projects -------------------------------------------------------
+
+		projectsLayout = new GridLayout()
+		contentLayout.addComponent(projectsLayout)
+		projectsLayout.setColumns(6)
+		projectsLayout.setMargin(true)
+		projectsLayout.setSpacing(true)
+		projectsLayout.setSizeUndefined()
 
 		updateProjectsList(Checkout.list())
 
@@ -207,10 +263,10 @@ class ProjectsOverview extends VerticalLayout {
 	}
 
 	void updateProjectsList(List checkouts) {
-		existingProjectsLayout.removeAllComponents()
+		projectsLayout.removeAllComponents()
 
 		for (checkout in checkouts) {
-			existingProjectsLayout.addComponent(new ProjectLink(checkout))
+			projectsLayout.addComponent(new ProjectLink(checkout))
 		}
 	}
 

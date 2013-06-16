@@ -7,7 +7,8 @@ class Query {
 	static enum QueryType {
 		EQUIPMENT("Apparaat"), 
 		MATERIAL("Materiaal"), 
-		SETTING("Instelling")
+		SETTING("Instelling"),
+		TEXT("Tekst")
 
 		String caption
 
@@ -17,11 +18,12 @@ class Query {
 	}
 
 	QueryType queryType
-	String value
+	String value, extraValue
 
-	Query(QueryType queryType, String value) {
+	Query(QueryType queryType, String value, String extraValue = null) {
 		this.queryType = queryType
 		this.value = value
+		this.extraValue = extraValue
 	}
 
 	List executeQuery(List checkouts) {
@@ -29,6 +31,16 @@ class Query {
 
 		switch (queryType) {
 			case QueryType.EQUIPMENT:
+				results = Checkout.createCriteria().listDistinct {
+					and {
+						'in'("id", checkouts*.id)
+						settings {
+							equipment {
+								eq("name", value)
+							}
+						}
+					}
+				}
 				break
 
 			case QueryType.MATERIAL:
@@ -52,6 +64,41 @@ class Query {
 				break
 
 			case QueryType.SETTING:
+				results = Checkout.createCriteria().listDistinct {
+					and {
+						'in'("id", checkouts*.id)
+						settings {
+							if (extraValue == null) {
+								print "extraValue is null"
+								settingType {
+									eq("name", value)
+								}
+							}
+							else {
+								print "extraValue is not null"
+
+								and {
+									settingType {
+										eq("name", value)
+									}	
+									eq("value", extraValue)
+								}
+							}
+						}
+					}
+				}
+				break
+
+			case QueryType.TEXT:
+				results = Checkout.createCriteria().listDistinct {
+					and {
+						'in'("id", checkouts*.id)
+						or {
+							ilike("title", "%" + value + "%")
+							ilike("description", "%" + value + "%")
+						}
+					}
+				}
 				break
 		}
 
