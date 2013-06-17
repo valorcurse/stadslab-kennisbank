@@ -24,8 +24,13 @@ import kennisbank.equipment.Equipment
 
 class StudentCheckinWindow extends CheckinWindow {
 
+	Boolean checkinSuccessful
+	Checkin savedCheckin
+
 	@Override
 	Layout windowContent() {
+		checkinSuccessful = null
+
 		VerticalLayout layout = new VerticalLayout()
 		layout.setSpacing(true)
 
@@ -108,20 +113,6 @@ class StudentCheckinWindow extends CheckinWindow {
 			@Override
 			public void buttonClick(ClickEvent event) {
 
-				//EmailService emailService = new EmailService()
-
-				//emailService.sendEmail()
-
-				/*StudentCheckout.withTransaction {
-					StudentCheckout checkout = new StudentCheckout()
-					if(checkout.save()) {
-						print checkout.uniqueID
-					}
-					else { print "Something, somewhere went terribly wrong."}
-					print StudentCheckout.findByUniqueID(checkout.uniqueID).toString()
-				}
-				*/
-
 				// Set components back to default, i.e. no error messages
 				warningsLabel.setValue(warningsDefaultMessage)
 				equipmentLabel.setComponentError(null)
@@ -149,6 +140,7 @@ class StudentCheckinWindow extends CheckinWindow {
 					}	
 					
 					if (checkin.save()) {
+						checkinSuccessful = checkin
 						close()
 						Notification.show("In-checken geslaagd!")
 					}

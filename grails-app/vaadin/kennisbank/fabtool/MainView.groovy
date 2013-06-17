@@ -311,16 +311,16 @@ loginPanelLayout.addComponent(registerButton)
 
 					print Checkout.list().toString()
 
-					Checkout currentCheckout = Checkout.findByUniqueID(urlParameters[1])
+					Checkout currentCheckout = Checkout.findByTitle(urlParameters[1].replace("-", " "))
 
 					if (currentCheckout != null) {
-						print "Unique ID " + currentCheckout.uniqueID + " exists!"
+						// print "Unique ID " + currentCheckout.uniqueID + " exists!"
 						Project.withTransaction {
 							
 							//currentCheckout.project = new Project(title: currentCheckout.uniqueID)
 							//if (currentCheckout.project.save(flush: true)) {
 								ProjectView projectTab = new ProjectView(currentCheckout)
-								Tab tab = topTabs.addTab(projectTab, "Project: "+ currentCheckout.uniqueID)
+								Tab tab = topTabs.addTab(projectTab, "Project: "+ currentCheckout.title.replace(" ", "-"))
 								tab.setClosable(true)
 								topTabs.setSelectedTab(tab)
 							//}

@@ -263,7 +263,7 @@ class ProjectsOverview extends VerticalLayout {
 
 		projectsLayout = new GridLayout()
 		contentLayout.addComponent(projectsLayout)
-		projectsLayout.setColumns(6)
+		projectsLayout.setColumns(5)
 		projectsLayout.setMargin(true)
 		projectsLayout.setSpacing(true)
 		projectsLayout.setSizeUndefined()

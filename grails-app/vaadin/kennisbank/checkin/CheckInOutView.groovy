@@ -5,6 +5,7 @@ import com.vaadin.annotations.*
 import com.vaadin.server.VaadinRequest
 import com.vaadin.data.util.IndexedContainer
 import com.vaadin.ui.Button.ClickEvent
+import com.vaadin.ui.Window.CloseEvent
 import com.vaadin.data.Item
 
 
@@ -27,11 +28,46 @@ class CheckInOutView extends UI {
 
 		HorizontalLayout centerPanelLayout = new HorizontalLayout()
 		centerPanel.setContent(centerPanelLayout)
-		// centerPanelLayout.setSizeFull()
 		centerPanelLayout.setSpacing(true)
 		centerPanelLayout.setMargin(true)
 
-		// ####################################################### Checkin #######################################################
+		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Container >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+		IndexedContainer container = new IndexedContainer()
+		container.addContainerProperty("Naam", String.class, "")
+		container.addContainerProperty("E-mail", String.class, "")
+		container.addContainerProperty("Datum", String.class, "")
+		container.addContainerProperty("", Button.class, "")
+
+		def updateCheckinList
+		updateCheckinList =	 {
+			container.removeAllItems()
+			
+			for (def checkin : Checkin.list()) {
+				if (!checkin.closed) {
+					Item item = container.addItem(checkin)
+					item.getItemProperty("Naam").setValue(checkin.firstName + " " + checkin.lastName)
+					item.getItemProperty("E-mail").setValue(checkin.email)
+					item.getItemProperty("Datum").setValue(checkin.dateCreated.toString())
+					item.getItemProperty("").setValue(new Button("Uit checken", new Button.ClickListener() {
+						public void buttonClick(ClickEvent event) { 
+							CheckoutWindow window = new CheckoutWindow(checkin)
+							UI.getCurrent().addWindow(window)
+
+							window.addCloseListener(new Window.CloseListener() {
+					            public void windowClose(CloseEvent e) {
+									if (window.checkoutSuccessful) {
+										updateCheckinList()
+									}
+								}
+							})
+						} 
+					}))
+				}
+			}
+		}
+
+		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Checkin >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 		VerticalLayout leftLayout = new VerticalLayout()
 		centerPanelLayout.addComponent(leftLayout)
@@ -47,10 +83,18 @@ class CheckInOutView extends UI {
 			public void buttonClick(ClickEvent event) { 
 				StudentCheckinWindow window = new StudentCheckinWindow()
 				UI.getCurrent().addWindow(window)
-			}
-			})
 
-		// ####################################################### Checkout #######################################################
+				window.addCloseListener(new Window.CloseListener() {
+		            public void windowClose(CloseEvent e) {
+						if (window.checkinSuccessful) {
+							updateCheckinList()
+						}
+					}
+				})
+			}
+		})
+
+		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Checkout >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 		VerticalLayout rightLayout = new VerticalLayout()
 		centerPanelLayout.addComponent(rightLayout)
@@ -60,31 +104,9 @@ class CheckInOutView extends UI {
 		rightLayout.addComponent(checkoutTable)
 		rightLayout.setComponentAlignment(checkoutTable, Alignment.TOP_CENTER)
 		checkoutTable.setPageLength(10)
-
-		IndexedContainer container = new IndexedContainer()
-		container.addContainerProperty("Naam", String.class, "")
-		container.addContainerProperty("E-mail", String.class, "")
-		container.addContainerProperty("Datum", String.class, "")
-		container.addContainerProperty("", Button.class, "")
 		checkoutTable.setContainerDataSource(container)
+		updateCheckinList()
 
-		for (def checkin : Checkin.list()) {
-			if (!checkin.closed) {
-				Item item = container.addItem(checkin)
-				item.getItemProperty("Naam").setValue(checkin.firstName + " " + checkin.lastName)
-				item.getItemProperty("E-mail").setValue(checkin.email)
-				item.getItemProperty("Datum").setValue(checkin.dateCreated.toString())
-				item.getItemProperty("").setValue(new Button("Uit checken", new Button.ClickListener() {
-					public void buttonClick(ClickEvent event) { 
-						CheckoutWindow window = new CheckoutWindow(checkin)
-						UI.getCurrent().addWindow(window)
-					} 
-				}))
-			}
-		}
-
-		// checkoutTable.setColumnExpandRatio("Apparatuur", 0.5)
-		// checkoutTable.setColumnExpandRatio("Materiaal", 0.5)
 	}
 	
 }

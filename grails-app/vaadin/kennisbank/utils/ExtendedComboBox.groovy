@@ -13,7 +13,7 @@ class ExtendedComboBox extends HorizontalLayout {
 	ExtendedComboBox(String caption, List list, Boolean removeIcon, Boolean plusIcon) {
 
 		setSpacing(true)
-		setStyleName("extendedcombobox") ? (caption == null) : setStyleName("extendedcomboboxcaption")
+		(caption == null) ? setStyleName("extendedcombobox") : setStyleName("extendedcomboboxcaption")
 
 		children = []
 

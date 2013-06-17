@@ -38,10 +38,10 @@ class ProjectView extends VerticalLayout {
 
 	public ProjectView(Checkout project) {
 
-		this.project = Checkout.findByUniqueID(project.uniqueID)
+		this.project = project
 		hiddenComponents = []
 		
-		uriFragment = "#!/project/" + project.uniqueID
+		uriFragment = "#!/project/" + project.title.replace(" ", "-")
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
 		setSizeFull()
@@ -54,6 +54,9 @@ class ProjectView extends VerticalLayout {
 	}
 
 	private Panel GenerateView() {
+		
+		Panel panel = new Panel()
+
 		
 
 		return panel

@@ -43,12 +43,14 @@ import kennisbank.utils.*
 class CheckoutWindow extends Window {
 
 	def checkoutForms
+	def checkoutSuccessful
 	Checkin checkin
 
 	CheckoutWindow(Checkin checkin) {
 
 		checkoutForms = []
 		this.checkin = checkin
+		checkoutSuccessful = false
 
 		setCaption("Check out") 
 		setPrimaryStyleName("check-out")
@@ -107,6 +109,7 @@ class CheckoutWindow extends Window {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				if (save()) {
+					checkoutSuccessful = true
 					close()
 				}
 			}
@@ -133,7 +136,6 @@ class CheckoutWindow extends Window {
 				}
 
 				if (checkout.validate()) {
-					checkout.published = true
 					checkout.save()
 				
 				} else {
@@ -173,7 +175,7 @@ class CheckoutWindow extends Window {
 		}
 
 		for (checkout in checkouts) {
-			if (checkout.published) {
+			if (checkout.id) {
 				checkin.addToCheckouts(checkout)
 			} else {
 				return false

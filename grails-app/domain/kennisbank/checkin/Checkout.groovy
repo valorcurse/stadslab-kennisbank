@@ -62,7 +62,6 @@ class Checkout {
 
 			file.path = fileDestination.absolutePath
 		}
-		// save()
 	}
 
 }
