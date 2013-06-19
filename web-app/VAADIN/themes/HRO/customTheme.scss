@@ -252,14 +252,6 @@
 	.check-out {
 		overflow-x: hidden;
 
-		#picture {
-			width: 260px;
-			height: 170px;
-			margin: 0px;
-			border-style: solid;
-			border-width: 1px;
-		}
-
 		#check-button {
 			.v-icon {
 				height: 13px;
@@ -276,6 +268,14 @@
 			border-bottom: 1px solid #bfbfbf;
 		}
 
+	}
+
+	.picture {
+		width: 260px;
+		height: 170px;
+		margin: 0px;
+		border-style: solid;
+		border-width: 1px;
 	}
 
 	.image-button {
@@ -397,5 +397,14 @@
 		.v-textfield {
 			width: 175px;
 		}
+	}
+
+	.projectLayout {
+		overflow: hidden;
+		
+		.description {
+			border: 1px solid lightgrey;
+		}
+
 	}
 }	

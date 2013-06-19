@@ -12,7 +12,7 @@ class Checkout {
 	String title
 	String description
 	String picturePath
-	List settings
+	// List settings
 
 	static hasMany = [files: AttachedFile, settings: Setting]
 	static hasOne = [checkin: Checkin]
@@ -28,6 +28,8 @@ class Checkout {
 
 	static mapping = {
 		settings lazy: false
+		files lazy: false
+		checkin lazy: false
 		description type: "text"
 	}
 

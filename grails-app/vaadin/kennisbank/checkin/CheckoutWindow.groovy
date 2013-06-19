@@ -239,13 +239,13 @@ class CheckoutForm extends Panel {
 
 		VerticalLayout pictureLayout = new VerticalLayout()
 		gridLayout.addComponent(pictureLayout, 0, 1) // Column 0, Row 1
-		pictureLayout.setPrimaryStyleName("embedded-panel")
+		// pictureLayout.setPrimaryStyleName("embedded-panel")
 		pictureLayout.setSpacing(true)
 
-		Image pictureButton = new Image();
-		pictureLayout.addComponent(pictureButton);
-		pictureButton.setId("picture");
-		pictureButton.setSource(new ThemeResource("emptyImage.gif"))
+		Image projectImage = new Image("Upload hier een foto van het project");
+		pictureLayout.addComponent(projectImage);
+		projectImage.setStyleName("picture");
+		projectImage.setSource(new ThemeResource("emptyImage.gif"))
 
 		pictureUpload = new Upload(null, receiver) // Upload button
 		pictureLayout.addComponent(pictureUpload)
@@ -255,7 +255,7 @@ class CheckoutForm extends Panel {
 		pictureUpload.addSucceededListener(new Upload.SucceededListener() {
 			public void uploadSucceeded(SucceededEvent event) {
 				checkout.picturePath = uploadHelper.filePath
-				pictureButton.setSource(new FileResource(new File(checkout.picturePath)))
+				projectImage.setSource(new FileResource(new File(checkout.picturePath)))
 				Notification.show("Uploaden geslaagd!", Notification.TYPE_TRAY_NOTIFICATION)	
 			}
 		})
@@ -266,15 +266,15 @@ class CheckoutForm extends Panel {
 			}
 		})
 
-
-
 		// ------------------------------------------------------- Uploads -------------------------------------------------------
 
 		VerticalLayout uploadsLayout = new VerticalLayout()
 		gridLayout.addComponent(uploadsLayout, 1, 1)
 		uploadsLayout.setSpacing(true)
 
-		Table uploadsTable = new Table()
+
+
+		Table uploadsTable = new Table("Upload hier de bron and overige bestanden")
 		uploadsLayout.addComponent(uploadsTable)
 		
 		uploadsTable.setWidth("100%")
@@ -320,21 +320,21 @@ class CheckoutForm extends Panel {
 
 		// ------------------------------------------------------- Material -------------------------------------------------------
 		
-		TreeTable settingsTreeTable = new TreeTable()
+		TreeTable settingsTreeTable = new TreeTable("Voeg hier de apparaten, materialen en bijbehorend instellingen die gebruikt zijn")
 		gridLayout.addComponent(settingsTreeTable, 0, 3, 1, 3) // Column 0, Row 3 to Column 1, Row 3
 		settingsTreeTable.setWidth("100%")
 		settingsTreeTable.setPageLength(0)
 
-		HierarchicalContainer materialContainer = new HierarchicalContainer()
-		materialContainer.addContainerProperty("Apparatuur", Component.class, "")
-		materialContainer.addContainerProperty("Materiaal", Component.class, "")
-		materialContainer.addContainerProperty("Instellingen", TextField.class, "")
-		settingsTreeTable.setContainerDataSource(materialContainer)
+		HierarchicalContainer settingsContainer = new HierarchicalContainer()
+		settingsContainer.addContainerProperty("Apparatuur", Component.class, "")
+		settingsContainer.addContainerProperty("Materiaal", Component.class, "")
+		settingsContainer.addContainerProperty("Instellingen", TextField.class, "")
+		settingsTreeTable.setContainerDataSource(settingsContainer)
 		settingsTreeTable.setColumnExpandRatio("Apparatuur", 0.6)
 		settingsTreeTable.setColumnExpandRatio("Materiaal", 0.4)
 
 		rootAddMaterialButton = new AddMaterialButton("Voeg een apparaat toe")
-		Item rootItem = materialContainer.addItem(rootAddMaterialButton)
+		Item rootItem = settingsContainer.addItem(rootAddMaterialButton)
 		rootItem.getItemProperty("Apparatuur").setValue(rootAddMaterialButton)
 
 		rootAddMaterialButton.button.addClickListener(new Button.ClickListener() {
@@ -353,9 +353,9 @@ class CheckoutForm extends Panel {
 				equipmentComboBox.comboBox.setInputPrompt("Kies een apparaat")
 
 				// Add the ComboBox to the table
-				Item equipmentItem = materialContainer.addItem(equipmentComboBox)
+				Item equipmentItem = settingsContainer.addItem(equipmentComboBox)
 				equipmentItem.getItemProperty("Apparatuur").setValue(equipmentComboBox)
-				materialContainer.setParent(equipmentComboBox, rootAddMaterialButton)
+				settingsContainer.setParent(equipmentComboBox, rootAddMaterialButton)
 				settingsTreeTable.setCollapsed(rootAddMaterialButton, false)
 				
 				def equipment
@@ -364,10 +364,10 @@ class CheckoutForm extends Panel {
 				def removeChildren = {
 					def childrenToDelete = []
 					for (child in equipmentComboBox.children) {
-						materialContainer.removeItem(child)
+						settingsContainer.removeItem(child)
 						childrenToDelete.add(child)
 						for (secondChild in child.children) {
-							materialContainer.removeItem(secondChild)
+							settingsContainer.removeItem(secondChild)
 						}
 					}
 					for (child in childrenToDelete) {
@@ -431,7 +431,7 @@ class CheckoutForm extends Panel {
 								TreeTable settingsTreeTable, ExtendedComboBox equipmentComboBox,
 								Checkout checkout) {
 		
-		IndexedContainer materialContainer = settingsTreeTable.getContainerDataSource()
+		IndexedContainer settingsContainer = settingsTreeTable.getContainerDataSource()
 
 		def equipmentUsedSettings = []
 		equipment.settingTypes.each {
@@ -450,9 +450,9 @@ class CheckoutForm extends Panel {
 		materialComboBox.comboBox.setInputPrompt("Kies een materiaal")
 
 		// Add the ComboBox to the table
-		Item materialItem = materialContainer.addItem(materialComboBox)
+		Item materialItem = settingsContainer.addItem(materialComboBox)
 		materialItem.getItemProperty("Apparatuur").setValue(materialComboBox)
-		materialContainer.setParent(materialComboBox, equipmentComboBox)
+		settingsContainer.setParent(materialComboBox, equipmentComboBox)
 		settingsTreeTable.setCollapsed(equipmentComboBox, false)
 		
 		// ---------------------------- Choose material ----------------------------
@@ -460,7 +460,7 @@ class CheckoutForm extends Panel {
 			@Override
 			public void valueChange(final ValueChangeEvent comboEvent) {
 				for (child in materialComboBox.children) {
-					materialContainer.removeItem(child)					
+					settingsContainer.removeItem(child)					
 				}
 
 				def material = Material.findByName(comboEvent.getProperty().getValue())
@@ -489,7 +489,7 @@ class CheckoutForm extends Panel {
 							for (def settingUsed : equipment.settingTypes.asList()) {
 								Label newSettingLabel = new Label(settingUsed.name)
 								
-								Item settingItem = materialContainer.addItem(newSettingLabel)
+								Item settingItem = settingsContainer.addItem(newSettingLabel)
 								materialComboBox.children.add(newSettingLabel)
 								settingItem.getItemProperty("Materiaal").setValue(newSettingLabel)
 
@@ -500,7 +500,7 @@ class CheckoutForm extends Panel {
 
 								settingItem.getItemProperty("Instellingen").setValue(valueTextField)
 			 
-								materialContainer.setParent(newSettingLabel, materialComboBox)
+								settingsContainer.setParent(newSettingLabel, materialComboBox)
 								settingsTreeTable.setChildrenAllowed(newSettingLabel, false)
 
 								valueTextField.addTextChangeListener(new TextChangeListener() {
@@ -517,7 +517,7 @@ class CheckoutForm extends Panel {
 						} else {
 							// Reset the values on the settings' TextFields 
 							for (child in settingsTreeTable.getChildren(materialComboBox)) {
-								Item item = materialContainer.getItem(child)
+								Item item = settingsContainer.getItem(child)
 								item.getItemProperty("Instellingen").getValue().setValue("")
 							}
 						}

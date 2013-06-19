@@ -53,10 +53,10 @@ class BootStrap {
 		.addToEquipment(Equipment.findByName("Laser snijder"))
 		.save(flush: true, failOnError: true)
 
-		Checkout checkout1 = new Checkout(title: "The new and improved iPad", published: true, 
+		Checkout checkout1 = new Checkout(title: "The new and improved iPad", 
 			picturePath: rootPath + "/samples/ipad.jpg", description: description, checkin: checkin)
 
-		Checkout checkout2 = new Checkout(title: "Ubuntu laptop", published: true, 
+		Checkout checkout2 = new Checkout(title: "Ubuntu laptop", 
 			picturePath: rootPath + "/samples/ubuntu.jpg", description: description, checkin: checkin)
 		
 

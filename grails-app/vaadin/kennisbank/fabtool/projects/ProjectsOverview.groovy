@@ -217,7 +217,6 @@ class ProjectsOverview extends VerticalLayout {
 		HorizontalLayout searchSettingBottomLayout = new HorizontalLayout()
 		searchSettingLayout.addComponent(searchSettingBottomLayout)
 		searchSettingLayout.setComponentAlignment(searchSettingBottomLayout, Alignment.MIDDLE_RIGHT)
-		// searchSettingBottomLayout.setWidth("100%")
 		searchSettingBottomLayout.setSpacing(true)
 
 		Label settingValueLabel = new Label("Waarde")
@@ -243,8 +242,6 @@ class ProjectsOverview extends VerticalLayout {
 				}
 			}
 		})
-
-
 
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Content >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

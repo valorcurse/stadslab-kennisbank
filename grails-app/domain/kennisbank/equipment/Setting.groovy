@@ -19,6 +19,7 @@ class Setting {
 	}
 
 	static mapping = {
+		equipment lazy: false
 	}
 
 }
