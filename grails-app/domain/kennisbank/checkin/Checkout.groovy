@@ -1,6 +1,5 @@
 package kennisbank.checkin
 
-import kennisbank.project.Project
 import kennisbank.AttachedFile
 import kennisbank.equipment.Material
 import kennisbank.equipment.Equipment
@@ -12,8 +11,7 @@ class Checkout {
 	String title
 	String description
 	String picturePath
-	// List settings
-
+	
 	static hasMany = [files: AttachedFile, settings: Setting]
 	static hasOne = [checkin: Checkin]
 

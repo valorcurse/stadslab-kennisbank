@@ -142,7 +142,6 @@ class CheckoutWindow extends Window {
 					MessageSource messageSource = ApplicationHolder.application.mainContext.getBean('messageSource')
 
 					checkout.errors.allErrors.each {
-						println it.getField()
 
 						form.tab.setComponentError(new UserError("Er is een fout in dit project."))
 
@@ -295,7 +294,7 @@ class CheckoutForm extends Panel {
 
 				Item uploadItem = uploadsContainer.addItem(uploadHelper.filePath)
 				uploadItem.getItemProperty("Naam").setValue(new DownloadLink(uploadHelper.filePath, uploadHelper.name))
-				uploadItem.getItemProperty("Grootte").setValue(uploadHelper.size)
+				uploadItem.getItemProperty("Grootte").setValue(Utils.humanReadableByteCount(new File(uploadHelper.filePath).length()))
 				Notification.show("Uploaden geslaagd!", Notification.TYPE_TRAY_NOTIFICATION)
 			}
 		})

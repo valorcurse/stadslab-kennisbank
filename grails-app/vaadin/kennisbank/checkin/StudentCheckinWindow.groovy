@@ -18,7 +18,6 @@ import com.vaadin.shared.ui.label.ContentMode
 import org.springframework.context.MessageSource
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import com.vaadin.server.UserError
-import kennisbank.EmailService
 import kennisbank.equipment.Equipment
 
 

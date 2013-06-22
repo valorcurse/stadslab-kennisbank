@@ -31,13 +31,10 @@ import kennisbank.utils.*
 
 class ProjectView extends VerticalLayout {
 
-	String uriFragment, oldPicturePath
-	Checkout project
-	def hiddenComponents
-
-	String tabName() {
-		return uriFragment
-	}
+	String uriFragment
+	private String oldPicturePath
+	private Checkout project
+	private def hiddenComponents
 
 	public ProjectView(Checkout project) {
 
@@ -47,19 +44,15 @@ class ProjectView extends VerticalLayout {
 		uriFragment = "#!/project/" + project.title.replace(" ", "-")
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
-		// setSizeFull()
 		setMargin(true)
 
 		Panel viewPanel = GenerateView()
-
 		addComponent(viewPanel)
 		setComponentAlignment(viewPanel, Alignment.TOP_CENTER)
 	}
 
 	private Panel GenerateView() {
 		
-		// Checkout project = checkout
-
 		Panel panel = new Panel()
 		panel.setSizeUndefined()
 
@@ -105,7 +98,7 @@ class ProjectView extends VerticalLayout {
 		for (def file : project.files) {
 				Item item = uploadsContainer.addItem(file)
 				item.getItemProperty("Naam").setValue(new DownloadLink(file.path, file.name))
-				item.getItemProperty("Grootte").setValue("")
+				item.getItemProperty("Grootte").setValue(Utils.humanReadableByteCount(new File(file.path).length()))
 		}
 
 		// ------------------------------------------------------- Description -------------------------------------------------------

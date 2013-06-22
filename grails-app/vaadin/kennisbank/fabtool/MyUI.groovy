@@ -1,7 +1,5 @@
 package kennisbank.fabtool
 
-import kennisbank.User;
-
 import com.vaadin.ui.*
 import com.vaadin.ui.MenuBar.Command
 import com.vaadin.ui.MenuBar.MenuItem
@@ -20,6 +18,7 @@ import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
 import com.vaadin.server.Page
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
+import kennisbank.auth.*
 
 /**
  *
@@ -31,11 +30,12 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 
 @Theme("HRO")
 //@PreserveOnRefresh
-@Title("Kennisbank")
+// @Title("Kennisbank")
 class MyUI extends UI {
 
-	public boolean loggedIn
-	public User loggedInUser
+	boolean loggedIn
+	User loggedInUser
+	
 	MainView mainView
 	Navigator navigator
 	

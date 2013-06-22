@@ -108,3 +108,22 @@ grails {
                 "mail.smtp.debug": "true"] 
     } 
 }
+
+// Added by the Spring Security Core plugin:
+grails.plugins.springsecurity.userLookup.userDomainClassName = 'kennisbank.auth.User'
+grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'kennisbank.auth.UserAuthority'
+grails.plugins.springsecurity.authority.className = 'kennisbank.auth.Authority'
+grails.plugins.springsecurity.requestMap.className = 'kennisbank.auth.Requestmap'
+grails.plugins.springsecurity.securityConfigType = 'Requestmap'
+grails.plugins.springsecurity.securityConfigType = "InterceptUrlMap"
+
+grails.plugins.springsecurity.interceptUrlMap = [
+   '/secure/**':    ['ROLE_ADMIN'],
+   '/finance/**':   ['ROLE_FINANCE', 'IS_AUTHENTICATED_FULLY'],
+   '/js/**':        ['IS_AUTHENTICATED_ANONYMOUSLY'],
+   '/css/**':       ['IS_AUTHENTICATED_ANONYMOUSLY'],
+   '/images/**':    ['IS_AUTHENTICATED_ANONYMOUSLY'],
+   '/*':            ['IS_AUTHENTICATED_ANONYMOUSLY'],
+   '/login/**':     ['IS_AUTHENTICATED_ANONYMOUSLY'],
+   '/logout/**':    ['IS_AUTHENTICATED_ANONYMOUSLY']
+]

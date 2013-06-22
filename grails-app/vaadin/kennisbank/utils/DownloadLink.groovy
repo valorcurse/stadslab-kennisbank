@@ -9,7 +9,6 @@ import com.vaadin.ui.TabSheet.Tab
 import groovy.transform.InheritConstructors
 import com.vaadin.ui.themes.Reindeer
 import kennisbank.*
-import kennisbank.project.Document;
 
 import com.vaadin.server.FileResource
 import com.vaadin.server.FileDownloader

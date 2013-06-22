@@ -82,14 +82,14 @@ class ProjectsOverview extends VerticalLayout {
 	}
 
 	String uriFragment
-	GridLayout projectsLayout, queriesLayout
-	Queries queries
+	private GridLayout projectsLayout, queriesLayout
+	private Queries queries
 
 	def hiddenComponents
 
-	String tabName() {
-		return uriFragment
-	}
+	// String tabName() {
+	// 	return uriFragment
+	// }
 
 	ProjectsOverview() {
 

@@ -1,6 +1,7 @@
 import kennisbank.*
 import kennisbank.checkin.*
 import kennisbank.equipment.*
+import kennisbank.auth.*
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 
 class BootStrap {
@@ -8,6 +9,8 @@ class BootStrap {
 	def init = { servletContext ->
 
 		String rootPath = ApplicationHolder.application.parentContext.getResource("").file.absolutePath
+
+		new User(username: "admin", password: "12345", enabled: true).save(flush: true)
 
 		Material glas = new Material(name: "Glas").save(flush: true, failOnError: true)
 		Material leer = new Material(name: "Leer").save(flush: true, failOnError: true)
@@ -68,7 +71,7 @@ class BootStrap {
 		new Setting(value: "100", settingType: power, materialType: triplex, equipment: laserSnijder, checkout: checkout2),
 		new Setting(value: "3", settingType: dikte, materialType: triplex, equipment: laserSnijder, checkout: checkout2)]
 
-		AttachedFile file = new AttachedFile(name: "someFile", path: rootPath + "/samples/someFile.txt")
+		AttachedFile file = new AttachedFile(name: "someFile.txt", path: rootPath + "/samples/someFile.txt")
 
 		checkout1.addToSettings(checkout1Settings[0])
 		.addToSettings(checkout1Settings[1])
