@@ -23,8 +23,8 @@ class CheckInOutView extends UI {
 		Panel centerPanel = new Panel()
 		bodyLayout.addComponent(centerPanel)
 		bodyLayout.setComponentAlignment(centerPanel, Alignment.MIDDLE_CENTER)
-		centerPanel.setHeight("50%")
-		centerPanel.setWidth("40%")
+		// centerPanel.setWidth("40%")
+		centerPanel.setSizeUndefined()
 
 		HorizontalLayout centerPanelLayout = new HorizontalLayout()
 		centerPanel.setContent(centerPanelLayout)
