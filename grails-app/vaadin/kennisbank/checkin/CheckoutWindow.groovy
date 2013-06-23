@@ -46,6 +46,7 @@ class CheckoutWindow extends Window {
 	def checkoutSuccessful
 	Checkin checkin
 
+
 	CheckoutWindow(Checkin checkin) {
 
 		checkoutForms = []
@@ -253,9 +254,18 @@ class CheckoutForm extends Panel {
 
 		pictureUpload.addSucceededListener(new Upload.SucceededListener() {
 			public void uploadSucceeded(SucceededEvent event) {
-				checkout.picturePath = uploadHelper.filePath
-				projectImage.setSource(new FileResource(new File(checkout.picturePath)))
-				Notification.show("Uploaden geslaagd!", Notification.TYPE_TRAY_NOTIFICATION)	
+				def imageExtensions = [".tif", ".tiff", ".gif", ".jpeg", ".jpg", ".jif", ".jfif", 
+										".jp2", ".jpx", ".j2k", ".j2c", ".fpx", ".pcd", ".png"]
+
+				def path = (uploadHelper.filePath =~ /\d+\.tmp/).replaceAll("")
+				if (imageExtensions.any { path.endsWith(it) }) {
+					checkout.picturePath = uploadHelper.filePath
+					projectImage.setSource(new FileResource(new File(checkout.picturePath)))
+					Notification.show("Uploaden geslaagd!", Notification.TYPE_TRAY_NOTIFICATION)	
+				}
+				else {
+					Notification.show("Bestand is geen afbeelding.")
+				}
 			}
 		})
 		
