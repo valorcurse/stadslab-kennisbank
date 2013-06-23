@@ -19,7 +19,7 @@ class SecurityService {
             def authentication = new UsernamePasswordAuthenticationToken(username, password)
             SCH.context.authentication = authenticationManager.authenticate(authentication)
         } catch (BadCredentialsException e) {
-            throw new SecurityException("&amp;amp;amp;amp;amp;quot;Invalid username/password&amp;amp;amp;amp;amp;quot;")
+            throw new SecurityException("Invalid username/password")
         }
     }
 
@@ -28,7 +28,7 @@ class SecurityService {
     }
 
     String getCurrentUsername() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication()
         return auth.getName(); //get logged in username
     }
 

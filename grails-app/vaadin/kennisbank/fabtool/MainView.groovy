@@ -32,7 +32,7 @@ import com.vaadin.server.Sizeable.Unit
 class MainView extends Panel implements View {
 
 	TabSheet topTabs
-	SecurityService security = (SecurityService) Grails.get(SecurityService)
+	private SecurityService security = (SecurityService) Grails.get(SecurityService)
 
 	private def authComponents
 	private Panel loginPanel, loggedinPanel
@@ -44,6 +44,7 @@ class MainView extends Panel implements View {
 			revealHiddenComponents()
 			loginPanel.setVisible(false)
 			loggedinPanel.setVisible(true)
+			
 			return true
 
 		} catch (SecurityException e) {
@@ -53,7 +54,28 @@ class MainView extends Panel implements View {
 
 	// Function to log out the current user
 	private void logout() {
-		security.signOut()
+		try {
+			security.signOut()
+			
+			def tabsToRemove = []
+
+			Iterator<Component> i = topTabs.getComponentIterator();
+			while (i.hasNext()) {
+				Component c = (Component) i.next();
+				Tab tab = topTabs.getTab(c);
+				
+				if (!tab.getCaption().equals("Home")) {
+					tabsToRemove.add(tab)
+				}
+			}
+
+			tabsToRemove.each {
+				topTabs.removeTab(it)
+			}
+		}
+		catch (SecurityException e) {
+			print "something happened: " + e
+		}
 	}
 
 

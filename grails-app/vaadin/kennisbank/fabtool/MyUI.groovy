@@ -29,7 +29,7 @@ import kennisbank.auth.*
 //Theme being used, default is Reindeer
 
 @Theme("HRO")
-//@PreserveOnRefresh
+@PreserveOnRefresh
 // @Title("Kennisbank")
 class MyUI extends UI {
 
