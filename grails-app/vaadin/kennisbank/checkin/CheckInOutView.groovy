@@ -54,7 +54,7 @@ class CheckInOutView extends UI {
 					 	break
 
 					 	case CompanyCheckin:
-						name = checkin.contactPerson			 		
+						name = checkin.contactPerson + " : " + checkin.companyName			 		
 					 	break
 					} 
 
