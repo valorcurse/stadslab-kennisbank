@@ -304,6 +304,7 @@ class MainView extends Panel implements View {
 	}
 
 	public void enter(ViewChangeEvent event) {
+		print event.getParameters()
 		if(event.getParameters() != null) {
 
 			// Check if a tab is already open
@@ -339,9 +340,6 @@ class MainView extends Panel implements View {
 					}		
 				break
 			
-				case "administration":
-					
-				break
 			}
 			
 		}

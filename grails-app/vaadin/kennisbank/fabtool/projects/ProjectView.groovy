@@ -113,7 +113,7 @@ class ProjectView extends VerticalLayout {
 		TreeTable settingsTreeTable = new TreeTable()
 		gridLayout.addComponent(settingsTreeTable, 0, 3, 1, 3) // Column 0, Row 3 to Column 1, Row 3
 		settingsTreeTable.setWidth("100%")
-		settingsTreeTable.setPageLength(0)
+		settingsTreeTable.setPageLength(5)
 
 		HierarchicalContainer settingsContainer = new HierarchicalContainer()
 		settingsContainer.addContainerProperty("Apparatuur", Label.class, "")
@@ -128,7 +128,6 @@ class ProjectView extends VerticalLayout {
 			equipmentItem.getItemProperty("Apparatuur").setValue(new Label("<b>" + equipment.key.name + "</b>", ContentMode.HTML))
 
 			for (materialType in equipment.getValue().groupBy { it.materialType }) {
-				print materialType
 				Item materialTypeItem = settingsContainer.addItem(materialType.key)
 				materialTypeItem.getItemProperty("Apparatuur").setValue(new Label(materialType.key.material.name))
 				materialTypeItem.getItemProperty("Materiaal").setValue(new Label("<b>" + materialType.key.name + "</b>", ContentMode.HTML))
@@ -148,9 +147,19 @@ class ProjectView extends VerticalLayout {
 
 		// --------------------------------- Made By Label ---------------------------------
 
+		def name = ""
+		switch(project.checkin.getClass()) {
+		 	case StudentCheckin:
+		 	name = project.checkin.firstName + " " + project.checkin.lastName
+		 	break
+
+		 	case CompanyCheckin:
+			name = project.checkin.contactPerson + " : " + project.checkin.companyName			 		
+		 	break
+		} 
+
 		Label madeByLabel = new Label("Gemaakt door: <i>" + 
-			project.checkin.firstName + " " + project.checkin.lastName + 
-			" (<a href=\"mailto:" + project.checkin.email + "\">"+ project.checkin.email +"</a>)" +
+			name + " (<a href=\"mailto:" + project.checkin.email + "\">"+ project.checkin.email +"</a>)" +
 			" op " + project.checkin.dateCreated.format('dd MMMM yyyy') + "</i>", ContentMode.HTML)
 		
 		gridLayout.addComponent(madeByLabel, 0, 4, 1, 4) // Column 1, Row 1
