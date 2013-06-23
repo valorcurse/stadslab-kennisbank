@@ -415,9 +415,19 @@ class CheckoutForm extends Panel {
 
 		// --------------------------------- Made By Label ---------------------------------
 
+		def name = ""
+		switch(checkin.getClass()) {
+		 	case StudentCheckin:
+		 	name = checkin.firstName + " " + checkin.lastName
+		 	break
+
+		 	case CompanyCheckin:
+			name = checkin.contactPerson + " : " + checkin.companyName			 		
+		 	break
+		} 
+
 		Label madeByLabel = new Label("Gemaakt door: <i>" + 
-			checkin.firstName + " " + checkin.lastName + 
-			" (<a href=\"mailto:" + checkin.email + "\">"+ checkin.email +"</a>)" +
+			name + " (<a href=\"mailto:" + checkin.email + "\">"+ checkin.email +"</a>)" +
 			" op " + checkin.dateCreated.format('dd MMMM yyyy') + "</i>", ContentMode.HTML)
 		
 		gridLayout.addComponent(madeByLabel, 0, 4, 1, 4) // Column 1, Row 1
