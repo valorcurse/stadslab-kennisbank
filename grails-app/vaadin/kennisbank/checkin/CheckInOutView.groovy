@@ -24,7 +24,7 @@ class CheckInOutView extends UI {
 		bodyLayout.addComponent(centerPanel)
 		bodyLayout.setComponentAlignment(centerPanel, Alignment.MIDDLE_CENTER)
 		centerPanel.setHeight("50%")
-		centerPanel.setWidth("50%")
+		centerPanel.setWidth("40%")
 
 		HorizontalLayout centerPanelLayout = new HorizontalLayout()
 		centerPanel.setContent(centerPanelLayout)
@@ -46,9 +46,21 @@ class CheckInOutView extends UI {
 			for (def checkin : Checkin.list()) {
 				if (!checkin.closed) {
 					Item item = container.addItem(checkin)
-					item.getItemProperty("Naam").setValue(checkin.firstName + " " + checkin.lastName)
+
+					def name = ""
+					switch(checkin.getClass()) {
+					 	case StudentCheckin:
+					 	name = checkin.firstName + " " + checkin.lastName
+					 	break
+
+					 	case CompanyCheckin:
+						name = checkin.contactPerson			 		
+					 	break
+					} 
+
+					item.getItemProperty("Naam").setValue(name)
 					item.getItemProperty("E-mail").setValue(checkin.email)
-					item.getItemProperty("Datum").setValue(checkin.dateCreated.toString())
+					item.getItemProperty("Datum").setValue(checkin.dateCreated.format("hh:mm dd/MM/yyyy").toString())
 					item.getItemProperty("").setValue(new Button("Uit checken", new Button.ClickListener() {
 						public void buttonClick(ClickEvent event) { 
 							CheckoutWindow window = new CheckoutWindow(checkin)
@@ -72,7 +84,6 @@ class CheckInOutView extends UI {
 		VerticalLayout leftLayout = new VerticalLayout()
 		centerPanelLayout.addComponent(leftLayout)
 		leftLayout.setSizeFull()
-		// leftLayout.setSizeUndefined()
 		leftLayout.setSpacing(true)
 
 		Button studentCheckinButton = new Button("Student")
@@ -94,15 +105,38 @@ class CheckInOutView extends UI {
 			}
 		})
 
+		Button companyCheckinButton = new Button("Bedrijf")
+		leftLayout.addComponent(companyCheckinButton)
+		leftLayout.setComponentAlignment(companyCheckinButton, Alignment.TOP_CENTER)
+
+		companyCheckinButton.addClickListener(new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) { 
+				CompanyCheckinWindow window = new CompanyCheckinWindow()
+				UI.getCurrent().addWindow(window)
+
+				window.addCloseListener(new Window.CloseListener() {
+		            public void windowClose(CloseEvent e) {
+		            	print window.checkinSuccessful
+						if (window.checkinSuccessful) {
+							updateCheckinList()
+						}
+					}
+				})
+			}
+		})
+
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Checkout >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 		VerticalLayout rightLayout = new VerticalLayout()
 		centerPanelLayout.addComponent(rightLayout)
-		// rightLayout.setSizeFull()
+		rightLayout.setSizeFull()
 
 		Table checkoutTable = new Table()
 		rightLayout.addComponent(checkoutTable)
 		rightLayout.setComponentAlignment(checkoutTable, Alignment.TOP_CENTER)
+		checkoutTable.setWidth("500px")
+		checkoutTable.setColumnExpandRatio("Naam", 0.5)
+		checkoutTable.setColumnExpandRatio("E-mail", 0.5)
 		checkoutTable.setPageLength(10)
 		checkoutTable.setContainerDataSource(container)
 		updateCheckinList()

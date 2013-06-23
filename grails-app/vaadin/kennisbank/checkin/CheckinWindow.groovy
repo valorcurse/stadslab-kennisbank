@@ -21,6 +21,8 @@ import com.vaadin.server.UserError
 
 abstract class CheckinWindow extends Window {
 
+	protected Boolean checkinSuccessful = false
+
 	CheckinWindow() {	
 		setCaption("Check-in")
 		setPrimaryStyleName("check-in")

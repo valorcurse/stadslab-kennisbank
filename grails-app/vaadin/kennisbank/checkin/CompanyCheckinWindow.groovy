@@ -82,6 +82,7 @@ class CompanyCheckinWindow extends CheckinWindow {
 						projectDescription: projectDescriptionTextArea.getValue())
 
 					if (checkin.save()) {
+						checkinSuccessful = true
 						Notification.show("In-checken geslaagd!")
 						close()
 					}

@@ -1,9 +1,7 @@
 package kennisbank.checkin
 
-class CompanyCheckin {
+class CompanyCheckin extends Checkin {
 
-	Date dateCreated
-	
 	String 	companyName,
 			contactPerson,
 			email,
