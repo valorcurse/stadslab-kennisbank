@@ -155,13 +155,13 @@ class MainView extends Panel implements View {
 		loginPanelLayout.addComponent(usernameField)
 		loginPanelLayout.setComponentAlignment(usernameField, Alignment.MIDDLE_CENTER)
 		usernameField.setWidth("90%")
-		usernameField.setInputPrompt("Username")
+		usernameField.setInputPrompt("Gebruikersnaam")
 
 		PasswordField passwordField = new PasswordField()
 		loginPanelLayout.addComponent(passwordField)
 		loginPanelLayout.setComponentAlignment(passwordField, Alignment.TOP_CENTER)
 		passwordField.setWidth("90%")
-		passwordField.setInputPrompt("Password")
+		passwordField.setInputPrompt("Wachtwoord")
 
 		NativeButton loginButton = new NativeButton("Login")
 		loginPanelLayout.addComponent(loginButton)
@@ -170,11 +170,8 @@ class MainView extends Panel implements View {
 		loginButton.addClickListener(new Button.ClickListener() {
 			public void buttonClick(ClickEvent event) {
 
-				if (login(usernameField.getValue(), passwordField.getValue())) {
-					print "Signed in!"
-				}
-				else{
-					Notification.show("Username and/or password incorrect.")
+				if (!login(usernameField.getValue(), passwordField.getValue())) {
+					Notification.show("Gebruikersnaam en/of wachtwoord is onjuist.")
 				}
 
 				usernameField.setValue("")
@@ -204,7 +201,7 @@ class MainView extends Panel implements View {
 		loggedinPanelLayout.setComponentAlignment(welcome, Alignment.MIDDLE_CENTER)
 		welcome.addStyleName("welcome-label")
 
-		NativeButton logoutButton = new NativeButton("Log out")
+		NativeButton logoutButton = new NativeButton("Uitloggen")
 		loggedinPanelLayout.addComponent(logoutButton)
 		loggedinPanelLayout.setComponentAlignment(logoutButton, Alignment.TOP_CENTER)
 		logoutButton.addClickListener(new Button.ClickListener() {
@@ -220,24 +217,24 @@ class MainView extends Panel implements View {
 
 		// ------------------------------------------------------- Search -------------------------------------------------------
 
-		Panel searchPanel = new Panel("Search")
-		left.addComponent(searchPanel)
-		left.setComponentAlignment(searchPanel, Alignment.TOP_CENTER)
-		searchPanel.setHeight("70px")
-		searchPanel.setWidth("100%")
-		searchPanel.setStyleName(Runo.PANEL_LIGHT)
-		searchPanel.setPrimaryStyleName("sidebar-panel")
+		// Panel searchPanel = new Panel("Search")
+		// left.addComponent(searchPanel)
+		// left.setComponentAlignment(searchPanel, Alignment.TOP_CENTER)
+		// searchPanel.setHeight("70px")
+		// searchPanel.setWidth("100%")
+		// searchPanel.setStyleName(Runo.PANEL_LIGHT)
+		// searchPanel.setPrimaryStyleName("sidebar-panel")
 
-		VerticalLayout searchLayout = new VerticalLayout()
-		searchPanel.setContent(searchLayout)
-		searchLayout.setSizeFull()
+		// VerticalLayout searchLayout = new VerticalLayout()
+		// searchPanel.setContent(searchLayout)
+		// searchLayout.setSizeFull()
 		
-		TextField searchField = new TextField()
-		searchLayout.addComponent(searchField)
-		searchLayout.setComponentAlignment(searchField, Alignment.MIDDLE_CENTER)
-		searchField.setWidth("90%")
-		searchField.addStyleName("search")
-		searchField.setInputPrompt("Search...")
+		// TextField searchField = new TextField()
+		// searchLayout.addComponent(searchField)
+		// searchLayout.setComponentAlignment(searchField, Alignment.MIDDLE_CENTER)
+		// searchField.setWidth("90%")
+		// searchField.addStyleName("search")
+		// searchField.setInputPrompt("Search...")
 		
 
 		// ------------------------------------------------------- Navigation Menu -------------------------------------------------------
@@ -255,19 +252,19 @@ class MainView extends Panel implements View {
 		leftMenuLayout.setSpacing(true)
 
 
-		NativeButton projectButton = new NativeButton("Projects")
+		NativeButton projectButton = new NativeButton("Projecten")
 		leftMenuLayout.addComponent(projectButton)
 		leftMenuLayout.setComponentAlignment(projectButton, Alignment.MIDDLE_CENTER)
 		projectButton.setWidth("90%")
 		projectButton.addClickListener(new Button.ClickListener() {
 			public void buttonClick(ClickEvent event) {
-				Tab tab = topTabs.addTab(new ProjectsOverview(), "Projects")
+				Tab tab = topTabs.addTab(new ProjectsOverview(), "Projecten")
 				tab.setClosable(true)
 				topTabs.setSelectedTab(tab)
 			}
 		})
 		
-		NativeButton adminButton = new NativeButton("Administration")
+		NativeButton adminButton = new NativeButton("Administratie")
 		leftMenuLayout.addComponent(adminButton)
 		leftMenuLayout.setComponentAlignment(adminButton, Alignment.BOTTOM_CENTER)
 		authComponents.add(adminButton)
@@ -275,7 +272,7 @@ class MainView extends Panel implements View {
 		adminButton.setVisible(false)
 		adminButton.addClickListener(new Button.ClickListener() {
 			public void buttonClick(ClickEvent event) {
-				Tab tab = topTabs.addTab(new Administration(), "Administration")
+				Tab tab = topTabs.addTab(new Administration(), "Administratie")
 				tab.setClosable(true)
 				topTabs.setSelectedTab(tab)
 			}
@@ -291,7 +288,7 @@ class MainView extends Panel implements View {
 		topTabs.addStyleName(Reindeer.TABSHEET_HOVER_CLOSABLE)
 		topTabs.setId("top-tabs")
 
-		topTabs.addTab(new HomeView(), "Home")
+		topTabs.addTab(new HomeView(), "Hoofdpagina")
 		
 		topTabs.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
 			public void selectedTabChange(SelectedTabChangeEvent event) {
@@ -333,7 +330,7 @@ class MainView extends Panel implements View {
 						}
 						else {
 							ProjectsOverview projectTab = new ProjectsOverview()
-							Tab tab = topTabs.addTab(projectTab, "Projects")
+							Tab tab = topTabs.addTab(projectTab, "Projecten")
 							tab.setClosable(true)
 							topTabs.setSelectedTab(tab)
 						}

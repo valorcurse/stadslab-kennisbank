@@ -113,7 +113,7 @@ class ProjectsOverview extends VerticalLayout {
 		layout.setMargin(true)
 		layout.setSizeFull()
 
-		Label titleLabel = new Label("<h1><b>Projects</b></h1>", ContentMode.HTML)
+		Label titleLabel = new Label("<h1><b>Projecten</b></h1>", ContentMode.HTML)
 		layout.addComponent(titleLabel) // Column 0, row 0 to column 1, row 0
 		layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
 		titleLabel.setWidth("100%")

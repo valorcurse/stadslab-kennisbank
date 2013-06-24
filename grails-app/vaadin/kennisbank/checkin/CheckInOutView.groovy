@@ -116,7 +116,6 @@ class CheckInOutView extends UI {
 
 				window.addCloseListener(new Window.CloseListener() {
 		            public void windowClose(CloseEvent e) {
-		            	print window.checkinSuccessful
 						if (window.checkinSuccessful) {
 							updateCheckinList()
 						}
