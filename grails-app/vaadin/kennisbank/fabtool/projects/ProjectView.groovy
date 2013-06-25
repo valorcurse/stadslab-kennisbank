@@ -24,24 +24,39 @@ import com.vaadin.shared.ui.label.ContentMode
 import com.vaadin.event.ShortcutAction.KeyCode
 
 import kennisbank.checkin.*
-import kennisbank.project.*
 import kennisbank.fabtool.*
+
 import kennisbank.equipment.*
 import kennisbank.utils.*
 
+/**
+ * Display all the information of the corresponding {@link kennisbank.checkin.Checkout}.
+ *
+ * @author Marcelo Dias Avelino
+ */
+
 class ProjectView extends VerticalLayout {
 
+	/**
+	 * Fragment used to bookmark this page.
+	 */
 	String uriFragment
-	private String oldPicturePath
-	private Checkout project
-	private def hiddenComponents
 
-	public ProjectView(Checkout project) {
+	/**
+	 * The corresponding {@link kennisbank.checkin.Checkout}.
+	 */
+	private Checkout checkout
 
-		this.project = project
-		hiddenComponents = []
+	/**
+	 * The constructor of ProjectView. 
+	 *
+	 * @param checkout The {@link kennisbank.checkin.Checkout} linked to this view.
+	 */
+	public ProjectView(Checkout checkout) {
+
+		this.checkout = checkout
 		
-		uriFragment = "#!/project/" + project.title.replace(" ", "-")
+		uriFragment = "#!/checkout/" + checkout.title.replace(" ", "-")
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
 		setMargin(true)
@@ -49,16 +64,11 @@ class ProjectView extends VerticalLayout {
 		Panel viewPanel = GenerateView()
 		addComponent(viewPanel)
 		setComponentAlignment(viewPanel, Alignment.TOP_CENTER)
-	}
-
-	private Panel GenerateView() {
-		
-		Panel panel = new Panel()
-		panel.setSizeUndefined()
+		viewPanel.setSizeUndefined()
 
 		GridLayout gridLayout = new GridLayout(2, 5)
-		panel.setContent(gridLayout)
-		gridLayout.setSpacing(true)
+		viewPanel.setContent(gridLayout)
+		GridLayoutt.setSpacing(true)
 		gridLayout.setMargin(true)
 		gridLayout.setColumnExpandRatio(1, 1)
 		gridLayout.setStyleName("projectLayout")
@@ -68,7 +78,7 @@ class ProjectView extends VerticalLayout {
 		VerticalLayout titleLayout = new VerticalLayout()
 		gridLayout.addComponent(titleLayout, 0, 0, 1, 0) // Column 0, Row 0 to Column 1, Row 0
 
-		Label titleLabel = new Label("<h1>" + project.title + "</h1>", ContentMode.HTML)
+		Label titleLabel = new Label("<h1>" + checkout.title + "</h1>", ContentMode.HTML)
 		titleLabel.setSizeUndefined()
 		titleLayout.addComponent(titleLabel)
 		titleLayout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
@@ -78,7 +88,7 @@ class ProjectView extends VerticalLayout {
 		Image picture = new Image();
 		gridLayout.addComponent(picture, 0, 1) // Column 0, Row 1
 		picture.setStyleName("picture");
-		picture.setSource(new FileResource(new File(project.picturePath)))
+		picture.setSource(new FileResource(new File(checkout.picturePath)))
 
 		// ------------------------------------------------------- Uploads -------------------------------------------------------
 
@@ -95,7 +105,7 @@ class ProjectView extends VerticalLayout {
 		uploadsTable.setColumnExpandRatio("Grootte", 0.3)
 
 
-		for (def file : project.files) {
+		for (def file : checkout.files) {
 				Item item = uploadsContainer.addItem(file)
 				item.getItemProperty("Naam").setValue(new DownloadLink(file.path, file.name))
 				item.getItemProperty("Grootte").setValue(Utils.humanReadableByteCount(new File(file.path).length()))
@@ -103,7 +113,7 @@ class ProjectView extends VerticalLayout {
 
 		// ------------------------------------------------------- Description -------------------------------------------------------
 
-		Label descriptionLabel = new Label(project.description)
+		Label descriptionLabel = new Label(checkout.description)
 		gridLayout.addComponent(descriptionLabel, 0, 2, 1, 2) // Column 0, Row 2 to Column 1, Row 2
 		descriptionLabel.setWidth("100%")
 		descriptionLabel.setStyleName("description")
@@ -123,7 +133,7 @@ class ProjectView extends VerticalLayout {
 		settingsTreeTable.setColumnExpandRatio("Apparatuur", 0.6)
 		settingsTreeTable.setColumnExpandRatio("Materiaal", 0.4)
 
-		for (equipment in project.settings.groupBy { it.equipment }) {
+		for (equipment in checkout.settings.groupBy { it.equipment }) {
 			Item equipmentItem = settingsContainer.addItem(equipment.key)
 			equipmentItem.getItemProperty("Apparatuur").setValue(new Label("<b>" + equipment.key.name + "</b>", ContentMode.HTML))
 
@@ -148,36 +158,23 @@ class ProjectView extends VerticalLayout {
 		// --------------------------------- Made By Label ---------------------------------
 
 		def name = ""
-		switch(project.checkin.getClass()) {
+		switch(checkout.checkin.getClass()) {
 		 	case StudentCheckin:
-		 	name = project.checkin.firstName + " " + project.checkin.lastName
+		 	name = checkout.checkin.firstName + " " + checkout.checkin.lastName
 		 	break
 
 		 	case CompanyCheckin:
-			name = project.checkin.contactPerson + " : " + project.checkin.companyName			 		
+			name = checkout.checkin.contactPerson + " : " + checkout.checkin.companyName			 		
 		 	break
 		} 
 
 		Label madeByLabel = new Label("Gemaakt door: <i>" + 
-			name + " (<a href=\"mailto:" + project.checkin.email + "\">"+ project.checkin.email +"</a>)" +
-			" op " + project.checkin.dateCreated.format('dd MMMM yyyy') + "</i>", ContentMode.HTML)
+			name + " (<a href=\"mailto:" + checkout.checkin.email + "\">"+ checkout.checkin.email +"</a>)" +
+			" op " + checkout.checkin.dateCreated.format('dd MMMM yyyy') + "</i>", ContentMode.HTML)
 		
 		gridLayout.addComponent(madeByLabel, 0, 4, 1, 4) // Column 1, Row 1
 		gridLayout.setComponentAlignment(madeByLabel, Alignment.TOP_CENTER)
 		madeByLabel.setWidth("-1")
 
-		return panel
-	}
-
-	void revealHiddenComponents() {
-		for (c in hiddenComponents) {
-			c.setVisible(true)
-		}
-	}
-
-	void hideRevealedComponents() {
-		for (c in hiddenComponents) {
-			c.setVisible(false)
-		}
 	}
 }

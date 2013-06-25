@@ -22,6 +22,9 @@ import com.vaadin.server.UserError
 
 class CompanyCheckinWindow extends CheckinWindow {
 
+	/**
+	 * Method that must be overriden to add content to the window
+	 */
 	@Override
 	Layout windowContent() {
 
@@ -125,18 +128,16 @@ class CompanyCheckinWindow extends CheckinWindow {
 								if (it.getField() == "email") {
 									emailTextField.setComponentError(new UserError(messageSource.getMessage(it, Locale.getDefault())))
 								}
-
 							}
 						}
 					}
 				}
 			}
-		}
-		)
-layout.addComponent(checkinButton)
-layout.setComponentAlignment(checkinButton, Alignment.MIDDLE_CENTER)
+		})
+		
+		layout.addComponent(checkinButton)
+		layout.setComponentAlignment(checkinButton, Alignment.MIDDLE_CENTER)
 
-return layout
-}
-
+		return layout
+	}
 }

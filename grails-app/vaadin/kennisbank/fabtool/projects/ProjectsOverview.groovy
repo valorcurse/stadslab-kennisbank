@@ -18,16 +18,38 @@ import kennisbank.equipment.*
 import kennisbank.checkin.Checkout
 import kennisbank.utils.*
 
-
+/**
+ * Display and provide the option to search for {@link kennisbank.checkin.Checkout Checkouts}.
+ *
+ * @author Marcelo Dias Avelino
+ */
 class ProjectsOverview extends VerticalLayout {
 
+	/**
+	 * Holds all the {@link kennisbank.fabtool.projects.Query} objects and manages the corresponding {@link #QueryTag QueryTags} 
+	 *
+	 * @author Marcelo Dias Avelino
+	 */
 	class Queries {
-		def queries
+		
+		/**
+		 * Map of {@link kennisbank.fabtool.projects.Query} objects and corresponding {@link ProjectsOverview.QueryTag QueryTags}.
+		 */
+		private def queries
 
+		/**
+		 * Constructor of Queries class.
+		 */
 		Queries() {
 			queries = [:]
 		}
 
+		/**
+		 * Adds a {@link kennisbank.fabtool.projects.Query} to the map and creates 
+		 * a corresponding {@link #QueryTag}.
+		 *
+		 * @param query The {@link kennisbank.fabtool.projects.Query} to be added.
+		 */
 		void add(Query query) {
 			QueryTag newTag = new QueryTag(query)
 			queries[query] = newTag
@@ -38,16 +60,24 @@ class ProjectsOverview extends VerticalLayout {
 				@Override
 				public void buttonClick(ClickEvent event) {
 					remove(query)
-					removeQueryTag(newTag)
+					queriesLayout.removeComponent(tag)		
 				}
 			})
 		}
 
+		/**
+		 * Removes the provided {@link kennisbank.fabtool.projects.Query} from the map. 
+		 *
+		 * @param query The {@link kennisbank.fabtool.projects.Query} to be removed.
+		 */
 		void remove(Query query) {
 			queries.remove(query)
 			executeQueries()
 		}
 
+		/**
+		 * Executes all the {@link kennisbank.fabtool.projects.Query queries} and updates the {@link kennisbank.checkin.Checkout checkouts} displayed. 
+		 */		
 		List executeQueries() {
 			def checkouts = Checkout.createCriteria().list(max: 20) { }
 			queries.keySet().toList().each {
@@ -58,16 +88,24 @@ class ProjectsOverview extends VerticalLayout {
 		}
 	}
 
+	/**
+	 * Graphical component of a {@link kennisbank.fabtool.projects.Query} which can be removed.
+	 *
+	 * @author Marcelo Dias Avelino
+	 */
 	class QueryTag extends HorizontalLayout {
 
+		/**
+		 * Button used to remove the component.
+		 */		
 		Button removeButton
-		Query query
 
+		/**
+		 * Constructor of the QueryTag class.
+		 */		
 		QueryTag(Query query) {
 			setStyleName("projectQueryTag")
 			setSpacing(true)
-
-			this.query = query
 
 			addComponent(new Label(query.queryType.caption + ": " + 
 				(query.extraValue ? query.value + " - " + query.extraValue : query.value)))
@@ -76,27 +114,36 @@ class ProjectsOverview extends VerticalLayout {
 			addComponent(removeButton)
 			removeButton.setIcon(new ThemeResource("Red-X.svg"))
 			removeButton.setStyleName(Reindeer.BUTTON_LINK)
-
-			
 		}
 	}
 
+	/**
+	 * Fragment used to bookmark this page.
+	 */		
 	String uriFragment
-	private GridLayout projectsLayout, queriesLayout
+	
+	/**
+	 * Layout where the {@link #QueryTag QueryTags} are displayed.  
+	 */
+	private GridLayout queriesLayout
+
+	/**
+	 * Layout where the {@link kennisbank.fabtool.projects.ProjectLink ProjectLinks} are displayed.  
+	 */
+	private GridLayout projectsLayout
+
+	/**
+	 * Object where the {@link kennisbank.fabtool.projects.Query Queries} themselves and their logic are stored.  
+	 */
 	private Queries queries
 
-	def hiddenComponents
-
-	// String tabName() {
-	// 	return uriFragment
-	// }
-
+	/**
+	 * Constructor of the ProjectsOverview class.
+	 */		
 	ProjectsOverview() {
 
 		setMargin(true)
 		setSizeFull()
-
-		hiddenComponents = []
 
 		uriFragment = "#!/project"
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
@@ -275,27 +322,16 @@ class ProjectsOverview extends VerticalLayout {
 		}
 	}
 
+	/**
+	 * Displays a new list of {@link kennisbank.fabtool.projects.ProjectLink ProjectLinks} on {@link #projectsLayout}.
+	 *
+	 * @param checkouts New list of {@link kennisbank.checkin.Checkout checkouts} to be displayed.
+	 */
 	void updateProjectsList(List checkouts) {
 		projectsLayout.removeAllComponents()
 
 		for (checkout in checkouts) {
 			projectsLayout.addComponent(new ProjectLink(checkout))
-		}
-	}
-
-	void removeQueryTag(QueryTag tag) {
-		queriesLayout.removeComponent(tag)		
-	}
-
-	void revealHiddenComponents() {
-		for (c in hiddenComponents) {
-			c.setVisible(true)
-		}
-	}
-
-	void hideRevealedComponents() {
-		for (c in hiddenComponents) {
-			c.setVisible(false)
 		}
 	}
 }

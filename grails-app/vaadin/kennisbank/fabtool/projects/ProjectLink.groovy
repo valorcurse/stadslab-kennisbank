@@ -12,10 +12,23 @@ import com.vaadin.server.FileResource
 import kennisbank.*
 import kennisbank.checkin.Checkout
 
+/**
+ * Provide a graphical link to a {@link kennisbank.checkin.Checkout}. <br>
+ * This component is used to open a new tab where all the information of the <b>Checkout</b> is linked with.
+ *
+ * @author Marcelo Dias Avelino
+ */
+
 class ProjectLink extends VerticalLayout implements LayoutClickListener {
+	
+	/**
+	 * This is the <b>{@link kennisbank.checkin.Checkout}</b> this component points to.
+	 */
+	private Checkout checkout
 
-	Checkout checkout
-
+	/**
+	 * Constructor of ProjectLink class.
+	 */
 	ProjectLink(Checkout checkout) {
 		addLayoutClickListener(this)
 		setStyleName("projectButton")
@@ -34,6 +47,10 @@ class ProjectLink extends VerticalLayout implements LayoutClickListener {
 		
 	}
 
+	/**
+	 * Click event fired when the component is clicked. <br>
+	 * Opens a new tab with a <b>{@link kennisbank.fabtool.projects.ProjectView}</b> of the {@link #checkout}.
+	 */
 	void layoutClick(LayoutClickEvent event) {
 		TabSheet tabs = UI.getCurrent().mainView.topTabs
 		Tab tab = tabs.addTab(new ProjectView(checkout), "Project: " + 	checkout.title)

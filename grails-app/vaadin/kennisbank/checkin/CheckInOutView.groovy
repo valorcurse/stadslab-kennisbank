@@ -8,10 +8,21 @@ import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Window.CloseEvent
 import com.vaadin.data.Item
 
+/*
+	@author Marcelo Dias Avelino (valorcurse@gmail.com)
+
+	This file contains the code for the view where it's possible to checkin and checkout
+
+*/
 
 @Theme("HRO")
 class CheckInOutView extends UI {
 
+	/**
+	 * Initializer of the view that must be overriden to add content to the window
+	 *
+	 * @param args not used
+	 */
 	@Override
 	public void init(VaadinRequest request) {
 		setPrimaryStyleName("check-in")
@@ -23,7 +34,6 @@ class CheckInOutView extends UI {
 		Panel centerPanel = new Panel()
 		bodyLayout.addComponent(centerPanel)
 		bodyLayout.setComponentAlignment(centerPanel, Alignment.MIDDLE_CENTER)
-		// centerPanel.setWidth("40%")
 		centerPanel.setSizeUndefined()
 
 		HorizontalLayout centerPanelLayout = new HorizontalLayout()
@@ -43,6 +53,7 @@ class CheckInOutView extends UI {
 		updateCheckinList =	 {
 			container.removeAllItems()
 			
+			// Change the text displayed in the name column depending on the type of checkin
 			for (def checkin : Checkin.list()) {
 				if (!checkin.closed) {
 					Item item = container.addItem(checkin)
@@ -86,6 +97,7 @@ class CheckInOutView extends UI {
 		leftLayout.setSizeFull()
 		leftLayout.setSpacing(true)
 
+		// Create a checkin for a student
 		Button studentCheckinButton = new Button("Student")
 		leftLayout.addComponent(studentCheckinButton)
 		leftLayout.setComponentAlignment(studentCheckinButton, Alignment.TOP_CENTER)
@@ -105,6 +117,7 @@ class CheckInOutView extends UI {
 			}
 		})
 
+		// Create a checkin for a company
 		Button companyCheckinButton = new Button("Bedrijf")
 		leftLayout.addComponent(companyCheckinButton)
 		leftLayout.setComponentAlignment(companyCheckinButton, Alignment.TOP_CENTER)
@@ -130,16 +143,17 @@ class CheckInOutView extends UI {
 		centerPanelLayout.addComponent(rightLayout)
 		rightLayout.setSizeFull()
 
+		// Table where checkins are displayed
 		Table checkoutTable = new Table()
 		rightLayout.addComponent(checkoutTable)
 		rightLayout.setComponentAlignment(checkoutTable, Alignment.TOP_CENTER)
 		checkoutTable.setWidth("500px")
-		// checkoutTable.setHeight("100%")
 		checkoutTable.setColumnExpandRatio("Naam", 0.3)
 		checkoutTable.setColumnExpandRatio("E-mail", 0.3)
 		checkoutTable.setColumnExpandRatio("Datum", 0.3)
 		checkoutTable.setPageLength(8)
 		checkoutTable.setContainerDataSource(container)
+
 		updateCheckinList()
 
 	}

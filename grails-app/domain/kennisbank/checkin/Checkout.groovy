@@ -1,10 +1,7 @@
 package kennisbank.checkin
 
 import kennisbank.AttachedFile
-import kennisbank.equipment.Material
-import kennisbank.equipment.Equipment
 import kennisbank.equipment.Setting
-import org.apache.commons.lang.RandomStringUtils
 
 class Checkout {
 

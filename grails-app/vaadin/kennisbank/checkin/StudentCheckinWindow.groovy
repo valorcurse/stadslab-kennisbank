@@ -23,12 +23,11 @@ import kennisbank.equipment.Equipment
 
 class StudentCheckinWindow extends CheckinWindow {
 
-	// Boolean checkinSuccessful
-	Checkin savedCheckin
-
+	/**
+	 * Method that must be overriden to add content to the window
+	 */
 	@Override
 	Layout windowContent() {
-		// checkinSuccessful = null
 
 		VerticalLayout layout = new VerticalLayout()
 		layout.setSpacing(true)

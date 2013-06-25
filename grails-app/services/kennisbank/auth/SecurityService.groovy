@@ -4,8 +4,6 @@ import org.springframework.security.core.context.SecurityContextHolder as SCH
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
-import org.springframework.security.core.context.SecurityContextHolder
-
 
 class SecurityService {
 
@@ -28,7 +26,7 @@ class SecurityService {
     }
 
     String getCurrentUsername() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication()
+        Authentication auth = SCH.getContext().getAuthentication()
         return auth.getName(); //get logged in username
     }
 

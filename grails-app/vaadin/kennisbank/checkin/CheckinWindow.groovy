@@ -21,6 +21,9 @@ import com.vaadin.server.UserError
 
 abstract class CheckinWindow extends Window {
 
+	/**
+	 * Boolean to set if the checkin was successful
+	 */
 	protected Boolean checkinSuccessful = false
 
 	CheckinWindow() {	
@@ -36,5 +39,8 @@ abstract class CheckinWindow extends Window {
 		windowLayout.addComponent(windowContent())
 	}
 
+	/**
+	 * Method that must be overriden to add content to the window
+	 */
 	protected abstract Layout windowContent();
 }
