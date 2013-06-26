@@ -314,12 +314,6 @@ class ProjectsOverview extends VerticalLayout {
 
 		updateProjectsList(Checkout.list())
 
-		if(UI.getCurrent().loggedIn) {
-			revealHiddenComponents()
-		}
-		else {
-			hideRevealedComponents()
-		}
 	}
 
 	/**

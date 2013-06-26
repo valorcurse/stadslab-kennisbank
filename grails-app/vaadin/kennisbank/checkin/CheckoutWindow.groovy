@@ -39,14 +39,33 @@ import kennisbank.*
 import kennisbank.utils.*
 
 
-
+/**
+ * Window where checkouts are handled.
+ *
+ * @author Marcelo Dias Avelino
+ */
 class CheckoutWindow extends Window {
 
-	def checkoutForms
+	/**
+	 * Variable that is set if the checkout was saved successfully.
+	 */
 	def checkoutSuccessful
-	Checkin checkin
 
+	/**
+	 * List of all checkouts for the corresponding checkin.
+	 */
+	private def checkoutForms
 
+	/**
+	 * The {@link kennisbank.checkin.Checkin} associated with these checkouts.
+	 */
+	private Checkin checkin
+
+	/**
+	 * Constructor for the CheckoutWindow.
+	 * 
+	 * @param checkin The {@link kennisbank.checkin.Checkin} associated with these checkouts.
+	 */
 	CheckoutWindow(Checkin checkin) {
 
 		checkoutForms = []
@@ -61,10 +80,15 @@ class CheckoutWindow extends Window {
 
 		setCloseShortcut(KeyCode.ESCAPE, null);
 
-		setContent(equipmentTab(checkin))
+		setContent(GenerateLayout())
 	}
 
-	private Layout equipmentTab(Checkin checkin) {
+	/**
+	 * Generates the layout content for this window.
+	 * 
+	 * @param checkin
+	 */
+	private Layout GenerateLayout() {
 		VerticalLayout layout = new VerticalLayout()
 		layout.setWidth("700px")
 		layout.setMargin(true)
@@ -140,6 +164,9 @@ class CheckoutWindow extends Window {
 					checkout.save()
 				
 				} else {
+
+		// ------------------------------------------------------- Constraints -------------------------------------------------------		
+
 					MessageSource messageSource = ApplicationHolder.application.mainContext.getBean('messageSource')
 
 					checkout.errors.allErrors.each {

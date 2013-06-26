@@ -20,7 +20,11 @@ import org.codehaus.groovy.grails.commons.ApplicationHolder
 import com.vaadin.server.UserError
 import kennisbank.equipment.Equipment
 
-
+/**
+ * Window where the functionality for students to login.
+ *
+ * @author Marcelo Dias Avelino
+ */
 class StudentCheckinWindow extends CheckinWindow {
 
 	/**
@@ -189,13 +193,11 @@ class StudentCheckinWindow extends CheckinWindow {
 					}
 				}
 			}
-		}
-		)
+		})
 
-layout.addComponent(checkinButton)
-layout.setComponentAlignment(checkinButton, Alignment.MIDDLE_CENTER)
+		layout.addComponent(checkinButton)
+		layout.setComponentAlignment(checkinButton, Alignment.MIDDLE_CENTER)
 
-return layout
-}
-
+		return layout
+	}
 }

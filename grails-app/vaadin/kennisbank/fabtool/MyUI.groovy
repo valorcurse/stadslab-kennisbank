@@ -21,24 +21,30 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import kennisbank.auth.*
 
 /**
+ * Class where all other components and views are drawn upon.
  *
- *
- * @author
+ * @author Marcelo Dias Avelino
  */
-
-//Theme being used, default is Reindeer
 
 @Theme("HRO")
 @PreserveOnRefresh
+// TODO - Error is thrown when changing title
 // @Title("Kennisbank")
 class MyUI extends UI {
 
-	boolean loggedIn
-	User loggedInUser
-	
+	/**
+	 * {@link kennisbank.MainView} where every component is drawn upon.
+	 */
 	MainView mainView
+
+	/**
+	 * Class which handles URI's.
+	 */
 	Navigator navigator
 	
+	/**
+	* Initializes the UI.
+	*/
 	@Override
 	public void init(VaadinRequest request) {
 

@@ -28,16 +28,44 @@ import kennisbank.checkin.Checkout
 import com.vaadin.event.ShortcutAction.KeyCode
 import com.vaadin.server.Sizeable.Unit
 
-
+/**
+ * The main view for the FabTool section. All other views are displayed as a tab within this view.
+ *
+ * @author Marcelo Dias Avelino
+ */
 class MainView extends Panel implements View {
 
+	/**
+	 * TabSheet where the other views of the FabTool are displayed.
+	 */
 	TabSheet topTabs
+
+	/**
+	 * Service used to authenticate logins.
+	 */
 	private SecurityService security = (SecurityService) Grails.get(SecurityService)
 
+	/**
+	 * Components which are only displayed to authorized users.
+	 */
 	private def authComponents
-	private Panel loginPanel, loggedinPanel
 
-	// Function to handle the login and hide/reveal the necessary components
+	/**
+	 * Panel where the controls for logging in are displayed.
+	 */
+	private Panel loginPanel
+
+	/**
+	 * Panel which replaces {@link #loginPanel} after logging in and displays the option to logout.
+	 */
+	private Panel loggedinPanel
+	
+	/**
+	 * Function to handle the login and hide/reveal the necessary components.
+	 * 
+	 * @param username Username for the user who's trying to login.
+	 * @param username Password for the user who's trying to login.
+	 */
 	private Boolean login(String username, String password) {
 		try {
 			security.signIn(username, password)
@@ -52,7 +80,9 @@ class MainView extends Panel implements View {
 		}
 	}
 
-	// Function to log out the current user
+	/**
+	 * Function to logout the current user and hide/reveal the necessary components.
+	 */
 	private void logout() {
 		try {
 			security.signOut()
@@ -78,7 +108,9 @@ class MainView extends Panel implements View {
 		}
 	}
 
-
+	/**
+	 * Construct of the MainView class.
+	 */
 	public MainView() {
 		authComponents = []
 
@@ -86,6 +118,11 @@ class MainView extends Panel implements View {
 		setContent(GenerateView())
 	}
 
+	/**
+	 * Function which generates the graphical interface and corresponding logic
+	 * 
+	 * @return Panel with generated view
+	 */
 	private Panel GenerateView() {
 
 		Panel mainPanel = new Panel()
@@ -342,13 +379,19 @@ class MainView extends Panel implements View {
 		}
 	}
 
-	void revealHiddenComponents() {
+	/**
+	 * Reveals components the current user has access to.
+	 */
+	private void revealHiddenComponents() {
 		for (c in authComponents) {
 			c.setVisible(true)
 		}
 	}
 
-	void hideRevealedComponents() {
+	/**
+	 * Hides components the current user doesn't have access to.
+	 */
+	private void hideRevealedComponents() {
 		for (c in authComponents) {
 			c.setVisible(false)
 		}

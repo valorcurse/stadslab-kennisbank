@@ -8,20 +8,17 @@ import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Window.CloseEvent
 import com.vaadin.data.Item
 
-/*
-	@author Marcelo Dias Avelino (valorcurse@gmail.com)
-
-	This file contains the code for the view where it's possible to checkin and checkout
-
-*/
+/**
+ * Main view where the logic for checkins and checkouts are implemented.
+ *
+ * @author Marcelo Dias Avelino
+ */
 
 @Theme("HRO")
 class CheckInOutView extends UI {
 
 	/**
 	 * Initializer of the view that must be overriden to add content to the window
-	 *
-	 * @param args not used
 	 */
 	@Override
 	public void init(VaadinRequest request) {

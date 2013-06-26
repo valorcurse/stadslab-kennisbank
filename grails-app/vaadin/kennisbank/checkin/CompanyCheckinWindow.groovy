@@ -20,6 +20,11 @@ import org.springframework.context.MessageSource
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import com.vaadin.server.UserError
 
+/**
+ * Window where the functionality for companies to login.
+ *
+ * @author Marcelo Dias Avelino
+ */
 class CompanyCheckinWindow extends CheckinWindow {
 
 	/**

@@ -19,13 +19,21 @@ import org.springframework.context.MessageSource
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import com.vaadin.server.UserError
 
+/**
+ * Abstract class for checkins.
+ *
+ * @author Marcelo Dias Avelino
+ */
 abstract class CheckinWindow extends Window {
 
 	/**
-	 * Boolean to set if the checkin was successful
+	 * Boolean to set if the checkin was successful.
 	 */
 	protected Boolean checkinSuccessful = false
 
+	/**
+	 * Constructor of the CheckinWindow class.
+	 */
 	CheckinWindow() {	
 		setCaption("Check-in")
 		setPrimaryStyleName("check-in")
@@ -40,7 +48,9 @@ abstract class CheckinWindow extends Window {
 	}
 
 	/**
-	 * Method that must be overriden to add content to the window
+	 * Method that must be overriden to add content to the window.
+	 *
+	 * @return Layout with the generated layout.
 	 */
 	protected abstract Layout windowContent();
 }

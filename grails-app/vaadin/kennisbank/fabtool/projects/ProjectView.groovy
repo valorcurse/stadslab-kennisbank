@@ -61,14 +61,14 @@ class ProjectView extends VerticalLayout {
 
 		setMargin(true)
 
-		Panel viewPanel = GenerateView()
+		Panel viewPanel = new Panel()
 		addComponent(viewPanel)
 		setComponentAlignment(viewPanel, Alignment.TOP_CENTER)
 		viewPanel.setSizeUndefined()
 
 		GridLayout gridLayout = new GridLayout(2, 5)
 		viewPanel.setContent(gridLayout)
-		GridLayoutt.setSpacing(true)
+		gridLayout.setSpacing(true)
 		gridLayout.setMargin(true)
 		gridLayout.setColumnExpandRatio(1, 1)
 		gridLayout.setStyleName("projectLayout")
