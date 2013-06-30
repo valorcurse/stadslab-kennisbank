@@ -1,66 +1,62 @@
 package kennisbank.fabtool.adjustment
 
-import com.google.gwt.user.client.Command
-import com.google.gwt.user.client.ui.TabBar.Tab
-import com.vaadin.data.Property
+
 import com.vaadin.data.Property.ValueChangeListener
 import com.vaadin.data.Property.ValueChangeEvent
-import com.vaadin.event.FieldEvents.TextChangeEvent
-import com.vaadin.event.FieldEvents.TextChangeListener
-import com.vaadin.server.ClassResource
-import com.vaadin.server.ExternalResource
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
-//import com.vaadin.ui.TabSheet.SelectedTabChangeEvents
 import com.vaadin.server.ThemeResource
 import com.vaadin.ui.themes.Reindeer
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.*
-import com.vaadin.shared.ui.label.ContentMode
-import com.vaadin.ui.MenuItem
-
-import java.awt.MenuItem
-import java.io.OutputStream;
-import java.sql.PreparedStatement
 import kennisbank.*
 import kennisbank.fabtool.home.HomeView
-
 import kennisbank.equipment.*
-//import kennisbank.equipment.Material
 import kennisbank.utils.*
 import kennisbank.fabtool.projects.*
+import com.vaadin.shared.ui.label.ContentMode
+
+//import com.google.gwt.user.client.Command
+//import com.google.gwt.user.client.ui.TabBar.Tab
+//import com.vaadin.data.Property
+//import com.vaadin.event.FieldEvents.TextChangeEvent
+//import com.vaadin.event.FieldEvents.TextChangeListener
+//import com.vaadin.server.ClassResource
+//import com.vaadin.server.ExternalResource
+//import java.io.OutputStream;
+//import java.sql.PreparedStatement
 
 
 
-
-
+/**
+ * Window where the administrator can add or edit equipments, materials and materialtypes.
+ *
+ * @author Nilson Xavier da Luz
+ */
 class AdjustmentView extends VerticalLayout{
 	
 	
-
+	/**
+	 * Fragment used to bookmark this page.
+	 */	
 	String uriFragment
 
-	
-	//TabSheet ATabs
-	String tabName() {
-		return uriFragment
 
-	}
-
+	/**
+	 * Constructor of the AdjustmentView class.
+	 */		
 	AdjustmentView() {
 
 
 		//Main layout
 		VerticalLayout view = new VerticalLayout()
-		//view.setSizeFull() // Set layout to cover the whole screen
+		
 
 		uriFragment = "#!/Aanpassingen"
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
 		setMargin(true)
 		setSizeFull()
-
-		//MaterialType materialt = new MaterialType()
 
 		Panel panel = new Panel()
 		panel.setPrimaryStyleName("island-panel")
@@ -71,12 +67,13 @@ class AdjustmentView extends VerticalLayout{
 		layout.setSizeFull()
 
 		panel.setContent(layout)
-//----------------------------title------------------------------------------------------------
+
+		//----------------------------title------------------------------------------------------------
 		Label titleLabel = new Label("<h1><b>Aanpassingen</b></h1>", ContentMode.HTML)
 		titleLabel.setWidth("100%")
 		layout.addComponent(titleLabel)
 
-//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Add new equipment or material>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Add new equipment or material>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 		Panel addEquipmentPanel = new Panel("Voeg nieuwe apperaat of materiaal toe")
 		addEquipmentPanel.setPrimaryStyleName("embedded-panel")
 		addEquipmentPanel.addStyleName(Runo.PANEL_LIGHT)
@@ -120,6 +117,7 @@ class AdjustmentView extends VerticalLayout{
 		})
 		equipmentLayout.addComponent(addequipmentButton)
 		equipmentLayout.setComponentAlignment(addequipmentButton, Alignment.TOP_LEFT)
+		
 		//---------------------------------material------------------------------------------------
 		HorizontalLayout materialLayout = new HorizontalLayout()
 		layout.addComponent(materialLayout)
@@ -154,7 +152,7 @@ class AdjustmentView extends VerticalLayout{
 		materialLayout.addComponent(addmaterialButton)
 		materialLayout.setComponentAlignment(addmaterialButton, Alignment.MIDDLE_LEFT)
 
-//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Edit>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Edit>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 		Panel editMaterialPanel = new Panel("materiaal aanpassen")
 		editMaterialPanel.setPrimaryStyleName("embedded-panel")
 		editMaterialPanel.addStyleName(Runo.PANEL_LIGHT)
@@ -280,10 +278,10 @@ class AdjustmentView extends VerticalLayout{
 									}*/	
 									//print "heeeee " +chec.name
 									//print component.getCaption()
-									//MaterialType.removeItem(component.getCaption());
+									//MaterialType.remove(component.getCaption());
 									
 									//print component.getCaption()
-									//new MaterialType(name: MaterialType.findByName(component.getCaption())).delete(failOnError: true)
+									new MaterialType(name: MaterialType.findByName(component.getCaption())).delete(failOnError: true)
 									//new MaterialType(name: MaterialType.findByName(component.getCaption())).delete(failOnError: true)
 									//MaterialType.delete(MaterialType.findByName(component.getCaption()))
 
