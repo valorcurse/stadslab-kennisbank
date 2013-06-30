@@ -60,6 +60,8 @@ class AdjustmentView extends VerticalLayout{
 		setMargin(true)
 		setSizeFull()
 
+		//MaterialType materialt = new MaterialType()
+
 		Panel panel = new Panel()
 		panel.setPrimaryStyleName("island-panel")
 
@@ -84,6 +86,7 @@ class AdjustmentView extends VerticalLayout{
 		HorizontalLayout equipmentLayout = new HorizontalLayout()
 		layout.addComponent(equipmentLayout)
 		equipmentLayout.setSpacing(true)
+		equipmentLayout.setMargin(true)
 		
 		TextField equipmentTextField = new TextField()
 		equipmentLayout.addComponent(equipmentTextField)
@@ -121,6 +124,7 @@ class AdjustmentView extends VerticalLayout{
 		HorizontalLayout materialLayout = new HorizontalLayout()
 		layout.addComponent(materialLayout)
 		materialLayout.setSpacing(true)
+		materialLayout.setMargin(true)
 		
 		TextField materialTextField = new TextField()
 		materialLayout.addComponent(materialTextField)
@@ -214,10 +218,32 @@ class AdjustmentView extends VerticalLayout{
 		                materialEditLayout.removeAllComponents()
 		                
 		                //-------------------------------material title----------------------------------------
-		                Label materialTitleLabel = new Label(selectedMaterial, ContentMode.HTML)
+		                HorizontalLayout materialtitleLayout = new HorizontalLayout()
+		                materialEditLayout.addComponent(materialtitleLayout)
+		                materialEditLayout.setStyleName("searchTextLayout")
+						//materialtitleLayout.setMargin(true)
+						//materialtitleLayout.setSpacing(true)
+
+		                Label materialTitleLabel = new Label("<u><b>"+selectedMaterial+"<b><u>", ContentMode.HTML)
 						materialTitleLabel.setWidth("100%")
-						materialEditLayout.addComponent(materialTitleLabel)
+						materialtitleLayout.addComponent(materialTitleLabel)
 						materialEditLayout.setVisible(true)
+
+						Button deletematerialButton = new Button()
+						materialtitleLayout.addComponent(deletematerialButton)
+						deletematerialButton.setDescription("Verwijder materiaal")
+						deletematerialButton.setIcon(new ThemeResource("Red-X.svg"))
+						deletematerialButton.setStyleName(Reindeer.BUTTON_LINK)
+						deletematerialButton.addStyleName("deletematerialButton")
+
+						deletematerialButton.addClickListener(new Button.ClickListener() {
+							@Override
+							public void buttonClick(ClickEvent equipmentButtonEvent) 
+							{
+									
+								
+							}
+						})
 					
 
 						//-----------------existing materialtype checkbox------------------------------------------
@@ -242,8 +268,22 @@ class AdjustmentView extends VerticalLayout{
 								print MaterialType.findByName(component.getCaption())
 								materialEditLayout.removeComponent(component)
 								MaterialType.withTransaction {
-									List<MaterialType> chec = MaterialType.list()	
-									print "heeeee " +chec.name
+									List<MaterialType> chec = MaterialType.list()
+									/*for (MaterialType che : chec) {
+										print "dit "+che.name
+										if(che.name == component.getCaption())
+										{
+
+											print "halllllloooooooooooooooooooooooooooo"
+											MaterialType.removeItem(che.name);
+										}
+									}*/	
+									//print "heeeee " +chec.name
+									//print component.getCaption()
+									//MaterialType.removeItem(component.getCaption());
+									
+									//print component.getCaption()
+									//new MaterialType(name: MaterialType.findByName(component.getCaption())).delete(failOnError: true)
 									//new MaterialType(name: MaterialType.findByName(component.getCaption())).delete(failOnError: true)
 									//MaterialType.delete(MaterialType.findByName(component.getCaption()))
 
