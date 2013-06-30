@@ -10,22 +10,20 @@ import com.vaadin.event.FieldEvents.TextChangeListener
 import com.vaadin.server.ClassResource
 import com.vaadin.server.ExternalResource
 import com.vaadin.ui.Button.ClickEvent
-import com.vaadin.ui.TabSheet.SelectedTabChangeEvent
+//import com.vaadin.ui.TabSheet.SelectedTabChangeEvents
 import com.vaadin.ui.themes.Reindeer
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.*
 import com.vaadin.shared.ui.label.ContentMode
 import com.vaadin.ui.MenuItem
-import kennisbank.checkin.*
 
 import java.awt.MenuItem
 import java.io.OutputStream;
 import java.sql.PreparedStatement
 import java.util.Calendar;
-
+import kennisbank.checkin.*
 import kennisbank.*
 import kennisbank.fabtool.home.HomeView
-import kennisbank.fabtool.tabletabs.Today
 import static java.util.Calendar.*
 
 
@@ -95,26 +93,28 @@ class Administration extends VerticalLayout{
 		def dayofMonth = calendar.get(Calendar.DAY_OF_MONTH)
 		def dayofYear = calendar.get(Calendar.DAY_OF_YEAR)
 		//print (new Date() - (dayofMonth-1))
-		PopupDateField StartDate = new PopupDateField();
-		//StartDate.setValue(new Date() -(dayofWeek -(dayofWeek - 1)));//
-		StartDate.setImmediate(true);
-		StartDate.setShowISOWeekNumbers(true);
+		PopupDateField startDate = new PopupDateField();
+		//startDate.setValue(new Date() -(dayofWeek -(dayofWeek - 1)));//
+		startDate.setImmediate(true);
+		startDate.setShowISOWeekNumbers(true);
 		//sample.setTimeZone(TimeZone.getTimeZone("UTC"));
 		//sample.setLocale(Locale.US);
 		//sample.setResolution(Resolution.MINUTE);
 		
-		PopupDateField EndDate = new PopupDateField();
+		PopupDateField endDate = new PopupDateField();
 		
-		EndDate.setImmediate(true);
-//		EndDate.setShowISOWeekNumbers(true);
+		endDate.setImmediate(true);
+//		endDate.setShowISOWeekNumbers(true);
 		
-		StartDate.addValueChangeListener(new ValueChangeListener() {
+		startDate.addValueChangeListener(new ValueChangeListener() {
 			@Override
 			public void valueChange(final ValueChangeEvent event) {
-				
+			
 				final String valueString = String.valueOf(event.getProperty().getValue().format('MM/dd/yy'));
 					checkedInTable.removeAllItems()
-					StartDate.setValue(event.getProperty().getValue());
+					print startDate
+					//println "lslsls: " +  event.getProperty().getValue()
+					startDate.setValue(event.getProperty().getValue());
 					Notification.show("Value changed:"+valueString);
 				
 				List<StudentCheckin> checks = StudentCheckin.list()
@@ -126,14 +126,14 @@ class Administration extends VerticalLayout{
 					
 					println 'date :' +date.format('MM/dd/yy')
 					println 'selecteddate: ' + valueString
-					//println EndDate.getValue().format('MM/dd/yy')
+					//println endDate.getValue().format('MM/dd/yy')
 					
-					//if(check.dateCreated.toString().contains(StartDate))// && check.dateCreated > EndDate)
-					if( date.format('MM/dd/yy') >= valueString) //&& date.format('MM/dd/yy') < EndDate.getValue().format('MM/dd/yy'))
+					//if(check.dateCreated.toString().contains(startDate))// && check.dateCreated > endDate)
+					if( date.format('MM/dd/yy') >= valueString) //&& date.format('MM/dd/yy') < endDate.getValue().format('MM/dd/yy'))
 					{
-					println checkedInTable.getItem(check.equipment[0]).toString()
+					println checkedInTable.getItem(check.equipment*.name).toString()
 					checkedInTable.addItem(	[check.studentNumber, check.firstName, check.lastName, check.email,
-						check.institute, check.study, check.course, check.teacher,  check.equipment[0], check.dateCreated.toString()
+						check.institute, check.study, check.course, check.teacher,  check.equipment*.name.toString(), check.dateCreated.toString()
 					] as Object[],
 					new Integer(checkedInTable.size()+1))
 				}
@@ -144,7 +144,47 @@ class Administration extends VerticalLayout{
 				
 			}
 		});
-	
+
+		endDate.addValueChangeListener(new ValueChangeListener() {
+			@Override
+			public void valueChange(final ValueChangeEvent event) {
+			
+				final String valueString = String.valueOf(event.getProperty().getValue().format('MM/dd/yy'));
+					checkedInTable.removeAllItems()
+					print startDate
+					//println "lslsls: " +  event.getProperty().getValue()
+					endDate.setValue(event.getProperty().getValue());
+					Notification.show("Value changed:"+valueString);
+				
+				List<StudentCheckin> checks = StudentCheckin.list()
+				for (StudentCheckin check : checks) {
+					//println check.studentNumber
+					//println check.dateCreated
+					
+					Date date = new Date(check.dateCreated.getTime())
+					
+					println 'date :' +date.format('MM/dd/yy')
+					println 'selecteddate: ' + valueString
+					//println endDate.getValue().format('MM/dd/yy')
+					
+					//if(check.dateCreated.toString().contains(startDate))// && check.dateCreated > endDate)
+					if( date.format('MM/dd/yy') <= valueString && date.format('MM/dd/yy') >= startDate.getValue().format('MM/dd/yy') ) //&& date.format('MM/dd/yy') < endDate.getValue().format('MM/dd/yy'))
+					{
+					println checkedInTable.getItem(check.equipment*.name).toString()
+					checkedInTable.addItem(	[check.studentNumber, check.firstName, check.lastName, check.email,
+						check.institute, check.study, check.course, check.teacher,  check.equipment*.name.toString(), check.dateCreated.toString()
+					] as Object[],
+					new Integer(checkedInTable.size()+1))
+				}
+				}
+				
+				//stmt.execute();
+				//stmt.close();
+				
+			}
+		});
+
+
 
 
 		
@@ -164,8 +204,8 @@ class Administration extends VerticalLayout{
 		
 		HorizontalLayout dateLayout = new HorizontalLayout()
 		checkedInLayout.addComponent(dateLayout)
-		dateLayout.addComponent(StartDate)
-		dateLayout.addComponent(EndDate)
+		dateLayout.addComponent(startDate)
+		dateLayout.addComponent(endDate)
 
 		checkedInTable = new Table()
 		//checkedInTable.addStyleName(Reindeer.TABLE_BORDERLESS)
@@ -192,8 +232,8 @@ class Administration extends VerticalLayout{
 
 
 		for (StudentCheckin check : checks) {
-			println check.studentNumber
-			println check.dateCreated
+			//println check.studentNumber
+			//println check.dateCreated
 			
 			// println checkedInTable.getItem(check.equipment[0]).toString()
 			checkedInTable.addItem(	[check.studentNumber, check.firstName, check.lastName, check.email,
@@ -219,9 +259,9 @@ class Administration extends VerticalLayout{
 					public void buttonClick(ClickEvent event) {
 						for (StudentCheckin check : checks) {
 							println check.studentNumber
-							println checkedInTable.getItem(check.equipment[0]).toString()
+							println checkedInTable.getItem(check.equipment*.name).toString()
 							checkedInTable.addItem(	[check.studentNumber, check.firstName, check.lastName, check.email,
-								check.institute, check.study, check.course, check.teacher,  check.equipment[0], check.dateCreated.toString()
+								check.institute, check.study, check.course, check.teacher,  check.equipment*.name, check.dateCreated.toString()
 							] as Object[],
 							new Integer(checkedInTable.size()+1))
 						}
@@ -233,8 +273,8 @@ class Administration extends VerticalLayout{
 		//TodayButton.setHeight("50px")
 		TodayButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
-						StartDate.setValue(new Date().getTime())
-						EndDate.setValue(new Date().getTime())
+						startDate.setValue(new Date())
+						endDate.setValue(new Date())
 					}
 				})
 		NativeButton WeekButton = new NativeButton("Week")
@@ -243,8 +283,8 @@ class Administration extends VerticalLayout{
 		WeekButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
 					
-						StartDate.setValue(new Date() - (dayofWeek - 2));
-						EndDate.setValue(new Date())
+						startDate.setValue(new Date())
+						endDate.setValue(new Date())
 						
 						
 					}
@@ -254,8 +294,8 @@ class Administration extends VerticalLayout{
 		//TodayButton.setHeight("50px")
 		MonthButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
-						StartDate.setValue((new Date() -(dayofMonth - 1)));
-						EndDate.setValue(new Date())
+						startDate.setValue((new Date() -(dayofMonth - 1)));
+						endDate.setValue(new Date())
 						checkedInTable.removeAllItems()
 						
 						//List<StudentCheckin> checks = StudentCheckin.list()
@@ -264,17 +304,17 @@ class Administration extends VerticalLayout{
 							//println check.dateCreated
 							
 							Date date = new Date(check.dateCreated.getTime())
-						if( date.format('MM/dd/yy')  >= StartDate.getValue().format('MM/dd/yy') && date.format('MM/dd/yy') <= EndDate.getValue().format('MM/dd/yy'))
+						if( date.format('MM/dd/yy')  >= startDate.getValue().format('MM/dd/yy') && date.format('MM/dd/yy') <= endDate.getValue().format('MM/dd/yy'))
 						{
-							println checkedInTable.getItem(check.equipment[0]).toString()
+							println checkedInTable.getItem(check.equipment*.name).toString()
 							checkedInTable.addItem(	[check.studentNumber, check.firstName, check.lastName, check.email,
-								check.institute, check.study, check.course, check.teacher,  check.equipment[0], check.dateCreated.toString()
+								check.institute, check.study, check.course, check.teacher,  check.equipment*.name.toString(), check.dateCreated.toString()
 							] as Object[],
 							new Integer(checkedInTable.size()+1))
 						}
 						
-					//Filter f = new Filter(StartDate)
-						/*if( date >= StartDate.getValue().format('MM/dd/yy') && date..format('MM/dd/yy') < EndDate.getValue().format('MM/dd/yy'))
+					//Filter f = new Filter(startDate)
+						/*if( date >= startDate.getValue().format('MM/dd/yy') && date..format('MM/dd/yy') < endDate.getValue().format('MM/dd/yy'))
 						{
 						println checkedInTable.getItem(check.equipment[0]).toString()
 						checkedInTable.addItem(	[check.studentNumber, check.firstName, check.lastName, check.email,
@@ -291,8 +331,8 @@ class Administration extends VerticalLayout{
 		//TodayButton.setHeight("50px")
 		YearButton.addClickListener(new Button.ClickListener() {
 					public void buttonClick(ClickEvent event) {
-						StartDate.setValue(new Date() -(dayofYear - 1));
-						EndDate.setValue(new Date())
+						startDate.setValue(new Date() -(dayofYear - 1));
+						endDate.setValue(new Date())
 
 					}
 				})
@@ -304,27 +344,19 @@ class Administration extends VerticalLayout{
 		bottonLayout.addComponent(YearButton)
 		layout.addComponent(bottonsPanel)
 
-	
+		
 		checkedInLayout.addComponent(checkedInTable)
 		layout.addComponent(checkedInPanel)
 
-		//println checkedInTable.getData().toString()
-		//--------------------
-		
+	//----------------------------add Material--------------------------------
 
-		//----------------------------------------------------------------------
-
-		//checkedInLayout.addComponent(ATabs)
-		//checkedInLayout.addComponent(checkedInTable)
 		
 		
 		//layout.addComponent(sample)
 		
 
 		layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
-
 		layout.setComponentAlignment(checkedInPanel, Alignment.TOP_CENTER)
-
 		addComponent(panel)
 
 
@@ -342,7 +374,7 @@ class Administration extends VerticalLayout{
 	}
 }
 	/*public class Filter{
-		public OutputStream(StartDate,EndDate, checkedInTable){
+		public OutputStream(startDate,endDate, checkedInTable){
 		List<StudentCheckin> checks = StudentCheckin.list()
 				for (StudentCheckin check : checks) {
 					//println check.studentNumber
@@ -352,10 +384,10 @@ class Administration extends VerticalLayout{
 					
 					println 'date :' +date.format('MM/dd/yy')
 					//println 'selecteddate: ' + valueString
-					//println EndDate.getValue().format('MM/dd/yy')
+					//println endDate.getValue().format('MM/dd/yy')
 					
-					//if(check.dateCreated.toString().contains(StartDate))// && check.dateCreated > EndDate)
-					if( date >= StartDate.getValue().format('MM/dd/yy') && date.format('MM/dd/yy') < EndDate.getValue().format('MM/dd/yy'))
+					//if(check.dateCreated.toString().contains(startDate))// && check.dateCreated > endDate)
+					if( date >= startDate.getValue().format('MM/dd/yy') && date.format('MM/dd/yy') < endDate.getValue().format('MM/dd/yy'))
 					{
 					println checkedInTable.getItem(check.equipment[0]).toString()
 					checkedInTable.addItem(	[check.studentNumber, check.firstName, check.lastName, check.email,

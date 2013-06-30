@@ -23,6 +23,7 @@ import kennisbank.auth.*
 import kennisbank.fabtool.administration.Administration
 import kennisbank.fabtool.home.*
 import kennisbank.fabtool.projects.*
+import kennisbank.fabtool.adjustment.*
 import kennisbank.checkin.Checkout
 
 import com.vaadin.event.ShortcutAction.KeyCode
@@ -310,6 +311,20 @@ class MainView extends Panel implements View {
 		adminButton.addClickListener(new Button.ClickListener() {
 			public void buttonClick(ClickEvent event) {
 				Tab tab = topTabs.addTab(new Administration(), "Administratie")
+				tab.setClosable(true)
+				topTabs.setSelectedTab(tab)
+			}
+		})
+
+		NativeButton adjustButton = new NativeButton("Aanpassingen")
+		leftMenuLayout.addComponent(adjustButton)
+		leftMenuLayout.setComponentAlignment(adjustButton, Alignment.BOTTOM_CENTER)
+		authComponents.add(adjustButton)
+		adjustButton.setWidth("90%")
+		adjustButton.setVisible(false)
+		adjustButton.addClickListener(new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				Tab tab = topTabs.addTab(new AdjustmentView(), "Aanpassingen")
 				tab.setClosable(true)
 				topTabs.setSelectedTab(tab)
 			}
