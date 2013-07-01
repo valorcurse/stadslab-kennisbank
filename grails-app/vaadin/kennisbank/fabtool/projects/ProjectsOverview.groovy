@@ -60,7 +60,7 @@ class ProjectsOverview extends VerticalLayout {
 				@Override
 				public void buttonClick(ClickEvent event) {
 					remove(query)
-					queriesLayout.removeComponent(tag)		
+					removeQueryTag(newTag)		
 				}
 			})
 		}
@@ -125,7 +125,7 @@ class ProjectsOverview extends VerticalLayout {
 	/**
 	 * Layout where the {@link #QueryTag QueryTags} are displayed.  
 	 */
-	private GridLayout queriesLayout
+	GridLayout queriesLayout
 
 	/**
 	 * Layout where the {@link kennisbank.fabtool.projects.ProjectLink ProjectLinks} are displayed.  
@@ -327,5 +327,9 @@ class ProjectsOverview extends VerticalLayout {
 		for (checkout in checkouts) {
 			projectsLayout.addComponent(new ProjectLink(checkout))
 		}
+	}
+
+	void removeQueryTag(QueryTag tag) {
+		queriesLayout.removeComponent(tag)		
 	}
 }
