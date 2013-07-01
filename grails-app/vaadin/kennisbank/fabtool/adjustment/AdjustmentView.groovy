@@ -107,6 +107,8 @@ class AdjustmentView extends VerticalLayout{
 						new Equipment(name: equipmentTextField.getValue()).addToSettingTypes(passes)
 						.addToSettingTypes(power)
 						.addToSettingTypes(dikte).save(failOnError: true)
+
+						Notification.show(equipmentTextField.getValue() + " is toegevoegd")
 					}
 				}
 				else
@@ -140,6 +142,7 @@ class AdjustmentView extends VerticalLayout{
 					Material.withTransaction 
 					{
 						new Material(name: materialTextField.getValue()).save(failOnError: true)
+						Notification.show(materialTextField.getValue() + " is toegevoegd")
 					}
 				}
 				else
@@ -239,7 +242,7 @@ class AdjustmentView extends VerticalLayout{
 							public void buttonClick(ClickEvent equipmentButtonEvent) 
 							{
 									
-								
+								Material.findByName(selectedMaterial).delete(flush: true)
 							}
 						})
 					
@@ -267,21 +270,23 @@ class AdjustmentView extends VerticalLayout{
 								materialEditLayout.removeComponent(component)
 								MaterialType.withTransaction {
 									List<MaterialType> chec = MaterialType.list()
+
+									 MaterialType.findByName(component.getCaption()).delete(flush: true)
 									/*for (MaterialType che : chec) {
 										print "dit "+che.name
 										if(che.name == component.getCaption())
 										{
 
 											print "halllllloooooooooooooooooooooooooooo"
-											MaterialType.removeItem(che.name);
+											MaterialType.removeItem(name: MaterialType.findByName(che.name));
 										}
-									}*/	
+									}*/
 									//print "heeeee " +chec.name
 									//print component.getCaption()
 									//MaterialType.remove(component.getCaption());
-									
+									//MaterialType.removeItem(name: MaterialType.findByName(component.getCaption()));
 									//print component.getCaption()
-									new MaterialType(name: MaterialType.findByName(component.getCaption())).delete(failOnError: true)
+									//new MaterialType(name: MaterialType.findByName(component.getCaption())).delete(failOnError: true)
 									//new MaterialType(name: MaterialType.findByName(component.getCaption())).delete(failOnError: true)
 									//MaterialType.delete(MaterialType.findByName(component.getCaption()))
 
@@ -322,8 +327,13 @@ class AdjustmentView extends VerticalLayout{
 							
 									MaterialType.withTransaction 
 									{
+										def equipment2
+										
+										MaterialType nee = new MaterialType(name: addmaterialTextField.getValue(), material: Material.findByName(selectedMaterial)).save(failOnError: true)
+										
+										equipment2 = Equipment.findByName(selectedEquipment)
 
-										new MaterialType(name: addmaterialTextField.getValue(), material: Material.findByName(selectedMaterial)).save(failOnError: true)
+										equipment2.addToMaterialTypes(nee).save(failOnError: true)
 										//selectedMaterial.addToMaterialTypes(nee)
 										//new Equipment(name: selectedEquipment).addToMaterialTypes(nee).save(failOnError: true)
 										//print addmaterialTextField.getValue() + " is toegevoegd aan " + selectedMaterial + "in" + selectedEquipment
