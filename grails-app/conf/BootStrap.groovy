@@ -30,16 +30,13 @@ class BootStrap {
 		karton.addToMaterialTypes(massiefKarton)
 		.addToMaterialTypes(golfKarton)
 
+		SettingType passes = new SettingType(name: "Passes")
+		SettingType power = new SettingType(name: "Power")
+		SettingType dikte = new SettingType(name: "Dikte")
+
 		Equipment folieSnijder = new Equipment(name: "Folie snijder").save(failOnError: true)
 		Equipment printer = new Equipment(name: "3D printer").save(failOnError: true)
 		Equipment laserSnijder = new Equipment(name: "Laser snijder").save(failOnError: true)
-
-
-		SettingType passes = new SettingType(name: "Passes", equipment: ).save(failOnError: true)
-		SettingType power = new SettingType(name: "Power").save(failOnError: true)
-		SettingType dikte = new SettingType(name: "Dikte").save(failOnError: true)
-
-
 		.addToSettingTypes(passes)
 		.addToSettingTypes(power)
 		.addToSettingTypes(dikte)
@@ -47,6 +44,7 @@ class BootStrap {
 		.addToMaterialTypes(triplex)
 		.addToMaterialTypes(massiefKarton)
 		.addToMaterialTypes(golfKarton)
+
 
 		String description = "Lorem ipsum Minim eu sunt reprehenderit nisi voluptate Excepteur commodo cillum esse" + 
 		" dolore quis exercitation aliquip esse dolore culpa sit laboris dolor sed consequat dolor labore ea voluptate" + 
@@ -69,14 +67,14 @@ class BootStrap {
 		
 
 		def checkout1Settings = [
-		new Setting(value: "4", settingType: passes, materialType: duplex, equipment: printer, checkout: checkout1).save(),	
-		new Setting(value: "100", settingType: power, materialType: duplex, equipment: printer, checkout: checkout1).save(),
-		new Setting(value: "3", settingType: dikte, materialType: duplex, equipment: printer, checkout: checkout1).save()]
+		new Setting(value: "4", settingType: passes, materialType: duplex, equipment: printer, checkout: checkout1),	
+		new Setting(value: "100", settingType: power, materialType: duplex, equipment: printer, checkout: checkout1),
+		new Setting(value: "3", settingType: dikte, materialType: duplex, equipment: printer, checkout: checkout1)]
 
 		def checkout2Settings = [
-		new Setting(value: "4", settingType: passes, materialType: triplex, equipment: laserSnijder, checkout: checkout2.save()),	
-		new Setting(value: "100", settingType: power, materialType: triplex, equipment: laserSnijder, checkout: checkout2).save(),
-		new Setting(value: "3", settingType: dikte, materialType: triplex, equipment: laserSnijder, checkout: checkout2).save()]
+		new Setting(value: "4", settingType: passes, materialType: triplex, equipment: laserSnijder, checkout: checkout2),	
+		new Setting(value: "100", settingType: power, materialType: triplex, equipment: laserSnijder, checkout: checkout2),
+		new Setting(value: "3", settingType: dikte, materialType: triplex, equipment: laserSnijder, checkout: checkout2)]
 
 		AttachedFile file = new AttachedFile(name: "someFile.txt", path: rootPath + "/samples/someFile.txt")
 
