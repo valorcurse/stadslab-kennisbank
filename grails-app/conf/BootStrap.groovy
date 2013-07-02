@@ -32,6 +32,9 @@ class BootStrap {
 		hout.addToMaterialTypes(duplex)
 		.addToMaterialTypes(triplex)
 
+		karton.addToMaterialTypes(massiefKarton)
+		.addToMaterialTypes(golfKarton)
+
 		Equipment folieSnijder = new Equipment(name: "Folie snijder").save(failOnError: true)
 		Equipment printer = new Equipment(name: "3D printer").save(failOnError: true)
 		Equipment laserSnijder = new Equipment(name: "Laser snijder")
@@ -65,14 +68,14 @@ class BootStrap {
 		
 
 		def checkout1Settings = [
-		new Setting(value: "4", settingType: passes, materialType: duplex, equipment: printer, checkout: checkout1),	
-		new Setting(value: "100", settingType: power, materialType: duplex, equipment: printer, checkout: checkout1),
-		new Setting(value: "3", settingType: dikte, materialType: duplex, equipment: printer, checkout: checkout1)]
+		new Setting(value: "4", settingType: passes, materialType: duplex, equipment: printer, checkout: checkout1).save(),	
+		new Setting(value: "100", settingType: power, materialType: duplex, equipment: printer, checkout: checkout1).save(),
+		new Setting(value: "3", settingType: dikte, materialType: duplex, equipment: printer, checkout: checkout1).save()]
 
 		def checkout2Settings = [
-		new Setting(value: "4", settingType: passes, materialType: triplex, equipment: laserSnijder, checkout: checkout2),	
-		new Setting(value: "100", settingType: power, materialType: triplex, equipment: laserSnijder, checkout: checkout2),
-		new Setting(value: "3", settingType: dikte, materialType: triplex, equipment: laserSnijder, checkout: checkout2)]
+		new Setting(value: "4", settingType: passes, materialType: triplex, equipment: laserSnijder, checkout: checkout2.save()),	
+		new Setting(value: "100", settingType: power, materialType: triplex, equipment: laserSnijder, checkout: checkout2).save(),
+		new Setting(value: "3", settingType: dikte, materialType: triplex, equipment: laserSnijder, checkout: checkout2).save()]
 
 		AttachedFile file = new AttachedFile(name: "someFile.txt", path: rootPath + "/samples/someFile.txt")
 
