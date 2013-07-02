@@ -24,11 +24,6 @@ class BootStrap {
 		MaterialType massiefKarton = new MaterialType(name: "Massief Karton", material: karton).save(failOnError: true)
 		MaterialType golfKarton = new MaterialType(name: "Golfkarton", material: karton).save(failOnError: true)
 
-		SettingType passes = new SettingType(name: "Passes").save(failOnError: true)
-		SettingType power = new SettingType(name: "Power").save(failOnError: true)
-		SettingType dikte = new SettingType(name: "Dikte").save(failOnError: true)
-
-
 		hout.addToMaterialTypes(duplex)
 		.addToMaterialTypes(triplex)
 
@@ -37,7 +32,14 @@ class BootStrap {
 
 		Equipment folieSnijder = new Equipment(name: "Folie snijder").save(failOnError: true)
 		Equipment printer = new Equipment(name: "3D printer").save(failOnError: true)
-		Equipment laserSnijder = new Equipment(name: "Laser snijder")
+		Equipment laserSnijder = new Equipment(name: "Laser snijder").save(failOnError: true)
+
+
+		SettingType passes = new SettingType(name: "Passes", equipment: ).save(failOnError: true)
+		SettingType power = new SettingType(name: "Power").save(failOnError: true)
+		SettingType dikte = new SettingType(name: "Dikte").save(failOnError: true)
+
+
 		.addToSettingTypes(passes)
 		.addToSettingTypes(power)
 		.addToSettingTypes(dikte)
@@ -45,7 +47,6 @@ class BootStrap {
 		.addToMaterialTypes(triplex)
 		.addToMaterialTypes(massiefKarton)
 		.addToMaterialTypes(golfKarton)
-		.save(failOnError: true)
 
 		String description = "Lorem ipsum Minim eu sunt reprehenderit nisi voluptate Excepteur commodo cillum esse" + 
 		" dolore quis exercitation aliquip esse dolore culpa sit laboris dolor sed consequat dolor labore ea voluptate" + 
