@@ -5,7 +5,7 @@ import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 
-class SecurityService {
+class SecurityService implements Serializable {
 
     static transactional = true
 
