@@ -24,9 +24,9 @@ class BootStrap {
 		MaterialType massiefKarton = new MaterialType(name: "Massief Karton", material: karton).save(failOnError: true)
 		MaterialType golfKarton = new MaterialType(name: "Golfkarton", material: karton).save(failOnError: true)
 
-		SettingType passes = new SettingType(name: "Passes")
-		SettingType power = new SettingType(name: "Power")
-		SettingType dikte = new SettingType(name: "Dikte")
+		SettingType passes = new SettingType(name: "Passes").save(failOnError: true)
+		SettingType power = new SettingType(name: "Power").save(failOnError: true)
+		SettingType dikte = new SettingType(name: "Dikte").save(failOnError: true)
 
 
 		hout.addToMaterialTypes(duplex)
@@ -64,11 +64,13 @@ class BootStrap {
 			picturePath: rootPath + "/samples/ubuntu.jpg", description: description, checkin: checkin)
 		
 
-		def checkout1Settings = [new Setting(value: "4", settingType: passes, materialType: duplex, equipment: printer, checkout: checkout1),	
+		def checkout1Settings = [
+		new Setting(value: "4", settingType: passes, materialType: duplex, equipment: printer, checkout: checkout1),	
 		new Setting(value: "100", settingType: power, materialType: duplex, equipment: printer, checkout: checkout1),
 		new Setting(value: "3", settingType: dikte, materialType: duplex, equipment: printer, checkout: checkout1)]
 
-		def checkout2Settings = [new Setting(value: "4", settingType: passes, materialType: triplex, equipment: laserSnijder, checkout: checkout2),	
+		def checkout2Settings = [
+		new Setting(value: "4", settingType: passes, materialType: triplex, equipment: laserSnijder, checkout: checkout2),	
 		new Setting(value: "100", settingType: power, materialType: triplex, equipment: laserSnijder, checkout: checkout2),
 		new Setting(value: "3", settingType: dikte, materialType: triplex, equipment: laserSnijder, checkout: checkout2)]
 
