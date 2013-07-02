@@ -10,19 +10,19 @@ class BootStrap {
 
 		String rootPath = ApplicationHolder.application.parentContext.getResource("").file.absolutePath
 
-		new User(username: "admin", password: "12345", enabled: true).save(flush: true)
+		new User(username: "admin", password: "12345", enabled: true).save()
 
-		Material glas = new Material(name: "Glas").save(flush: true, failOnError: true)
-		Material leer = new Material(name: "Leer").save(flush: true, failOnError: true)
-		Material hout = new Material(name: "Hout").save(flush: true, failOnError: true)
-		Material karton = new Material(name: "Karton").save(flush: true, failOnError: true)
+		Material glas = new Material(name: "Glas").save(failOnError: true)
+		Material leer = new Material(name: "Leer").save(failOnError: true)
+		Material hout = new Material(name: "Hout").save(failOnError: true)
+		Material karton = new Material(name: "Karton").save(failOnError: true)
 
 		// Hout
-		MaterialType duplex = new MaterialType(name: "Duplex", material: Material.findByName("Hout")).save(flush: true, failOnError: true)
-		MaterialType triplex = new MaterialType(name: "Triplex", material: Material.findByName("Hout")).save(flush: true, failOnError: true)
+		MaterialType duplex = new MaterialType(name: "Duplex", material: Material.findByName("Hout")).save(failOnError: true)
+		MaterialType triplex = new MaterialType(name: "Triplex", material: Material.findByName("Hout")).save(failOnError: true)
 		// Karton
-		MaterialType massiefKarton = new MaterialType(name: "Massief Karton", material: Material.findByName("Karton")).save(flush: true, failOnError: true)
-		MaterialType golfKarton = new MaterialType(name: "Golfkarton", material: Material.findByName("Karton")).save(flush: true, failOnError: true)
+		MaterialType massiefKarton = new MaterialType(name: "Massief Karton", material: Material.findByName("Karton")).save(failOnError: true)
+		MaterialType golfKarton = new MaterialType(name: "Golfkarton", material: Material.findByName("Karton")).save(failOnError: true)
 
 		SettingType passes = new SettingType(name: "Passes")
 		SettingType power = new SettingType(name: "Power")
@@ -32,16 +32,17 @@ class BootStrap {
 		hout.addToMaterialTypes(duplex)
 		.addToMaterialTypes(triplex)
 
-		Equipment folieSnijder = new Equipment(name: "Folie snijder").save(flush: true, failOnError: true)
-		Equipment printer = new Equipment(name: "3D printer").save(flush: true, failOnError: true)
-		Equipment laserSnijder = new Equipment(name: "Laser snijder").addToSettingTypes(passes)
+		Equipment folieSnijder = new Equipment(name: "Folie snijder").save(failOnError: true)
+		Equipment printer = new Equipment(name: "3D printer").save(failOnError: true)
+		Equipment laserSnijder = new Equipment(name: "Laser snijder")
+		.addToSettingTypes(passes)
 		.addToSettingTypes(power)
 		.addToSettingTypes(dikte)
 		.addToMaterialTypes(duplex)
 		.addToMaterialTypes(triplex)
 		.addToMaterialTypes(massiefKarton)
 		.addToMaterialTypes(golfKarton)
-		.save(flush: true, failOnError: true)
+		.save(failOnError: true)
 
 		String description = "Lorem ipsum Minim eu sunt reprehenderit nisi voluptate Excepteur commodo cillum esse" + 
 		" dolore quis exercitation aliquip esse dolore culpa sit laboris dolor sed consequat dolor labore ea voluptate" + 
@@ -54,7 +55,7 @@ class BootStrap {
 			institute: "CMI", study: "Technische Informatica", 
 			course: "ICT-Lab", teacher: "Abd el Ghany")
 		.addToEquipment(Equipment.findByName("Laser snijder"))
-		.save(flush: true, failOnError: true)
+		.save(failOnError: true)
 
 		Checkout checkout1 = new Checkout(title: "The new and improved iPad", 
 			picturePath: rootPath + "/samples/ipad.jpg", description: description, checkin: checkin)

@@ -266,7 +266,6 @@ class CheckoutForm extends Panel {
 
 		VerticalLayout pictureLayout = new VerticalLayout()
 		gridLayout.addComponent(pictureLayout, 0, 1) // Column 0, Row 1
-		// pictureLayout.setPrimaryStyleName("embedded-panel")
 		pictureLayout.setSpacing(true)
 
 		Image projectImage = new Image("Upload hier een foto van het project");
@@ -485,6 +484,8 @@ class CheckoutForm extends Panel {
 		}
 
 		settingsList.add(equipmentUsedSettings)
+
+		if (!equipment.materialTypes) { return }
 
 		// ComboBox to choose kind of material used
 		ExtendedComboBox materialComboBox = new ExtendedComboBox(null, equipment.materialTypes*.material.name, false, false)
