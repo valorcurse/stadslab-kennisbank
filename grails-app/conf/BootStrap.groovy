@@ -18,11 +18,11 @@ class BootStrap {
 		Material karton = new Material(name: "Karton").save(failOnError: true)
 
 		// Hout
-		MaterialType duplex = new MaterialType(name: "Duplex", material: Material.findByName("Hout")).save(failOnError: true)
-		MaterialType triplex = new MaterialType(name: "Triplex", material: Material.findByName("Hout")).save(failOnError: true)
+		MaterialType duplex = new MaterialType(name: "Duplex", material: hout).save(failOnError: true)
+		MaterialType triplex = new MaterialType(name: "Triplex", material: hout).save(failOnError: true)
 		// Karton
-		MaterialType massiefKarton = new MaterialType(name: "Massief Karton", material: Material.findByName("Karton")).save(failOnError: true)
-		MaterialType golfKarton = new MaterialType(name: "Golfkarton", material: Material.findByName("Karton")).save(failOnError: true)
+		MaterialType massiefKarton = new MaterialType(name: "Massief Karton", material: karton).save(failOnError: true)
+		MaterialType golfKarton = new MaterialType(name: "Golfkarton", material: karton).save(failOnError: true)
 
 		SettingType passes = new SettingType(name: "Passes")
 		SettingType power = new SettingType(name: "Power")
@@ -54,7 +54,7 @@ class BootStrap {
 			lastName: "Dias Avelino", email: "valorcurse@gmail.com", 
 			institute: "CMI", study: "Technische Informatica", 
 			course: "ICT-Lab", teacher: "Abd el Ghany")
-		.addToEquipment(Equipment.findByName("Laser snijder"))
+		.addToEquipment(laserSnijder)
 		.save(failOnError: true)
 
 		Checkout checkout1 = new Checkout(title: "The new and improved iPad", 
