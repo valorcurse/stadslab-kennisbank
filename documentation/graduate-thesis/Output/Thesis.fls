@@ -198,9 +198,9 @@ INPUT /usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 INPUT Chapters/Architecture.tex
 INPUT Chapters/Architecture.tex
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
+INPUT Chapters/Implementation.tex
+INPUT Chapters/Implementation.tex
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmti10.tfm
-INPUT Chapters/Implementation.tex
-INPUT Chapters/Implementation.tex
 INPUT Appendices/AppendixA.tex
 INPUT Appendices/AppendixA.tex
 INPUT Output/Thesis.bbl
