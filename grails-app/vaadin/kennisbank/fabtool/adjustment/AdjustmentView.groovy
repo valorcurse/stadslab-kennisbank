@@ -1,10 +1,49 @@
 package kennisbank.fabtool.adjustment
 
+import com.vaadin.ui.*
+import com.vaadin.ui.TabSheet.SelectedTabChangeEvent
+import com.vaadin.ui.Button.ClickEvent
+import com.vaadin.ui.Button.ClickListener
+import com.vaadin.ui.themes.Runo
+import com.vaadin.ui.TabSheet.Tab
+import com.vaadin.ui.themes.Reindeer
+import com.vaadin.ui.Tree.ExpandEvent
+import com.vaadin.ui.Upload.SucceededEvent
+import com.vaadin.ui.Upload.FailedEvent
+import com.vaadin.ui.Upload.Receiver
+import com.vaadin.ui.Button.ClickEvent
 
 import com.vaadin.data.Property.ValueChangeListener
 import com.vaadin.data.Property.ValueChangeEvent
+import com.vaadin.data.Item
+import com.vaadin.data.util.HierarchicalContainer
+import com.vaadin.data.util.IndexedContainer
+
+import com.vaadin.server.FileResource
+import com.vaadin.server.DefaultErrorHandler
+import com.vaadin.server.UserError
+import com.vaadin.server.ThemeResource
+
+import com.vaadin.event.ShortcutAction.KeyCode
+import com.vaadin.event.ShortcutListener
+import com.vaadin.event.FieldEvents.TextChangeListener
+import com.vaadin.event.FieldEvents.TextChangeEvent
+
+import java.nio.channels.FileChannel
+import com.vaadin.shared.ui.label.ContentMode
+import org.springframework.context.MessageSource
+import org.codehaus.groovy.grails.commons.ApplicationHolder
+
+import kennisbank.equipment.*
+import kennisbank.*
+import kennisbank.utils.*
+import kennisbank.checkin.Checkout
+
+/*import com.vaadin.data.Property.ValueChangeListener
+import com.vaadin.data.Property.ValueChangeEvent
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
+import com.vaadin.ui.Button.ActionHandler
 import com.vaadin.server.ThemeResource
 import com.vaadin.ui.themes.Reindeer
 import com.vaadin.ui.themes.Runo
@@ -15,7 +54,7 @@ import kennisbank.equipment.*
 import kennisbank.utils.*
 import kennisbank.fabtool.projects.*
 import com.vaadin.shared.ui.label.ContentMode
-
+*/
 //import com.google.gwt.user.client.Command
 //import com.google.gwt.user.client.ui.TabBar.Tab
 //import com.vaadin.data.Property
@@ -78,9 +117,313 @@ class AdjustmentView extends VerticalLayout{
 		addEquipmentPanel.setPrimaryStyleName("embedded-panel")
 		addEquipmentPanel.addStyleName(Runo.PANEL_LIGHT)
 		layout.addComponent(addEquipmentPanel)
+		
+		def settings
+		AddMaterialButton rootAddMaterialButton
+		Checkout checkout
+
+
+		TreeTable settingsTreeTable = new TreeTable("Voeg hier de apparaten, materialen en bijbehorend instellingen die gebruikt zijn")
+		layout.addComponent(settingsTreeTable) // Column 0, Row 3 to Column 1, Row 3
+		settingsTreeTable.setWidth("100%")
+		settingsTreeTable.setPageLength(0)
+
+		HierarchicalContainer materialsContainer = new HierarchicalContainer()
+		materialsContainer.addContainerProperty("Apparatuur", Component.class, "")
+		//materialsContainer.addContainerProperty("Materiaal", Component.class, "")
+		//materialsContainer.addContainerProperty("Instellingen", TextField.class, "")
+		settingsTreeTable.setContainerDataSource(materialsContainer)
+		//settingsTreeTable.setColumnExpandRatio("Apparatuur", 0.6)
+		//settingsTreeTable.setColumnExpandRatio("Materiaal", 0.4)
+
+		//print Material.list()*.toString()
+		
+
+		rootAddMaterialButton = new AddMaterialButton("Voeg een Materiaal toe")
+		Item rootItem = materialsContainer.addItem(rootAddMaterialButton)
+		rootItem.getItemProperty("Apparatuur").setValue(rootAddMaterialButton)
+		settingsTreeTable.setCollapsed(rootAddMaterialButton, false)
+
+
+
+		for (material in Material.list()) {
+			ExtendedText materialTextField = new ExtendedText(material, true, true, true)
+			//Notification.show("hallo")
+			Item materialItem = materialsContainer.addItem(material)
+			materialItem.getItemProperty("Apparatuur").setValue(materialTextField)
+			materialsContainer.setParent(material, rootAddMaterialButton)	
+
+			for (materialType in material.materialTypes) {
+				ExtendedText materialtypeTextField = new ExtendedText(materialType, true, false, true)
+				Item materialTypeItem = materialsContainer.addItem(materialType)
+				materialTypeItem.getItemProperty("Apparatuur").setValue(materialtypeTextField)
+				//materialTypeItem.getItemProperty("Materiaal").setValue(new Label("<b>" + materialType.key.name + "</b>", ContentMode.HTML))
+				materialsContainer.setParent(materialType, material)	
+				settingsTreeTable.setCollapsed(material, false)
+			}
+
+			materialTextField.saveButton.addClickListener(new Button.ClickListener() {
+				@Override
+				public void buttonClick(ClickEvent equipmentButtonEvent) {
+					
+					if (materialTextField.textField.getValue() != "") 
+					{
+						Material.withTransaction 
+						{
+							new Material(name: materialTextField.textField.getValue()).save(failOnError: true)
+							Notification.show(materialTextField.textField.getValue() + " is toegevoegd")
+						}	
+					}
+					else{
+
+						Notification.show("Kies eerst een apparaat.")
+					}
+
+						
+					}
+				})
+
+			materialTextField.plusButton.addClickListener(new Button.ClickListener() {
+				@Override
+				public void buttonClick(ClickEvent equipmentButtonEvent) {
+					if (materialTextField.textField.getValue() != "") 
+					{
+						ExtendedText materialtypesTextField = new ExtendedText(null, true, true, true)
+						Item materialTItem = materialsContainer.addItem(materialtypesTextField)
+						materialTItem.getItemProperty("Apparatuur").setValue(materialtypesTextField)
+						materialsContainer.setParent(materialtypesTextField, materialTextField.object)
+					}
+					else{
+
+						Notification.show("Kies eerst een apparaat.")
+					}
+				}
+			})
+
+			materialTextField.removeButton.addClickListener(new Button.ClickListener() {
+				@Override
+				public void buttonClick(ClickEvent equipmentButtonEvent) {
+					def childrenToDelete = []
+					for (child in materialsContainer.getChildren(materialTextField.object)) {
+						childrenToDelete.add(child)
+					}
+					for (child in childrenToDelete) {
+						materialsContainer.removeItem(child)
+						settingsTreeTable.removeItem(child)
+					}
+
+					materialsContainer.removeItem(materialTextField.object)
+					settingsTreeTable.removeItem(materialTextField.object)
+				}
+			})
+		
+		}
+
+		rootAddMaterialButton.button.addClickListener(new Button.ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {
+
+				def settingsList = settings
+				//Checkout checkout = checkout
+				def materialComboBoxesToRemove = []
+				def materialSettingsToRemove = []
+
+ 				// ComboBox to choose kind of material used
+				ExtendedText materialTextField = new ExtendedText(null, true, true, true)
+				//materialTextField.textField.setNullSelectionAllowed(false)
+				materialTextField.textField.setImmediate(true)
+				materialTextField.textField.setInputPrompt("Maak een materiaal aan")
+
+				//TextField materialTextField = new TextField()
+				//materialTextField.setInputPrompt("Maak een materiaal aan")
+
+				// Add the ComboBox to the table
+				Item equipmentItem = materialsContainer.addItem(materialTextField)
+				equipmentItem.getItemProperty("Apparatuur").setValue(materialTextField)
+				materialsContainer.setParent(materialTextField, rootAddMaterialButton)
+				settingsTreeTable.setCollapsed(rootAddMaterialButton, false)
+				
+			
+				
+				// Remove previously added child components if equipment selection changed
+				
+
+
+
+				materialTextField.saveButton.addClickListener(new Button.ClickListener() {
+				@Override
+				public void buttonClick(ClickEvent equipmentButtonEvent) {
+					
+					if (materialTextField.textField.getValue() != "") 
+					{
+						Material.withTransaction 
+						{
+							Material newMaterial = new Material(name: materialTextField.textField.getValue()).save(failOnError: true)
+							materialTextField.object = newMaterial
+							Notification.show(materialTextField.textField.getValue() + " is toegevoegd")
+						}	
+					}
+					else{
+
+						Notification.show("Kies eerst een apparaat.")
+					}
+
+						
+					}
+				})
+				materialTextField.plusButton.addClickListener(new Button.ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent equipmentButtonEvent) {
+						if (materialTextField.textField.getValue() != "" && materialTextField.object != null) {
+							ExtendedText materialtypesTextField = new ExtendedText(null, true, true, true)
+							Item materialTItem = materialsContainer.addItem(materialtypesTextField)
+							materialTItem.getItemProperty("Apparatuur").setValue(materialtypesTextField)
+							materialsContainer.setParent(materialtypesTextField, materialTextField)
+							settingsTreeTable.setCollapsed(materialTextField, false)
+						}
+						else {
+							Notification.show("Materiaal moet eerst worden opgeslagen.")
+						}
+					}
+				})
+
+				materialTextField.removeButton.addClickListener(new Button.ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent equipmentButtonEvent) {
+						def childrenToDelete = []
+						for (child in materialsContainer.getChildren(materialTextField)) {
+							childrenToDelete.add(child)
+						}
+						for (child in childrenToDelete) {
+							materialsContainer.removeItem(child)
+							settingsTreeTable.removeItem(child)
+						}
+
+						materialsContainer.removeItem(materialTextField)
+						settingsTreeTable.removeItem(materialTextField)
+					}
+				})
+
+				// ---------------------------- Choose equipment ----------------------------
+			
+
+				
+			}
+		})
+
+		// --------------------------------- Made By Label ---------------------------------
+
+		
+
 	
-		//-----------------------------------Equipment-------------------------------------------
-		HorizontalLayout equipmentLayout = new HorizontalLayout()
+	
+	/*private void comboBoxContent(Equipment equipment, List settingsList,
+								TreeTable settingsTreeTable, ExtendedComboBox equipmentComboBox
+								) {
+		
+		IndexedContainer materialsContainer = settingsTreeTable.getContainerDataSource()
+
+		def equipmentUsedSettings = []
+		equipment.settingTypes.each {
+			def newSetting = new Setting(equipment: equipment, settingType: it)
+			checkout.addToSettings(newSetting)
+			equipmentUsedSettings.add(newSetting)
+		}
+
+		settingsList.add(equipmentUsedSettings)
+
+		// ComboBox to choose kind of material used
+		ExtendedComboBox materialComboBox = new ExtendedComboBox(null, equipment.materialTypes*.material.name, false, false)
+		equipmentComboBox.children.add(materialComboBox)
+		materialComboBox.comboBox.setNullSelectionAllowed(false)
+		materialComboBox.comboBox.setImmediate(true)
+		materialComboBox.comboBox.setInputPrompt("Kies een materiaal")
+
+		// Add the ComboBox to the table
+		Item materialItem = materialsContainer.addItem(materialComboBox)
+		materialItem.getItemProperty("Apparatuur").setValue(materialComboBox)
+		materialsContainer.setParent(materialComboBox, equipmentComboBox)
+		settingsTreeTable.setCollapsed(equipmentComboBox, false)
+		
+		// ---------------------------- Choose material ----------------------------
+		materialComboBox.comboBox.addValueChangeListener(new ValueChangeListener() {
+			@Override
+			public void valueChange(final ValueChangeEvent comboEvent) {
+				for (child in materialComboBox.children) {
+					materialsContainer.removeItem(child)					
+				}
+
+				def material = Material.findByName(comboEvent.getProperty().getValue())
+
+				// ComboBox to choose the type of the material
+				ComboBox materialTypeComboBox = new ComboBox(null, material.materialTypes*.name)
+				materialTypeComboBox.setNullSelectionAllowed(false)
+				materialTypeComboBox.setImmediate(true)
+				materialTypeComboBox.setInputPrompt("Kies een materiaal type")
+
+				settingsTreeTable.setCollapsed(materialComboBox, false)
+										
+				//  Add the ComboBox to the table
+				materialItem.getItemProperty("Materiaal").setValue(materialTypeComboBox)
+
+				// ---------------------------- Choose material type ----------------------------
+				materialTypeComboBox.addValueChangeListener(new ValueChangeListener() {
+					@Override
+					public void valueChange(final ValueChangeEvent comboTypeEvent) { 
+
+						def materialType = comboTypeEvent.getProperty().getValue()
+
+						equipmentUsedSettings.each { it.materialType = MaterialType.findByName(materialType) }
+
+						if (!settingsTreeTable.hasChildren(materialComboBox)) {
+							for (def settingUsed : equipment.settingTypes.asList()) {
+								Label newSettingLabel = new Label(settingUsed.name)
+								
+								Item settingItem = materialsContainer.addItem(newSettingLabel)
+								materialComboBox.children.add(newSettingLabel)
+								settingItem.getItemProperty("Materiaal").setValue(newSettingLabel)
+
+								TextField valueTextField = new TextField()
+								materialComboBox.children.add(valueTextField)
+								valueTextField.setWidth("99%")
+								valueTextField.setCaption(settingUsed.name)
+
+								settingItem.getItemProperty("Instellingen").setValue(valueTextField)
+			 
+								materialsContainer.setParent(newSettingLabel, materialComboBox)
+								settingsTreeTable.setChildrenAllowed(newSettingLabel, false)
+
+								valueTextField.addTextChangeListener(new TextChangeListener() {
+									@Override
+									public void textChange(final TextChangeEvent textChangeEvent) {
+										def currentSetting = equipmentUsedSettings.find {
+											it.settingType.name == textChangeEvent.getComponent().getCaption()
+										}
+
+										currentSetting.value = textChangeEvent.getText()
+									}
+								})
+							}
+						} else {
+							// Reset the values on the settings' TextFields 
+							for (child in settingsTreeTable.getChildren(materialComboBox)) {
+								Item item = materialsContainer.getItem(child)
+								item.getItemProperty("Instellingen").getValue().setValue("")
+							}
+						}
+					}
+				})
+			}
+		})*/
+	 
+		layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
+		addComponent(panel)
+	}
+}
+
+
+//-----------------------------------Equipment-------------------------------------------
+		/*HorizontalLayout equipmentLayout = new HorizontalLayout()
 		layout.addComponent(equipmentLayout)
 		equipmentLayout.setSpacing(true)
 		equipmentLayout.setMargin(true)
@@ -280,7 +623,7 @@ class AdjustmentView extends VerticalLayout{
 											print "halllllloooooooooooooooooooooooooooo"
 											MaterialType.removeItem(name: MaterialType.findByName(che.name));
 										}
-									}*/
+									}
 									//print "heeeee " +chec.name
 									//print component.getCaption()
 									//MaterialType.remove(component.getCaption());
@@ -350,9 +693,4 @@ class AdjustmentView extends VerticalLayout{
 					}
 		        });
 		}	
-    });
-        
-	layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
-	addComponent(panel)
-	}
-}
+    });*/
