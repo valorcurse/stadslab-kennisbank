@@ -115,7 +115,7 @@ class CheckInOutView extends UI {
 		})
 
 		// Create a checkin for a company
-		Button companyCheckinButton = new Button("Bedrijf")
+		Button companyCheckinButton = new Button("Bedrijf & Overige")
 		leftLayout.addComponent(companyCheckinButton)
 		leftLayout.setComponentAlignment(companyCheckinButton, Alignment.TOP_CENTER)
 
