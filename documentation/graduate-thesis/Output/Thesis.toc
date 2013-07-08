@@ -1,3 +1,4 @@
+\select@language {dutch}
 \contentsline {chapter}{\numberline {1}Introductie}{1}{chapter.2}
 \contentsline {chapter}{\numberline {2}Architectuur}{2}{chapter.3}
 \contentsline {section}{\numberline {2.1}Checkins en checkouts}{2}{section.4}
@@ -22,4 +23,4 @@
 \contentsline {subsection}{\numberline {4.3.1}Projecten}{10}{subsection.33}
 \vspace {2em}
 \vspace {2em}
-\contentsline {chapter}{Bibliography}{12}{dummy.37}
+\contentsline {chapter}{Bibliografie}{12}{dummy.37}

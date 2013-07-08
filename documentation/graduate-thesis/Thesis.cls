@@ -194,7 +194,7 @@
       \vfill
       {\huge \bf \@title \par}
       \vfill
-      {\LARGE by \par}
+      {\LARGE \par}
       \smallskip
       {\LARGE \authornames \par}
       \vfill
