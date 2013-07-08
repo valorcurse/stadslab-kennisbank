@@ -201,6 +201,13 @@ INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
 INPUT Chapters/Implementation.tex
 INPUT Chapters/Implementation.tex
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmti10.tfm
+INPUT Images/incheck.png
+INPUT ./Images/incheck.png
+INPUT ./Images/incheck.png
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmcsc10.tfm
+INPUT Images/checkin-company.png
+INPUT ./Images/checkin-company.png
+INPUT ./Images/checkin-company.png
 INPUT Appendices/AppendixA.tex
 INPUT Appendices/AppendixA.tex
 INPUT Output/Thesis.bbl
@@ -210,6 +217,7 @@ INPUT Output/Thesis.out
 INPUT Output/Thesis.out
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb
+INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb

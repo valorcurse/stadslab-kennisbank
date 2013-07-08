@@ -7,9 +7,11 @@
 \contentsline {subsection}{\numberline {2.2.1}Projecten}{3}{subsection.8}
 \contentsline {subsection}{\numberline {2.2.2}Administratie}{3}{subsection.9}
 \contentsline {subsection}{\numberline {2.2.3}Aanpassingen}{3}{subsection.10}
-\contentsline {chapter}{\numberline {3}Implementation}{4}{chapter.11}
+\contentsline {chapter}{\numberline {3}Implementatie}{4}{chapter.11}
 \contentsline {section}{\numberline {3.1}Technologi\"en}{4}{section.12}
+\contentsline {section}{\numberline {3.2}Componenten}{5}{section.13}
+\contentsline {subsection}{\numberline {3.2.1}Checkin}{5}{subsection.14}
 \vspace {2em}
-\contentsline {chapter}{\numberline {A}An Appendix}{5}{appendix.13}
+\contentsline {chapter}{\numberline {A}An Appendix}{7}{appendix.17}
 \vspace {2em}
-\contentsline {chapter}{Bibliography}{7}{dummy.14}
+\contentsline {chapter}{Bibliography}{9}{dummy.18}

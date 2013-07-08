@@ -79,9 +79,9 @@ class ProjectView extends VerticalLayout {
 		gridLayout.addComponent(titleLayout, 0, 0, 1, 0) // Column 0, Row 0 to Column 1, Row 0
 
 		Label titleLabel = new Label("<h1>" + checkout.title + "</h1>", ContentMode.HTML)
-		titleLabel.setSizeUndefined()
 		titleLayout.addComponent(titleLabel)
 		titleLayout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
+		titleLabel.setSizeUndefined()
 
 		// ------------------------------------------------------- Picture -------------------------------------------------------
 
