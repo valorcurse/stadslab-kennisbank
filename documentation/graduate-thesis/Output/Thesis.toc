@@ -7,11 +7,19 @@
 \contentsline {subsection}{\numberline {2.2.1}Projecten}{3}{subsection.8}
 \contentsline {subsection}{\numberline {2.2.2}Administratie}{3}{subsection.9}
 \contentsline {subsection}{\numberline {2.2.3}Aanpassingen}{3}{subsection.10}
-\contentsline {chapter}{\numberline {3}Implementatie}{4}{chapter.11}
-\contentsline {section}{\numberline {3.1}Technologi\"en}{4}{section.12}
-\contentsline {section}{\numberline {3.2}Componenten}{5}{section.13}
-\contentsline {subsection}{\numberline {3.2.1}Checkin}{5}{subsection.14}
-\contentsline {subsection}{\numberline {3.2.2}Checkout}{7}{subsection.23}
+\contentsline {chapter}{\numberline {3}Technologi\"en}{4}{chapter.11}
+\contentsline {chapter}{\numberline {4}Implementatie}{5}{chapter.12}
+\contentsline {section}{\numberline {4.1}Checkin}{5}{section.13}
+\contentsline {subsection}{\numberline {4.1.1}Student}{6}{subsection.15}
+\contentsline {subsection}{\numberline {4.1.2}Bedrijf en Overige}{6}{subsection.19}
+\contentsline {section}{\numberline {4.2}Checkout}{7}{section.24}
+\contentsline {subsection}{\numberline {4.2.1}Titel}{8}{subsection.26}
+\contentsline {subsection}{\numberline {4.2.2}Foto}{8}{subsection.27}
+\contentsline {subsection}{\numberline {4.2.3}Bron bestanden}{8}{subsection.28}
+\contentsline {subsection}{\numberline {4.2.4}Korte omschrijving}{9}{subsection.29}
+\contentsline {subsection}{\numberline {4.2.5}Instellingen}{9}{subsection.30}
+\contentsline {section}{\numberline {4.3}FabTool}{9}{section.31}
+\contentsline {subsection}{\numberline {4.3.1}Projecten}{10}{subsection.33}
 \vspace {2em}
 \vspace {2em}
-\contentsline {chapter}{Bibliography}{9}{dummy.25}
+\contentsline {chapter}{Bibliography}{12}{dummy.37}
