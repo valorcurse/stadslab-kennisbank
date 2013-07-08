@@ -242,8 +242,6 @@ INPUT ./Images/filter-projects.png
 INPUT Images/project.png
 INPUT ./Images/project.png
 INPUT ./Images/project.png
-INPUT Output/Thesis.bbl
-INPUT Output/Thesis.bbl
 INPUT Output/Thesis.aux
 INPUT Output/Thesis.out
 INPUT Output/Thesis.out

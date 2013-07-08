@@ -1,0 +1,8 @@
+PWD /home/valorcurse/Repositories/stadslab-kennisbank/documentation/graduate-thesis/Chapters
+INPUT /etc/texmf/web2c/texmf.cnf
+INPUT /usr/share/texlive/texmf/web2c/texmf.cnf
+INPUT /var/lib/texmf/web2c/pdftex/pdflatex.fmt
+INPUT /home/valorcurse/Repositories/stadslab-kennisbank/documentation/graduate-thesis/Chapters/Technology.tex
+OUTPUT Output/Technology.log
+INPUT /usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmti10.tfm

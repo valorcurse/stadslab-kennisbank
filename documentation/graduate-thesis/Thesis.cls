@@ -155,7 +155,7 @@
 \UNIVERSITY  { HOGESCHOOL ROTTERDAM \\
                \vspace{0.5cm}
                \noindent \hspace*{-1.3cm} \makebox[\textwidth]{\includegraphics[width=\paperwidth]{Images/image3.jpg}}}               
-\department  {Institute of Communication, Media and Information Technology}
+\department  {Instituut van Communicatie, Media en Informatietechnologie (CMI)}
 \DEPARTMENT  {\texorpdfstring{\href{Department or School Web Site URL Here (include http://)}
                 {DEPARTMENT OR SCHOOL NAME (IN BLOCK CAPITALS)}}
                 {DEPARTMENT OR SCHOOL NAME (IN BLOCK CAPITALS)}}
