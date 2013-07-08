@@ -89,14 +89,14 @@ Een korte omschrijving over wat het project is en/of doet.
 
 \subsection{Instellingen}
 
-Hier worden de gebruikte instellingen ingevuld van de gebruikte apparatten. Dit wordt gedaan door eerst apparaten toe te voegen, daarna materialen waaronder verschillende types te kiezen valt. Als een materiaal gekozen is, verschijnen de nodige instellingen van de gekozen apparaat en velden waar de instellingen kunnen worden ingevuld. \\
+Hier worden de gebruikte instellingen ingevuld van de gebruikte apparatten. Dit wordt gedaan door eerste apparaten toe te voegen, daarna materialen waaronder verschillende types te kiezen valt. Als een materiaal gekozen is, verschijnen de nodige instellingen van de gekozen apparaat en velden waar de instellingen kunnen worden ingevuld. \\
 
-Er kunnen meerdere projecten worden aangemaakt voor het geval dat de gebruiker aan meerdere projecten heeft gewerkt. Dit wordt gedaan door op de ``Nieuw project'' knop dat bovenaan staat te drukken. Hierdoor wordt een nieuwe tab toegevoegd naast de tab van het bestaande project. \\
+Er kunnen meerdere project worden aangemaakt voor het geval dat de gebruiker aan meerdere projecten heeft gewerkt. Dit wordt gedaan door op de ``Nieuw project'' knop bovenaan te drukken. Hierdoor wordt een nieuwe tab toegevoegd naast de tab van het bestaande project. \\
 Als alles correct is ingevuld, dan wordt de checkout opgeslagen en is de gebruiker uitgecheckt.
 
 \section{FabTool}
 
-Het hoofdgedeelte van de webapplicatie is de FabTool, zie Figuur \ref{fig:fabtool}. Dit is waar projecten kunnen gezocht en bekeken, en waar beheerders overzicht kunnen houden over alle checkins, en apparaten kunnen beheren.
+Het hoofdgedeelte van de webapplicatie is de FabTool, zie Figuur \ref{fig:fabtool}. Dit is waar projecten kunnen gezocht en bekeken, en waar beheerders overzicht kunnen houden over alle checkins en apparaten kunnen beheren.
 
 \begin{figure}[Hh]
 	\centering
@@ -107,7 +107,7 @@ Het hoofdgedeelte van de webapplicatie is de FabTool, zie Figuur \ref{fig:fabtoo
 
 \subsection{Projecten}
 
-Een van de componenten van de FabTool is de projecten component. Hier worden alle projecten die tot nu toe zijn gemaakt weergegeven, zoals het te zien is op Figuur \ref{fig:projects}.
+Een van de componenten van de FabTool zijn de projecten. Hier worden alle projecten die tot nu toe zijn gemaakt weergegeven, zoals het te zien is op Figuur \ref{fig:projects}.
 
 \begin{figure}[Hh]
 	\centering
@@ -116,7 +116,7 @@ Een van de componenten van de FabTool is de projecten component. Hier worden all
 	\label{fig:projects}
 \end{figure}
 
-Het geeft gebruikers ook de mogelijkheid om naar projecten te zoeken en uit te filteren. Zoals het is weergegeven is in Figuur \ref{fig:filter-projects}, kunnen project op meerdere categori\"en worden gefilterd. Ze kunnen per soort apparaat, materiaal en instelling worden gezocht. Ook is het mogelijk om naar tekst te zoeken dat in de titel of bij de omschrijving voorkomt.
+Het geeft gebruikers ook de mogelijkheid om naar project te zoeken en te uit te filteren. Zoals het is weergegeven is in Figuur \ref{fig:filter-projects}, kunnen project op meerdere categori\"en worden gefilterd. Ze kunnen per soort apparaat, materiaal en instelling worden gezocht. Ook is het mogelijk om naar tekst te worden gezocht dat voorkomt in de titel of bij de omschrijving.
 
 \begin{figure}[Hh]
 	\centering
@@ -125,14 +125,81 @@ Het geeft gebruikers ook de mogelijkheid om naar projecten te zoeken en uit te f
 	\label{fig:filter-projects}
 \end{figure}
 
-Als de gebruiker het project heeft gevonden waar hij naar zocht, kan hij erop klikken. Hierdoor verschijnt een nieuwe pagina met hetzelfde informatie dat tijdens het inchecken is ingevuld. Dit is te zien in Figuur \ref{fig:filter-projects}.
+Als de gebruiker het project heeft gevonden waar hij naar zocht, kan hij erop klikken. Hierdoor verschijnt een nieuwe pagina met hetzelfde informatie dat tijdens het inchecken is ingevuld. Dit is te zien in Figuur \ref{fig:chosen-project}.
 
-\begin{figure}[H]
+\begin{figure}[Hh]
 	\centering
 	\includegraphics[width=1\textwidth]{Images/project.png}
 	\caption{Gekozen project}
-	\label{fig:filter-projects}
+	\label{fig:chosen-project}
 \end{figure}
 
 \subsection{Administratie}
 De Administratie is een page waar wordt bijgehouden wie er in de stadslab is geweest en wanneer. Dit is wordt gedaan door een tabel erin te maken met alle check-ins en mogelijkheid te geven om de check-ins te filteren om zo te zien in welke periode de druk was of juist rustig. Met deze gegevens kan de openingstijden van de stadslab bepaald worden.
+
+\subsubsection{Table}
+
+Om alle Check-ins bij te houden hebben we een tabel toegevoegd aan de Administratiepage. Het implementeren van de check-in gegevens gaat als volgt:
+
+\begin {itemize}
+\item Voor elke check-in gegeven moet de er een kolom gemaakt worden en een naam gegeven worden.
+\item Er moet een domain classe gemaakt worden. Deze classe leest alle nodige check-in gegevens en slaat die vervolgens op in de database. In de Administratie classe wordt er een list gemaakt en alle aangevraagde gegevens toegevoegd aan de tabel.
+\end {itemize}
+
+\subsubsection{Timebuttons}
+
+Voor het aanmaken van de zogenoemde timebuttons hebben we 3 verschillende concepten gemaakt.
+\begin {itemize}
+\item \textbf{Tabs}\\
+Het eerste concept was om tabs toe te voegen in de Administration page, die iedere keer een tabel had met nieuwe gegevens erin. Het aanmaken van een tabs bar was gelukt maar het uitvoeren ervan niet. De tabs functie is effectief voor het openen van een page classe, maar niet geschikt voor een panel die in de page is aangemaakt. 
+
+\item \textbf{Menubar}\\
+Het tweede concept was de menubar. Deze functie maakt buttons aan die ook nog een dropdown functie hebben. Het idee voor dropdown functie was om weeknummers of jaartallen te plaatsen, waardoor de tabel gefilterd kan worden. Het probleem aan deze aanpak is er een onduidelijke error ontstaat die we niet hebben kunnen oplossen en niet te veel tijd aan wilde besteden.
+
+\item \textbf{Buttons}\\
+De laatste en het definitieve concept is simpelweg het toevoegen van buttons. De timebuttons zijn verdeeld in 5 buttons ``Alle'', ``Vandaag'', ``Week'', ``Maand'' en ``Year''. Door alleen maar buttons toe te voegen kan er niet gefilterd worden. Daarom hebben we Date Selection functie toegevoegd.
+\end {itemize}
+
+\subsubsection{DateSelection}
+Bij DateSelection hebben we twee PopupDatefields aangemaakt. Een StartDate en een Enddate. Als er gedrukt wordt op de pop-up button komt er een kalender tevoorschijn. Voor beide fields kan je handmatig de dagen kiezen, maar we wilden wat extra’s. 
+We hebben een manier bedacht de Timebuttons effectief te maken, door de laatste periode te kiezen. Voor bijvoorbeeld de Timebutton ``week'' wordt de Enddate op de huidige dag geplaatst en de StartDate wordt doormiddel van de Enddate berekend zodat we de eerste dag van de week krijgen. Dit geldt ook voor jaar, maand of dag. 
+Door de 2 dates datefields te gebruiken is het mogelijk de tabel te filteren.
+
+\subsection{Aanpassingen}
+In de aanpassingen pagina kan de apparaten, materialen, materiaal types en setting van een apparaat aangemaakt worden of al ze al in de database staan aangepast worden. Voor dit zijn er 2 tabellen aangemaakt de materialen tabel en de apparaten tabel.
+
+\subsubsection{Materialentabel }
+\begin{figure}[Hh]
+	\centering
+	\includegraphics[width=0.5\textwidth]{Images/materiaaltable2.png}
+	\caption{Materiaal tabel }
+	\label{fig:materialentabel}
+\end{figure}
+
+In de tabel heb je de keuze om een nieuw materiaal toevoegen of bestaande materialen aan te passen. 
+
+\begin {itemize}
+\item \textbf{Nieuw materiaal}\\
+Door op het plusje te drukken naast ``Voeg een Materiaal toe'' wordt er een textfield genaamd ''“Nieuwe Materiaal”'' toegevoegd aan de tabel. De ``Niewe Materiaal'' heeft 3 functies opslaan, verwijderen en het toevoegen van een materiaal type. Door een nieuw materiaal type toe te voegen ontstaat ``Niewe Materiaal type'', deze heeft de functies opslaan en verwijderen. Zie figuur \ref{fig:materialentabel}
+
+\item \textbf{Bestaande materialen}\\
+Alle materialen die zijn opgeslagen worden in de tabel weergegeven. Deze materialen kunnen worden aangepast door de 3 functies ernaast. Door een andere naam in te typen en het vinkje te drukken vervang je de benamingen van het bestaande materiaal. Het kruisje om het materiaal te verwijderen en het plusje om een nieuw type aan het materiaal toe te voegen. Voor een bestaand materiaal type hebben het vinkje en kruisje hetzelfde functie als het materiaal. Zie figuur \ref{fig:materialentabel}
+\end {itemize}
+
+\subsubsection{Apparatentabel }
+\begin{figure}[Hh]
+	\centering
+	\includegraphics[width=0.5\textwidth]{Images/apparaattable2.png}
+	\caption{Apparaten tabel }
+	\label{fig:apparatentabel}
+\end{figure}
+
+De apparatentabel functioneert hetzelfde als de materialentabel. Het geeft je de keuze om een nieuw apparaat aan te maken of apparaten aan te passen.
+
+\begin {itemize}
+\item \textbf{Nieuw apparaat}\\
+Om een nieuw apparaat volledig toe te voegen moet eerst een naam ervoor bedacht worden. Na het aan maken van het apparaat ontstaan er 2 kopjes, `` Materialen'' en `` Settings''. Het “ Materialen ``gedeelte'' is om bestaande materialen toegevoegd worden aan het apparaat. Dit is omdat sommige apparaten alleen functioneren met bepaalde materialen. Naast het toevoegen van bestaande materialen kunnen er ook materiaal types toegevoegd worden die verbonden met het materiaal die gekozen is. In het `` Settings'' gedeelte kan je zelf de instellingen van het apparaat intypen en toevoegen. Zie figuur \ref{fig:apparatentabel}
+
+\item \textbf{Bestaande apparaten}\\
+In de tabel staan alle apparaten die zijn toegevoegd met de bijhorende materialen, materiaal soorten en instellingen. Hier kan het apparaat en de bijhorende onderdelen aangepast of verwijderd worden. Zie figuur \ref{fig:apparatentabel}
+\end {itemize}
