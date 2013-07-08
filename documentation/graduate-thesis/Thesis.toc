@@ -1,7 +1,0 @@
-\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.2}
-\contentsline {section}{\numberline {1.1}A Section}{1}{section.3}
-\contentsline {subsection}{\numberline {1.1.1}A Subsection}{1}{subsection.4}
-\contentsline {section}{\numberline {1.2}Another Section}{2}{section.5}
-\vspace {2em}
-\contentsline {chapter}{\numberline {A}An Appendix}{3}{appendix.6}
-\vspace {2em}
