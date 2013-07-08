@@ -13,7 +13,7 @@ class ExtendedText extends HorizontalLayout {
 	
 
 
-	ExtendedText(Object object, Boolean removeIcon, Boolean plusIcon, Boolean saveIcon) {
+	ExtendedText(Object object, Boolean saveIcon, Boolean removeIcon, Boolean plusIcon) {
 
 		setStyleName("extendedcombobox")
 		setSpacing(true)
