@@ -23,4 +23,3 @@
 \contentsline {subsection}{\numberline {4.3.1}Projecten}{10}{subsection.33}
 \vspace {2em}
 \vspace {2em}
-\contentsline {chapter}{Bibliografie}{12}{dummy.37}
