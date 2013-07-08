@@ -307,7 +307,7 @@ class CheckoutForm extends Panel {
 		gridLayout.addComponent(uploadsLayout, 1, 1)
 		uploadsLayout.setSpacing(true)
 
-		Table uploadsTable = new Table("Upload hier de bron and overige bestanden")
+		Table uploadsTable = new Table("Upload hier de bron en overige bestanden")
 		uploadsLayout.addComponent(uploadsTable)
 		
 		uploadsTable.setWidth("100%")

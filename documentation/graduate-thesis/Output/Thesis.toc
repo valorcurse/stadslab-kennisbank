@@ -11,7 +11,7 @@
 \contentsline {section}{\numberline {3.1}Technologi\"en}{4}{section.12}
 \contentsline {section}{\numberline {3.2}Componenten}{5}{section.13}
 \contentsline {subsection}{\numberline {3.2.1}Checkin}{5}{subsection.14}
+\contentsline {subsection}{\numberline {3.2.2}Checkout}{7}{subsection.23}
 \vspace {2em}
-\contentsline {chapter}{\numberline {A}An Appendix}{7}{appendix.17}
 \vspace {2em}
-\contentsline {chapter}{Bibliography}{9}{dummy.18}
+\contentsline {chapter}{Bibliography}{9}{dummy.25}
