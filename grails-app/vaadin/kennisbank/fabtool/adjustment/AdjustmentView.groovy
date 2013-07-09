@@ -86,7 +86,7 @@ class AdjustmentView extends VerticalLayout{
 		layout.addComponent(titleLabel)
 
 		//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Add new equipment or material>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-		Panel addEquipmentPanel = new Panel("Voeg nieuwe apperaat of materiaal toe")
+		Panel addEquipmentPanel = new Panel("Apparaten en materialen")
 		addEquipmentPanel.setPrimaryStyleName("embedded-panel")
 		addEquipmentPanel.addStyleName(Runo.PANEL_LIGHT)
 		layout.addComponent(addEquipmentPanel)
