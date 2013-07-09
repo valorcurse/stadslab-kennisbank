@@ -378,9 +378,17 @@ class CheckoutForm extends Panel {
 				def settingsList = settings
 				def materialComboBoxesToRemove = []
 				def materialSettingsToRemove = []
-
+				
+				// Only retrieve equipment which has material types
+				def equipmentList
+				Equipment.withTransaction {
+					equipmentList = Equipment.findAll {
+						materialTypes.size() > 0
+					}.name
+				}
+ 
  				// ComboBox to choose kind of material used
-				ExtendedComboBox equipmentComboBox = new ExtendedComboBox(null, Equipment.list()*.name, true, true)
+				ExtendedComboBox equipmentComboBox = new ExtendedComboBox(null, equipmentList, true, true)
 				equipmentComboBox.comboBox.setNullSelectionAllowed(false)
 				equipmentComboBox.comboBox.setImmediate(true)
 				equipmentComboBox.comboBox.setInputPrompt("Kies een apparaat")
@@ -432,8 +440,6 @@ class CheckoutForm extends Panel {
 							checkout.addToSettings(newSetting)
 							equipmentUsedSettings.add(newSetting)
 						}
-
-						print checkout.settings
 
 						comboBoxContent(equipment, settingsList,
 										settingsTreeTable, equipmentComboBox,

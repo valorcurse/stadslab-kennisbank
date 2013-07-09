@@ -14,8 +14,8 @@ class Setting {
 	static constraints = {
 		value nullable: true, blank: true
 		settingType nullable: true
-		materialType nullable: true
-		equipment nullable: true
+		materialType nullable: false
+		equipment nullable: false
 	}
 
 	static mapping = {
