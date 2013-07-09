@@ -16,6 +16,7 @@ class BootStrap {
 		Material leer = new Material(name: "Leer").save(failOnError: true)
 		Material hout = new Material(name: "Hout").save(failOnError: true)
 		Material karton = new Material(name: "Karton").save(failOnError: true)
+		Material systeemBord = new Material(name: "Systeem boord").save(failOnError: true)
 
 		// Hout
 		MaterialType duplex = new MaterialType(name: "Duplex", material: hout).save(failOnError: true)
@@ -23,6 +24,9 @@ class BootStrap {
 		// Karton
 		MaterialType massiefKarton = new MaterialType(name: "Massief Karton", material: karton).save(failOnError: true)
 		MaterialType golfKarton = new MaterialType(name: "Golfkarton", material: karton).save(failOnError: true)
+		// Systeem boord
+		MaterialType arduino = new MaterialType(name: "Arduino", material: systeemBord).save(failOnError: true)
+
 
 		hout.addToMaterialTypes(duplex)
 		.addToMaterialTypes(triplex)
@@ -34,7 +38,9 @@ class BootStrap {
 		SettingType power = new SettingType(name: "Power")
 		SettingType dikte = new SettingType(name: "Dikte")
 
-		Equipment folieSnijder = new Equipment(name: "Folie snijder").save(failOnError: true)
+		Equipment elektronica = new Equipment(name: "Elektronica").save(failOnError: true)
+		.addToMaterialTypes(arduino)
+
 		Equipment printer = new Equipment(name: "3D printer").save(failOnError: true)
 		Equipment laserSnijder = new Equipment(name: "Laser snijder").save(failOnError: true)
 		.addToSettingTypes(passes)

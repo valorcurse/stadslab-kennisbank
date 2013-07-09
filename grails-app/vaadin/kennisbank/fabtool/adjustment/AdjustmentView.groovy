@@ -39,33 +39,6 @@ import kennisbank.*
 import kennisbank.utils.*
 import kennisbank.checkin.Checkout
 
-/*import com.vaadin.data.Property.ValueChangeListener
-import com.vaadin.data.Property.ValueChangeEvent
-import com.vaadin.ui.Button.ClickEvent
-import com.vaadin.ui.Button.ClickListener
-import com.vaadin.ui.Button.ActionHandler
-import com.vaadin.server.ThemeResource
-import com.vaadin.ui.themes.Reindeer
-import com.vaadin.ui.themes.Runo
-import com.vaadin.ui.*
-import kennisbank.*
-import kennisbank.fabtool.home.HomeView
-import kennisbank.equipment.*
-import kennisbank.utils.*
-import kennisbank.fabtool.projects.*
-import com.vaadin.shared.ui.label.ContentMode
-*/
-//import com.google.gwt.user.client.Command
-//import com.google.gwt.user.client.ui.TabBar.Tab
-//import com.vaadin.data.Property
-//import com.vaadin.event.FieldEvents.TextChangeEvent
-//import com.vaadin.event.FieldEvents.TextChangeListener
-//import com.vaadin.server.ClassResource
-//import com.vaadin.server.ExternalResource
-//import java.io.OutputStream;
-//import java.sql.PreparedStatement
-
-
 
 /**
  * Window where the administrator can add or edit equipments, materials and materialtypes.
@@ -91,7 +64,7 @@ class AdjustmentView extends VerticalLayout{
 		VerticalLayout view = new VerticalLayout()
 		
 
-		uriFragment = "#!/Aanpassingen"
+		uriFragment = "#!"
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
 		setMargin(true)
@@ -162,11 +135,6 @@ class AdjustmentView extends VerticalLayout{
 				materialtypeTextField.removeButton.addClickListener(new Button.ClickListener() {
 							@Override
 							public void buttonClick(ClickEvent equipmendButtonEvent) {
-								
-								
-							
-								print "mamamamamam"
-								
 								
 								materialsContainer.removeItem(materialtypeTextField.object)
 								materialTreeTable.removeItem(materialtypeTextField.object)

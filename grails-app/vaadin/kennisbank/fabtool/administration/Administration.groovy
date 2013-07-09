@@ -60,6 +60,9 @@ class Administration extends VerticalLayout{
 		//Main layout
 		VerticalLayout view = new VerticalLayout()
 
+		uriFragment = "#!/"
+		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
+
 		setMargin(true)
 		setSizeFull()
 

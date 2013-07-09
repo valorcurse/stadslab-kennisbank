@@ -373,9 +373,9 @@ class CheckoutForm extends Panel {
 		rootAddMaterialButton.button.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
+				Checkout checkout = checkout
 
 				def settingsList = settings
-				Checkout checkout = checkout
 				def materialComboBoxesToRemove = []
 				def materialSettingsToRemove = []
 
@@ -409,6 +409,8 @@ class CheckoutForm extends Panel {
 					equipmentComboBox.children.clear()
 				}
 
+				def equipmentUsedSettings = []
+
 				// ---------------------------- Choose equipment ----------------------------
 				equipmentComboBox.comboBox.addValueChangeListener(new ValueChangeListener() {
 					@Override
@@ -417,9 +419,25 @@ class CheckoutForm extends Panel {
 
 						removeChildren()
 
+						if (equipment.settingTypes) {
+							equipment.settingTypes.each {
+								def newSetting = new Setting(equipment: equipment, settingType: it)
+								print newSetting
+								checkout.addToSettings(newSetting)
+								equipmentUsedSettings.add(newSetting)
+							}
+						}
+						else {
+							def newSetting = new Setting(equipment: equipment, settingType: null)
+							checkout.addToSettings(newSetting)
+							equipmentUsedSettings.add(newSetting)
+						}
+
+						print checkout.settings
+
 						comboBoxContent(equipment, settingsList,
 										settingsTreeTable, equipmentComboBox,
-										checkout)
+										checkout, equipmentUsedSettings)
 					}
 				})
 
@@ -430,9 +448,10 @@ class CheckoutForm extends Panel {
 							Notification.show("Kies eerst een apparaat.")
 						}
 						else {
+							
 							comboBoxContent(equipment, settingsList,
 											settingsTreeTable, equipmentComboBox,
-											checkout)
+											checkout, equipmentUsedSettings)
 						}
 					}
 				})
@@ -472,16 +491,9 @@ class CheckoutForm extends Panel {
 	
 	private void comboBoxContent(Equipment equipment, List settingsList,
 								TreeTable settingsTreeTable, ExtendedComboBox equipmentComboBox,
-								Checkout checkout) {
+								Checkout checkout, equipmentUsedSettings) {
 		
 		IndexedContainer settingsContainer = settingsTreeTable.getContainerDataSource()
-
-		def equipmentUsedSettings = []
-		equipment.settingTypes.each {
-			def newSetting = new Setting(equipment: equipment, settingType: it)
-			checkout.addToSettings(newSetting)
-			equipmentUsedSettings.add(newSetting)
-		}
 
 		settingsList.add(equipmentUsedSettings)
 
@@ -528,7 +540,10 @@ class CheckoutForm extends Panel {
 
 						def materialType = comboTypeEvent.getProperty().getValue()
 
-						equipmentUsedSettings.each { it.materialType = MaterialType.findByName(materialType) }
+						equipmentUsedSettings.each { 
+							it.materialType = MaterialType.findByName(materialType) 
+							print it.materialType
+						}
 
 						if (!settingsTreeTable.hasChildren(materialComboBox)) {
 							for (def settingUsed : equipment.settingTypes.asList()) {
