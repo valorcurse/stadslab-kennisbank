@@ -345,7 +345,10 @@ class MainView extends Panel implements View {
 		topTabs.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
 			public void selectedTabChange(SelectedTabChangeEvent event) {
 				Tab tab = topTabs.getTab(event.getTabSheet().getSelectedTab())
-				UI.getCurrent().getPage().getCurrent().setLocation(tab.getComponent().uriFragment)
+				
+				if (tab.getComponent().uriFragment) {
+					UI.getCurrent().getPage().getCurrent().setLocation(tab.getComponent().uriFragment)
+				}
 			}
 		});
 

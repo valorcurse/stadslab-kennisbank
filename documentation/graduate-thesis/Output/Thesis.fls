@@ -242,6 +242,12 @@ INPUT ./Images/filter-projects.png
 INPUT Images/project.png
 INPUT ./Images/project.png
 INPUT ./Images/project.png
+INPUT Images/materiaaltable2.png
+INPUT ./Images/materiaaltable2.png
+INPUT ./Images/materiaaltable2.png
+INPUT Images/apparaattable2.png
+INPUT ./Images/apparaattable2.png
+INPUT ./Images/apparaattable2.png
 INPUT Output/Thesis.aux
 INPUT Output/Thesis.out
 INPUT Output/Thesis.out

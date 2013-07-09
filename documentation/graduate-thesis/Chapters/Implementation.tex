@@ -135,23 +135,18 @@ Als de gebruiker het project heeft gevonden waar hij naar zocht, kan hij erop kl
 \end{figure}
 
 \subsection{Administratie}
-De Administratie is een page waar wordt bijgehouden wie er in de stadslab is geweest en wanneer. Dit is wordt gedaan door een tabel erin te maken met alle check-ins en mogelijkheid te geven om de check-ins te filteren om zo te zien in welke periode de druk was of juist rustig. Met deze gegevens kan de openingstijden van de stadslab bepaald worden.
+De Administratie is een pagina waar bijgehouden wordt wie er in de stadslab is geweest en wanneer. Dit wordt gedaan door een tabel weer te geven met alle check-ins en de mogelijkheid te geven om dezelfde check-ins te filteren, om hierdoor te kunnen zien in welke periode het druk was of juist rustig was.
 
 \subsubsection{Table}
 
-Om alle Check-ins bij te houden hebben we een tabel toegevoegd aan de Administratiepage. Het implementeren van de check-in gegevens gaat als volgt:
-
-\begin {itemize}
-\item Voor elke check-in gegeven moet de er een kolom gemaakt worden en een naam gegeven worden.
-\item Er moet een domain classe gemaakt worden. Deze classe leest alle nodige check-in gegevens en slaat die vervolgens op in de database. In de Administratie classe wordt er een list gemaakt en alle aangevraagde gegevens toegevoegd aan de tabel.
-\end {itemize}
+Om alle check-ins bij te houden hebben we een tabel toegevoegd aan de Administratie pagina. In deze tabel staan alle gegevens van de bijbehorende checkins. Deze tabel is te sorteren per soort gegeven.
 
 \subsubsection{Timebuttons}
 
 Voor het aanmaken van de zogenoemde timebuttons hebben we 3 verschillende concepten gemaakt.
 \begin {itemize}
 \item \textbf{Tabs}\\
-Het eerste concept was om tabs toe te voegen in de Administration page, die iedere keer een tabel had met nieuwe gegevens erin. Het aanmaken van een tabs bar was gelukt maar het uitvoeren ervan niet. De tabs functie is effectief voor het openen van een page classe, maar niet geschikt voor een panel die in de page is aangemaakt. 
+Het eerste concept was om tabs toe te voegen in de Administratie pagina, die iedere keer een tabel had met nieuwe gegevens erin. Het aanmaken van een tabs bar was gelukt maar het uitvoeren ervan niet. De tabs functie is effectief voor het openen van een pagina classe, maar niet geschikt voor een panel die in de pagina is aangemaakt. 
 
 \item \textbf{Menubar}\\
 Het tweede concept was de menubar. Deze functie maakt buttons aan die ook nog een dropdown functie hebben. Het idee voor dropdown functie was om weeknummers of jaartallen te plaatsen, waardoor de tabel gefilterd kan worden. Het probleem aan deze aanpak is er een onduidelijke error ontstaat die we niet hebben kunnen oplossen en niet te veel tijd aan wilde besteden.
