@@ -3,6 +3,7 @@ import kennisbank.checkin.*
 import kennisbank.equipment.*
 import kennisbank.auth.*
 import org.codehaus.groovy.grails.commons.ApplicationHolder
+import grails.util.Environment
 
 class BootStrap {
 
