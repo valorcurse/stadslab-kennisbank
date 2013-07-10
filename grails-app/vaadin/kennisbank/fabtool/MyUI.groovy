@@ -54,7 +54,14 @@ class MyUI extends UI {
 
 		navigator.addView("", mainView) // Add the main view
 
-		navigator.navigateTo("") // Go to the main view
-		
+		def state =  navigator.getState()
+		// If a URI is specified, navigate there
+		if (state) {
+			navigator.navigateTo(state) // Go to the main view
+		}
+		// Else navigate to mainview
+		else {
+			navigator.navigateTo("") // Go to the main view
+		}
 	}
 }
