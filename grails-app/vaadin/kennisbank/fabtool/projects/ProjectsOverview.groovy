@@ -11,7 +11,10 @@ import com.vaadin.ui.Field.ValueChangeEvent
 import com.vaadin.ui.themes.Reindeer
 import com.vaadin.ui.themes.Runo
 import com.vaadin.ui.*
+import com.vaadin.ui.TabSheet.Tab
 import com.vaadin.shared.ui.combobox.FilteringMode
+import com.vaadin.event.LayoutEvents.LayoutClickEvent
+import com.vaadin.event.LayoutEvents.LayoutClickListener
 import kennisbank.*
 import kennisbank.projects.*
 import kennisbank.equipment.*
@@ -325,7 +328,17 @@ class ProjectsOverview extends VerticalLayout {
 		projectsLayout.removeAllComponents()
 
 		for (checkout in checkouts) {
-			projectsLayout.addComponent(new ProjectLink(checkout))
+			ProjectLink newLink = new ProjectLink(checkout)
+			projectsLayout.addComponent(newLink)
+			newLink.addLayoutClickListener(new LayoutClickListener() {
+				@Override
+				public void layoutClick(LayoutClickEvent event) {
+					TabSheet tabs = UI.getCurrent().mainView.topTabs
+					Tab tab = tabs.addTab(new ProjectView(checkout), "Project: " + 	checkout.title)
+					tab.setClosable(true)
+					tabs.setSelectedTab(tab)
+				}
+			})
 		}
 	}
 

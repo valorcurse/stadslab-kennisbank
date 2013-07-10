@@ -2,7 +2,7 @@ package kennisbank.checkin
 
 import kennisbank.equipment.*
 
-class CompanyCheckin extends Checkin {
+class CompanyCheckin extends Checkin implements Serializable {
 
 	String 	companyName,
 			contactPerson,

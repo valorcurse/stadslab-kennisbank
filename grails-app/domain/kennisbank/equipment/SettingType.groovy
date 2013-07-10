@@ -1,6 +1,6 @@
 package kennisbank.equipment
 
-class SettingType {
+class SettingType implements Serializable {
 
 	String name
 	Date dateCreated

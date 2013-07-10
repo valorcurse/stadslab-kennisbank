@@ -2,7 +2,7 @@ package kennisbank.equipment
 
 import kennisbank.checkin.Checkout
 
-class Setting {
+class Setting implements Serializable {
 
 	String value
 	SettingType settingType

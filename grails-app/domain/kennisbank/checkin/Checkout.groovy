@@ -3,7 +3,7 @@ package kennisbank.checkin
 import kennisbank.AttachedFile
 import kennisbank.equipment.Setting
 
-class Checkout {
+class Checkout implements Serializable {
 
 	String title
 	String description

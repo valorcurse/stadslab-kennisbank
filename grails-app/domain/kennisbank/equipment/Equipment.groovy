@@ -1,6 +1,6 @@
 package kennisbank.equipment
 
-class Equipment {
+class Equipment implements Serializable {
 
 	String name
 	Set materialTypes, settingTypes
