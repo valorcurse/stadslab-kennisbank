@@ -2,7 +2,7 @@ package kennisbank.checkin
 
 import kennisbank.equipment.*
 
-class CompanyCheckin extends Checkin {
+class CompanyCheckin extends Checkin implements Serializable {
 
 	String 	companyName,
 			contactPerson,
@@ -14,6 +14,7 @@ class CompanyCheckin extends Checkin {
 
 	static mapping = {
 		projectDescription type: "text"
+		checkouts lazy: false
 	}
 
 	static constraints = {
@@ -21,6 +22,5 @@ class CompanyCheckin extends Checkin {
 		email blank: false, email: true
 		numberOfWorkers blank: false, matches: "[0-9]+"
 		projectDescription blank: false
-		checkouts lazy: false
 	}
 }

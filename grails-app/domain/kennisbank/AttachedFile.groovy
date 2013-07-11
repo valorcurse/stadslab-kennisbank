@@ -2,7 +2,7 @@ package kennisbank
 
 import java.util.Date
 
-class AttachedFile {
+class AttachedFile implements Serializable {
 
 	String name, path
 

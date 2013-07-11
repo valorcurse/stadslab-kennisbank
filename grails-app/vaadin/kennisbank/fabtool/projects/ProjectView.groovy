@@ -56,7 +56,7 @@ class ProjectView extends VerticalLayout {
 
 		this.checkout = checkout
 		
-		uriFragment = "#!/checkout/" + checkout.title.replace(" ", "-")
+		uriFragment = "#!/project/" + checkout.title.replace(" ", "-")
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
 		setMargin(true)
@@ -79,9 +79,9 @@ class ProjectView extends VerticalLayout {
 		gridLayout.addComponent(titleLayout, 0, 0, 1, 0) // Column 0, Row 0 to Column 1, Row 0
 
 		Label titleLabel = new Label("<h1>" + checkout.title + "</h1>", ContentMode.HTML)
-		titleLabel.setSizeUndefined()
 		titleLayout.addComponent(titleLabel)
 		titleLayout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
+		titleLabel.setSizeUndefined()
 
 		// ------------------------------------------------------- Picture -------------------------------------------------------
 
@@ -138,20 +138,27 @@ class ProjectView extends VerticalLayout {
 			equipmentItem.getItemProperty("Apparatuur").setValue(new Label("<b>" + equipment.key.name + "</b>", ContentMode.HTML))
 
 			for (materialType in equipment.getValue().groupBy { it.materialType }) {
-				Item materialTypeItem = settingsContainer.addItem(materialType.key)
-				materialTypeItem.getItemProperty("Apparatuur").setValue(new Label(materialType.key.material.name))
-				materialTypeItem.getItemProperty("Materiaal").setValue(new Label("<b>" + materialType.key.name + "</b>", ContentMode.HTML))
-				settingsContainer.setParent(materialType.key, equipment.key)	
-				settingsTreeTable.setCollapsed(equipment.key, false)
+				// Check if equipment uses materials
+				if (materialType.key) {
+					Item materialTypeItem = settingsContainer.addItem(materialType.key)
+					materialTypeItem.getItemProperty("Apparatuur").setValue(new Label(materialType.key.material.name))
+					materialTypeItem.getItemProperty("Materiaal").setValue(new Label("<b>" + materialType.key.name + "</b>", ContentMode.HTML))
+					settingsContainer.setParent(materialType.key, equipment.key)	
+					settingsTreeTable.setCollapsed(equipment.key, false)
 
-				for (setting in materialType.getValue()) {
-					Item settingItem = settingsContainer.addItem(setting)
-					settingItem.getItemProperty("Materiaal").setValue(new Label(setting.settingType.name))
-					settingItem.getItemProperty("Instellingen").setValue(setting.value)
-					settingsContainer.setParent(setting, materialType.key)	
-					settingsTreeTable.setCollapsed(materialType.key, false)
+					for (setting in materialType.getValue()) {
+						if (setting.settingType) {
+							Item settingItem = settingsContainer.addItem(setting)
+							settingItem.getItemProperty("Materiaal").setValue(new Label(setting.settingType.name))
+							settingItem.getItemProperty("Instellingen").setValue(setting.value)
+							settingsContainer.setParent(setting, materialType.key)	
+							settingsTreeTable.setCollapsed(materialType.key, false)
+						}
+						else {
+							settingsTreeTable.setChildrenAllowed(materialType.key, false)
+						}
+					}
 				}
-
 			}
 		}
 

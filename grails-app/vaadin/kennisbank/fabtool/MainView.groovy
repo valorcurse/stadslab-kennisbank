@@ -345,20 +345,24 @@ class MainView extends Panel implements View {
 		topTabs.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
 			public void selectedTabChange(SelectedTabChangeEvent event) {
 				Tab tab = topTabs.getTab(event.getTabSheet().getSelectedTab())
-				UI.getCurrent().getPage().getCurrent().setLocation(tab.getComponent().uriFragment)
+				
+				if (tab.getComponent().uriFragment) {
+					UI.getCurrent().getPage().getCurrent().setLocation(tab.getComponent().uriFragment)
+				}
 			}
-		});
+		})
 
 		return mainPanel
 	}
 
 	public void enter(ViewChangeEvent event) {
-		print event.getParameters()
+		// print "enter: " + event.getParameters()
 		if(event.getParameters() != null) {
 
 			// Check if a tab is already open
 			for (int t = 1; t < topTabs.getComponentCount(); t++) {
 				if (topTabs.getTab(t).getComponent().uriFragment.replace("#!/", "").equals(event.getParameters())) {
+					topTabs.setSelectedTab(topTabs.getTab(t))
 					return
 				}
 			}
@@ -388,9 +392,7 @@ class MainView extends Panel implements View {
 						}
 					}		
 				break
-			
 			}
-			
 		}
 	}
 

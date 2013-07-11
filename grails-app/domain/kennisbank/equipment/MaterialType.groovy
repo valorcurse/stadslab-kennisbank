@@ -1,6 +1,6 @@
 package kennisbank.equipment
 
-class MaterialType {
+class MaterialType implements Serializable {
 
 	String name
 	Setting setting

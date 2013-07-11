@@ -1,9 +1,8 @@
 package kennisbank.equipment
 
-class SettingType {
+class SettingType implements Serializable {
 
 	String name
-	// Equipment equipment
 	Date dateCreated
 
 	static belongsTo = [equipment: Equipment]

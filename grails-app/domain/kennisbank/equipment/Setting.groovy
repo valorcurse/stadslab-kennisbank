@@ -2,7 +2,7 @@ package kennisbank.equipment
 
 import kennisbank.checkin.Checkout
 
-class Setting {
+class Setting implements Serializable {
 
 	String value
 	SettingType settingType
@@ -12,9 +12,9 @@ class Setting {
 	static belongsTo = [checkout: Checkout]
 
 	static constraints = {
-		value nullable: true, blank: false
+		value nullable: true, blank: true
 		settingType nullable: true
-		materialType nullable: true
+		materialType nullable: false
 		equipment nullable: false
 	}
 

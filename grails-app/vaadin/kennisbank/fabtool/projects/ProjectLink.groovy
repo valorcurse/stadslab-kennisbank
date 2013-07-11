@@ -24,7 +24,7 @@ class ProjectLink extends VerticalLayout implements LayoutClickListener {
 	/**
 	 * This is the <b>{@link kennisbank.checkin.Checkout}</b> this component points to.
 	 */
-	private Checkout checkout
+	public Checkout checkout
 
 	/**
 	 * Constructor of ProjectLink class.
@@ -52,10 +52,6 @@ class ProjectLink extends VerticalLayout implements LayoutClickListener {
 	 * Opens a new tab with a <b>{@link kennisbank.fabtool.projects.ProjectView}</b> of the {@link #checkout}.
 	 */
 	void layoutClick(LayoutClickEvent event) {
-		TabSheet tabs = UI.getCurrent().mainView.topTabs
-		Tab tab = tabs.addTab(new ProjectView(checkout), "Project: " + 	checkout.title)
-		tab.setClosable(true)
-		tabs.setSelectedTab(tab)
 	}
 
 }

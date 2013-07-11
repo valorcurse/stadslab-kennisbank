@@ -2,7 +2,7 @@ package kennisbank.checkin
 
 import kennisbank.equipment.Equipment
 
-class Checkin {
+class Checkin implements Serializable {
 
 	Date dateCreated
 	Set equipment

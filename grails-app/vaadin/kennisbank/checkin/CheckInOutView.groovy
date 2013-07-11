@@ -6,6 +6,7 @@ import com.vaadin.server.VaadinRequest
 import com.vaadin.data.util.IndexedContainer
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Window.CloseEvent
+import com.vaadin.shared.ui.label.ContentMode
 import com.vaadin.data.Item
 
 /**
@@ -28,15 +29,40 @@ class CheckInOutView extends UI {
 		setContent(bodyLayout)
 		bodyLayout.setSizeFull()
 
+
 		Panel centerPanel = new Panel()
 		bodyLayout.addComponent(centerPanel)
 		bodyLayout.setComponentAlignment(centerPanel, Alignment.MIDDLE_CENTER)
 		centerPanel.setSizeUndefined()
 
-		HorizontalLayout centerPanelLayout = new HorizontalLayout()
-		centerPanel.setContent(centerPanelLayout)
-		centerPanelLayout.setSpacing(true)
-		centerPanelLayout.setMargin(true)
+		VerticalLayout panelLayout = new VerticalLayout()
+		centerPanel.setContent(panelLayout)
+
+		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Welcome Message >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+		VerticalLayout welcomeMessageLayout = new VerticalLayout()
+		panelLayout.addComponent(welcomeMessageLayout)
+		panelLayout.setComponentAlignment(welcomeMessageLayout, Alignment.TOP_CENTER)
+		welcomeMessageLayout.setWidth("100%")
+		welcomeMessageLayout.setMargin(true)
+		welcomeMessageLayout.setSpacing(true)
+
+		Label titleLabel = new Label("<h1>Welkom bij het Stadslab</h1>", ContentMode.HTML)
+		welcomeMessageLayout.addComponent(titleLabel)
+		welcomeMessageLayout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
+
+		Label welcomeMessageLabel = new Label("Voordat je gebruik van het lab mag maken, verzoeken wij je om in te checken.<br>" +
+			"Dit wordt gedaan door hieronder op de knop van de juiste categorie te klikken. <br><br>" + 
+			"Als je vervolgens klaar bent, dan graag uitchecken door je eigen checkin in de tabel te zoeken " + 
+			"en daarna de verzocht informatie van je project invullen.", ContentMode.HTML)
+		welcomeMessageLayout.addComponent(welcomeMessageLabel)
+		welcomeMessageLayout.setComponentAlignment(welcomeMessageLabel, Alignment.MIDDLE_CENTER)
+		welcomeMessageLabel.setWidth("425px")
+
+		HorizontalLayout bottomPanelLayout = new HorizontalLayout()
+		panelLayout.addComponent(bottomPanelLayout)
+		bottomPanelLayout.setSpacing(true)
+		bottomPanelLayout.setMargin(true)
 
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Container >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -89,10 +115,15 @@ class CheckInOutView extends UI {
 
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Checkin >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+		Panel leftPanel = new Panel("Checkin")
+		bottomPanelLayout.addComponent(leftPanel)
+		leftPanel.setSizeFull()
+
 		VerticalLayout leftLayout = new VerticalLayout()
-		centerPanelLayout.addComponent(leftLayout)
-		leftLayout.setSizeFull()
+		leftPanel.setContent(leftLayout)
+		// leftLayout.setSizeFull()
 		leftLayout.setSpacing(true)
+		leftLayout.setMargin(true)
 
 		// Create a checkin for a student
 		Button studentCheckinButton = new Button("Student")
@@ -115,7 +146,7 @@ class CheckInOutView extends UI {
 		})
 
 		// Create a checkin for a company
-		Button companyCheckinButton = new Button("Bedrijf en Overigen")
+		Button companyCheckinButton = new Button("Bedrijf & Overige")
 		leftLayout.addComponent(companyCheckinButton)
 		leftLayout.setComponentAlignment(companyCheckinButton, Alignment.TOP_CENTER)
 
@@ -136,8 +167,11 @@ class CheckInOutView extends UI {
 
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Checkout >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+		Panel rightPanel = new Panel("Checkout")
+		bottomPanelLayout.addComponent(rightPanel)
+
 		VerticalLayout rightLayout = new VerticalLayout()
-		centerPanelLayout.addComponent(rightLayout)
+		rightPanel.setContent(rightLayout)
 		rightLayout.setSizeFull()
 
 		// Table where checkins are displayed

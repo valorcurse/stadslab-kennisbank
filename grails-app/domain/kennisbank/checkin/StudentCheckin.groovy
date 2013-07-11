@@ -2,7 +2,7 @@ package kennisbank.checkin
 
 import kennisbank.equipment.Equipment
 
-class StudentCheckin extends Checkin {
+class StudentCheckin extends Checkin implements Serializable {
 
 	String 	studentNumber, 
 			firstName, 

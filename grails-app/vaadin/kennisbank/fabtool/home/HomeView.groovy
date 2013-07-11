@@ -24,7 +24,7 @@ class HomeView extends VerticalLayout {
 	}
 
 	public HomeView() {
-		uriFragment = "#!"
+		uriFragment = "#!/"
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 	}
 

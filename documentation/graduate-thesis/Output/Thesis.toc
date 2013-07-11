@@ -1,0 +1,32 @@
+\select@language {dutch}
+\contentsline {chapter}{\numberline {1}Introductie}{1}{chapter.2}
+\contentsline {chapter}{\numberline {2}Architectuur}{2}{chapter.3}
+\contentsline {section}{\numberline {2.1}Checkins en checkouts}{2}{section.4}
+\contentsline {subsection}{\numberline {2.1.1}Checkin}{2}{subsection.5}
+\contentsline {subsection}{\numberline {2.1.2}Checkout}{2}{subsection.6}
+\contentsline {section}{\numberline {2.2}FabTool}{3}{section.7}
+\contentsline {subsection}{\numberline {2.2.1}Projecten}{3}{subsection.8}
+\contentsline {subsection}{\numberline {2.2.2}Administratie}{3}{subsection.9}
+\contentsline {subsection}{\numberline {2.2.3}Aanpassingen}{3}{subsection.10}
+\contentsline {chapter}{\numberline {3}Technologi\"en}{4}{chapter.11}
+\contentsline {chapter}{\numberline {4}Implementatie}{5}{chapter.12}
+\contentsline {section}{\numberline {4.1}Checkin}{5}{section.13}
+\contentsline {subsection}{\numberline {4.1.1}Student}{6}{subsection.15}
+\contentsline {subsection}{\numberline {4.1.2}Bedrijf en Overige}{6}{subsection.19}
+\contentsline {section}{\numberline {4.2}Checkout}{7}{section.24}
+\contentsline {subsection}{\numberline {4.2.1}Titel}{8}{subsection.26}
+\contentsline {subsection}{\numberline {4.2.2}Foto}{8}{subsection.27}
+\contentsline {subsection}{\numberline {4.2.3}Bron bestanden}{8}{subsection.28}
+\contentsline {subsection}{\numberline {4.2.4}Korte omschrijving}{9}{subsection.29}
+\contentsline {subsection}{\numberline {4.2.5}Instellingen}{9}{subsection.30}
+\contentsline {section}{\numberline {4.3}FabTool}{9}{section.31}
+\contentsline {subsection}{\numberline {4.3.1}Projecten}{10}{subsection.33}
+\contentsline {subsection}{\numberline {4.3.2}Administratie}{11}{subsection.37}
+\contentsline {subsubsection}{\numberline {4.3.2.1}Table}{11}{subsubsection.38}
+\contentsline {subsubsection}{\numberline {4.3.2.2}Timebuttons}{11}{subsubsection.39}
+\contentsline {subsubsection}{\numberline {4.3.2.3}DateSelection}{12}{subsubsection.40}
+\contentsline {subsection}{\numberline {4.3.3}Aanpassingen}{12}{subsection.41}
+\contentsline {subsubsection}{\numberline {4.3.3.1}Materialentabel }{12}{subsubsection.42}
+\contentsline {subsubsection}{\numberline {4.3.3.2}Apparatentabel }{13}{subsubsection.44}
+\vspace {2em}
+\vspace {2em}

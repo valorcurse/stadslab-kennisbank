@@ -1,0 +1,6 @@
+PWD /home/valorcurse/Repositories/stadslab-kennisbank/documentation/graduate-thesis/Chapters
+INPUT /etc/texmf/web2c/texmf.cnf
+INPUT /usr/share/texlive/texmf/web2c/texmf.cnf
+INPUT /var/lib/texmf/web2c/pdftex/pdflatex.fmt
+INPUT /home/valorcurse/Repositories/stadslab-kennisbank/documentation/graduate-thesis/Chapters/Chapter1.tex
+OUTPUT Output/Chapter1.log
