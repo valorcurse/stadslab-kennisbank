@@ -13,4 +13,8 @@ class Material implements Serializable {
 		materialTypes lazy: false
 	}
 
+	def beforeDelete() {
+    	MaterialType.withNewSession { materialTypes*.delete() } 
+	}
+
 }

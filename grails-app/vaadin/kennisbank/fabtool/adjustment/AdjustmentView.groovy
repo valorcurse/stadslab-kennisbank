@@ -12,7 +12,7 @@ import com.vaadin.ui.Upload.SucceededEvent
 import com.vaadin.ui.Upload.FailedEvent
 import com.vaadin.ui.Upload.Receiver
 import com.vaadin.ui.Button.ClickEvent
-
+	
 import com.vaadin.data.Property.ValueChangeListener
 import com.vaadin.data.Property.ValueChangeEvent
 import com.vaadin.data.Item
@@ -118,69 +118,101 @@ class AdjustmentView extends VerticalLayout{
 
 		for (material in Material.list()) {
 			ExtendedText materialTextField = new ExtendedText(material, true, true, true)
-			//Notification.show("hallo")
-			Item materialItem = materialsContainer.addItem(material)
+			Item materialItem = materialsContainer.addItem(materialTextField)
 			materialItem.getItemProperty("Materiaal").setValue(materialTextField)
-			materialsContainer.setParent(material, rootAddMaterialButton)	
+			materialsContainer.setParent(materialTextField, rootAddMaterialButton)	
 
 			for (materialType in material.materialTypes) {
-				ExtendedText materialtypeTextField = new ExtendedText(materialType, true, true, false)
-				Item materialTypeItem = materialsContainer.addItem(materialType)
-				materialTypeItem.getItemProperty("Materiaal").setValue(materialtypeTextField)
-				//materialTypeItem.getItemProperty("Materiaal").setValue(new Label("<b>" + materialType.key.name + "</b>", ContentMode.HTML))
-				materialsContainer.setParent(materialType, material)	
-				materialTreeTable.setCollapsed(material, false)
-				materialTreeTable.setChildrenAllowed(materialType, false)
+				ExtendedText materialTypeTextField = new ExtendedText(materialType, true, true, false)
+				Item materialTypeItem = materialsContainer.addItem(materialTypeTextField)
+				materialTypeItem.getItemProperty("Materiaal").setValue(materialTypeTextField)
+				materialsContainer.setParent(materialTypeTextField, materialTextField)	
+				materialTreeTable.setCollapsed(materialTextField, false)
+				materialTreeTable.setChildrenAllowed(materialTypeTextField, false)
 
-				materialtypeTextField.removeButton.addClickListener(new Button.ClickListener() {
-							@Override
-							public void buttonClick(ClickEvent equipmendButtonEvent) {
-								
-								materialsContainer.removeItem(materialtypeTextField.object)
-								materialTreeTable.removeItem(materialtypeTextField.object)
-
-								MaterialType.findByName(materialTextField.textField.getValue()).delete(flush: true)
+				materialTypeTextField.saveButton.addClickListener(new Button.ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent equipmendButtonEvent) {
+						if (materialTypeTextField.textField.getValue() != "") {
+							Material.withTransaction {
+								if (materialTypeTextField.object == null) {
+									MaterialType newMaterialType = new MaterialType(name: materialTypeTextField.textField.getValue())
+									materialTextField.object.addToMaterialTypes(newMaterialType).save()
+									materialTypeTextField.object = newMaterialType
+								}
+								else {
+									if (materialTypeTextField.textField.getValue() != materialTypeTextField.object?.name) {
+										materialTypeTextField.object.name = materialTypeTextField.textField.getValue()
+										materialTypeTextField.object = materialTypeTextField.object.merge()
+										materialTypeTextField.object.save()
+									}
+								}
 							}
-						})
+						}
+					}
+				})
+
+				materialTypeTextField.removeButton.addClickListener(new Button.ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent equipmendButtonEvent) {
+						materialsContainer.removeItem(materialTypeTextField)
+						materialTreeTable.removeItem(materialTypeTextField)
+						if (materialTypeTextField.object) {
+							materialTypeTextField.object.delete()
+						}
+					}
+				})
 			}
 
 			materialTextField.saveButton.addClickListener(new Button.ClickListener() {
 				@Override
 				public void buttonClick(ClickEvent equipmentButtonEvent) {
-					
-					if (materialTextField.textField.getValue() != "") 
-					{
-						/*Material.withTransaction 
-						{
+					if (materialTextField.textField.getValue() != "") {
+						Material.withTransaction {
 							new Material(name: materialTextField.textField.getValue()).save(failOnError: true)
 							Notification.show(materialTextField.textField.getValue() + " is toegevoegd")
-						}	*/
+						}	
 					}
-					else{
-
+					else {
 						Notification.show("Kies eerst een apparaat.")
 					}
-
-						
-					}
-				})
-
-			
+				}
+			})
 
 			materialTextField.plusButton.addClickListener(new Button.ClickListener() {
 				@Override
-				public void buttonClick(ClickEvent equipmentButtonEvent) {
-					if (materialTextField.textField.getValue() != "") 
-					{
-						ExtendedText materialtypesTextField = new ExtendedText(null, true, true, true)
-						Item materialTItem = materialsContainer.addItem(materialtypesTextField)
-						materialTItem.getItemProperty("Materiaal").setValue(materialtypesTextField)
-						materialsContainer.setParent(materialtypesTextField, materialTextField.object)
+				public void buttonClick(ClickEvent materialEvent) {
+					if (materialTextField.textField.getValue() != "" && materialTextField.object) {
+						ExtendedText materialTypeTextField = new ExtendedText(null, true, true, false)
+						Item materialTItem = materialsContainer.addItem(materialTypeTextField)
+						materialTItem.getItemProperty("Materiaal").setValue(materialTypeTextField)
+						materialsContainer.setParent(materialTypeTextField, materialTextField)
+						materialTreeTable.setCollapsed(materialTextField, false)
+						materialTreeTable.setChildrenAllowed(materialTypeTextField, false)
 
-							
+						materialTypeTextField.saveButton.addClickListener(new Button.ClickListener() {
+							@Override
+							public void buttonClick(ClickEvent materialTypeEvent) {
+								if (materialTypeTextField.textField.getValue() != "") {
+									Material.withTransaction {
+										if (materialTypeTextField.object == null) {
+											MaterialType newMaterialType = new MaterialType(name: materialTypeTextField.textField.getValue())
+											materialTextField.object.addToMaterialTypes(newMaterialType).save()
+											materialTypeTextField.object = newMaterialType
+										}
+										else {
+											if (materialTypeTextField.textField.getValue() != materialTypeTextField.object?.name) {
+												materialTypeTextField.object.name = materialTypeTextField.textField.getValue()
+												materialTypeTextField.object = materialTypeTextField.object.merge()
+												materialTypeTextField.object.save()
+											}
+										}
+									}
+								}
+							}
+						})
 					}
 					else{
-
 						Notification.show("Kies eerst een apparaat.")
 					}
 				}
@@ -192,32 +224,26 @@ class AdjustmentView extends VerticalLayout{
 				@Override
 				public void buttonClick(ClickEvent equipmentButtonEvent) {
 					def childrenToDelete = []
-					for (child in materialsContainer.getChildren(materialTextField.object)) {
+					for (child in materialsContainer.getChildren(materialTextField)) {
 						childrenToDelete.add(child)
 					}
 					for (child in childrenToDelete) {
 						materialsContainer.removeItem(child)
 						materialTreeTable.removeItem(child)
-
-						//MaterialType.findByName(child).delete(flush: true)
-						//print child
 					}
-					//Material.removeItem(materialTextField.object)
 					
-					//Material.delete()
-					//Material(name: materialTextField.textField.getValue()).delete(flush: true)
-				
-					
-					
-					materialsContainer.removeItem(materialTextField.object)
-					materialTreeTable.removeItem(materialTextField.object)
+					materialsContainer.removeItem(materialTextField)
+					materialTreeTable.removeItem(materialTextField)
 
-					Material.findByName(materialTextField.textField.getValue()).delete(flush: true)
+					if (materialTextField.object) {
+						materialTextField.object.delete()
+					}
 				}
 			})
 		
 		}
 
+		// Self added buttons
 		rootAddMaterialButton.button.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
@@ -242,50 +268,58 @@ class AdjustmentView extends VerticalLayout{
 				materialsContainer.setParent(materialTextField, rootAddMaterialButton)
 				materialTreeTable.setCollapsed(rootAddMaterialButton, false)
 				
-			
-				
-				// Remove previously added child components if equipment selection changed
-				
-
-
-
 				materialTextField.saveButton.addClickListener(new Button.ClickListener() {
-				@Override
-				public void buttonClick(ClickEvent equipmentButtonEvent) {
-					
-					if (materialTextField.textField.getValue() != "") 
-					{
-						Material.withTransaction 
-						{
-							Material newMaterial = new Material(name: materialTextField.textField.getValue()).save(failOnError: true)
-							materialTextField.object = newMaterial
-							Notification.show(materialTextField.textField.getValue() + " is toegevoegd")
-						}	
-					}
-					else{
+					@Override
+					public void buttonClick(ClickEvent equipmentButtonEvent) {
+						if (materialTextField.textField.getValue() != "") {
+							Material.withTransaction {
+								Material newMaterial = new Material(name: materialTextField.textField.getValue()).save(failOnError: true)
+								materialTextField.object = newMaterial
+								Notification.show(materialTextField.textField.getValue() + " is toegevoegd")
+							}	
+						}
+						else {
 
-						Notification.show("Kies eerst een apparaat.")
-					}
-
-						
+							Notification.show("Kies eerst een apparaat.")
+						}
 					}
 				})
+
 				materialTextField.plusButton.addClickListener(new Button.ClickListener() {
 					@Override
 					public void buttonClick(ClickEvent equipmentButtonEvent) {
-						if (materialTextField.textField.getValue() != "" && materialTextField.object != null) {
-							ExtendedText materialtypesTextField = new ExtendedText(null, true, true, false)
-							Item materialTItem = materialsContainer.addItem(materialtypesTextField)
-							materialTItem.getItemProperty("Materiaal").setValue(materialtypesTextField)
-							materialsContainer.setParent(materialtypesTextField, materialTextField)
+						if (materialTextField.textField.getValue() != "") {
+							ExtendedText materialTypeTextField = new ExtendedText(null, true, true, true)
+							Item materialTItem = materialsContainer.addItem(materialTypeTextField)
+							materialTItem.getItemProperty("Materiaal").setValue(materialTypeTextField)
+							materialsContainer.setParent(materialTypeTextField, materialTextField)
 							materialTreeTable.setCollapsed(materialTextField, false)
-							materialTreeTable.setChildrenAllowed(materialtypesTextField, false)
+							materialTreeTable.setChildrenAllowed(materialTypeTextField, false)
 
-
-
+							materialTypeTextField.saveButton.addClickListener(new Button.ClickListener() {
+								@Override
+								public void buttonClick(ClickEvent materialTypeEvent) {
+									if (materialTypeTextField.textField.getValue() != "") {
+										Material.withTransaction {
+											if (materialTypeTextField.object == null) {
+												MaterialType newMaterialType = new MaterialType(name: materialTypeTextField.textField.getValue())
+												materialTextField.object.addToMaterialTypes(newMaterialType).save()
+												materialTypeTextField.object = newMaterialType
+											}
+											else {
+												if (materialTypeTextField.textField.getValue() != materialTypeTextField.object?.name) {
+													materialTypeTextField.object.name = materialTypeTextField.textField.getValue()
+													materialTypeTextField.object = materialTypeTextField.object.merge()
+													materialTypeTextField.object.save()
+												}
+											}
+										}
+									}
+								}
+							})
 						}
 						else {
-							Notification.show("Materiaal moet eerst worden opgeslagen.")
+							Notification.show("Kies eerst een naam.")
 						}
 					}
 				})
@@ -301,9 +335,13 @@ class AdjustmentView extends VerticalLayout{
 							materialsContainer.removeItem(child)
 							materialTreeTable.removeItem(child)
 						}
+						
+						materialsContainer.removeItem(materialTextField.object)
+						materialTreeTable.removeItem(materialTextField.object)
 
-						materialsContainer.removeItem(materialTextField)
-						materialTreeTable.removeItem(materialTextField)
+						if (materialTextField.object) {
+							materialTextField.object.delete()
+						}
 					}
 				})
 			}

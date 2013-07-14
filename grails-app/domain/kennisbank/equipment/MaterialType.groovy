@@ -6,7 +6,7 @@ class MaterialType implements Serializable {
 	Setting setting
 	// Material material
 
-	static hasOne = [material: Material]
+	static belongsTo = [material: Material]
 
 	static constraints = {
 		setting nullable: true
