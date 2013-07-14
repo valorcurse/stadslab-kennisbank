@@ -141,8 +141,10 @@ class AdjustmentView extends VerticalLayout{
 								
 								materialsContainer.removeItem(materialtypeTextField.object)
 								materialTreeTable.removeItem(materialtypeTextField.object)
-								material.removeFromMaterialTypes(materialtypeTextField.object)
-								materialTextField.object.delete(flush: true)
+								//material.removeFromMaterialTypes(materialtypeTextField.object)
+								//materialTextField.object.delete(flush: true)
+								MaterialType.findByName(materialtypeTextField.textField.getValue()).delete(flush: true)
+
 							}
 						})
 			}
@@ -253,15 +255,10 @@ class AdjustmentView extends VerticalLayout{
 						materialsContainer.removeItem(child)
 						materialTreeTable.removeItem(child)
 
-						//MaterialType.findByName(child).delete(flush: true)
-						//print child
+						print child
+						child.delete(flush: true)
+						
 					}
-					//Material.removeItem(materialTextField.object)
-					
-					//Material.delete()
-					//Material(name: materialTextField.textField.getValue()).delete(flush: true)
-				
-					
 					
 					materialsContainer.removeItem(materialTextField.object)
 					materialTreeTable.removeItem(materialTextField.object)
@@ -276,8 +273,7 @@ class AdjustmentView extends VerticalLayout{
 			@Override
 			public void buttonClick(ClickEvent event) {
 
-				//def settingsList = settings
-				//Checkout checkout = checkout
+				
 				def materialComboBoxesToRemove = []
 				def materialSettingsToRemove = []
 
@@ -287,8 +283,7 @@ class AdjustmentView extends VerticalLayout{
 				materialTextField.textField.setImmediate(true)
 				materialTextField.textField.setInputPrompt("Maak een materiaal aan")
 
-				//TextField materialTextField = new TextField()
-				//materialTextField.setInputPrompt("Maak een materiaal aan")
+			
 
 				// Add the ComboBox to the table
 				Item equipmentItem = materialsContainer.addItem(materialTextField)
@@ -403,23 +398,43 @@ class AdjustmentView extends VerticalLayout{
 				materialTextField.removeButton.addClickListener(new Button.ClickListener() {
 					@Override
 					public void buttonClick(ClickEvent equipmentButtonEvent) {
-						def childrenToDelete = []
-						for (child in materialsContainer.getChildren(materialTextField)) {
-							childrenToDelete.add(child)
-						}
-						for (child in childrenToDelete) {
-							materialsContainer.removeItem(child)
-							materialTreeTable.removeItem(child)
+						
+						if(materialTextField.textField.getValue() != "" && materialTextField.object != null){
+							print "giruhgier"
+							def childrenToDelete = []
+							for (child in materialsContainer.getChildren(materialTextField)) {
+								childrenToDelete.add(child)
+							}
+							
+							for (child in childrenToDelete) {
+								materialsContainer.removeItem(child)
+								materialTreeTable.removeItem(child)
+
+								print child.textField.getValue()
+								MaterialType.findByName(child.textField.getValue()).delete(flush: true)
+								//child.delete(flush: true)
+								
+							}
+							
+							materialsContainer.removeItem(materialTextField)
+							materialTreeTable.removeItem(materialTextField)
+
+							//Material.findByName(materialTextField.textField.getValue()).delete(flush: true)
+
 						}
 
-						materialsContainer.removeItem(materialTextField)
-						materialTreeTable.removeItem(materialTextField)
+
+						else{
+							materialsContainer.removeItem(materialTextField)
+							materialTreeTable.removeItem(materialTextField)
+							
+						}
 					}
 				})
 			}
 		})
 
-		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Other table >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Equipment table >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 		TreeTable equipmentTreeTable = new TreeTable()
 		treesLayout.addComponent(equipmentTreeTable) 
@@ -448,6 +463,8 @@ class AdjustmentView extends VerticalLayout{
 		
 			def existingEquipment
 			existingEquipment = Equipment.findByName(equipmentTextField.textField.getValue())
+
+		
 			//-----------------------------button to add new materials/ tree for extisting materials--------------------
 			AddMaterialButton materialsButton
 			materialsButton = new AddMaterialButton("Materialen")
@@ -472,6 +489,7 @@ class AdjustmentView extends VerticalLayout{
 					equipmentTreeTable.setCollapsed(equipmentTextField, false)
 
 
+
 					//-----------------------------add new materialtype to new material------------------------------
 					materialComboBox.plusButton.addClickListener(new Button.ClickListener() {
 						@Override
@@ -487,6 +505,7 @@ class AdjustmentView extends VerticalLayout{
 									equipmentsContainer.setParent(materialTypeComboBox, materialComboBox)
 									equipmentTreeTable.setCollapsed(equipmentTextField, false)
 
+
 									//--------------------------save new materialtype---------------------------------
 									materialTypeComboBox.saveButton.addClickListener(new Button.ClickListener() {
 										@Override
@@ -496,14 +515,18 @@ class AdjustmentView extends VerticalLayout{
 											{
 												MaterialType.withTransaction 
 												{
-													MaterialType newMaterial = new MaterialType(name: materialTypeComboBox.comboBox.getValue(), material: Material.findByName(materialComboBox.comboBox.getValue()))
-											
-													existingEquipment.addToMaterialTypes(newMaterial)
+													//MaterialType newMaterial = new MaterialType(name: materialTypeComboBox.comboBox.getValue(), material: Material.findByName(materialComboBox.comboBox.getValue()))
+													//def existingMaterial
+													def newMaterialType
+													newMaterialType = MaterialType.findByName(materialTypeComboBox.comboBox.getValue())
+													//existingMaterial = Material.findByName(materialTypeComboBox.comboBox.getValue())
+													existingEquipment.addToMaterialTypes(newMaterialType)
+													//existingMaterial.addToMaterialTypes(newMaterial)
 													if(existingEquipment.save(failOnError: true)){
 														
-														materialTypeComboBox.object = newMaterial
+														materialTypeComboBox.object = newMaterialType
 													}
-													Notification.show("works.")
+													Notification.show("new materialtype in new material")
 												}	
 											}
 											else{
@@ -550,9 +573,52 @@ class AdjustmentView extends VerticalLayout{
 							//}
 						}
 					})	
+					
+					
 
 				}
 			})
+			//-------------------------Remove Equipment and children-----------------------------------------
+			equipmentTextField.removeButton.addClickListener(new Button.ClickListener() {
+				@Override
+				public void buttonClick(ClickEvent equipmentdeleteEvent) {
+					
+					def childrenToDelete = []
+					for (child in equipmentsContainer.getChildren(equipmentTextField.object)) {
+						childrenToDelete.add(child)
+					}
+					for(secondchild in equipmentsContainer.getChildren(materialsButton)){
+					childrenToDelete.add(secondchild)
+					}
+					//for(thirdchild in equipmentsContainer.getChildren(materialComboBox)){
+					//childrenToDelete.add(thirdchild)
+					//}
+					for (child in childrenToDelete) {
+						equipmentsContainer.removeItem(child)
+						equipmentTreeTable.removeItem(child)
+						for (secondchild in childrenToDelete) {
+							print secondchild
+							equipmentsContainer.removeItem(secondchild)
+
+							//for (thirdchild in secondchild.children) {
+							//print "vvvvvvv " +thirdchild
+							//	equipmentsContainer.removeItem(thirdchild)
+							//}
+
+						}
+
+						print child
+						//child.delete(flush: true)
+						
+					}
+					
+					equipmentsContainer.removeItem(equipmentTextField.object)
+					equipmentTreeTable.removeItem(equipmentTextField.object)
+
+					Equipment.findByName(equipmentTextField.textField.getValue()).delete(flush: true)
+
+				}
+			})	
 			//-----------------------add new setting/tree for existig settings-----------------------------
 			AddMaterialButton settingsButton
 			settingsButton = new AddMaterialButton("Settings")
@@ -667,6 +733,7 @@ class AdjustmentView extends VerticalLayout{
 					public void buttonClick(ClickEvent settingremoveEvent) {
 						
 							//Notification.show(settingType.object)
+							print settingsTextField.textField.getValue()
 							equipmentsContainer.removeItem(settingType)
 							equipmentTreeTable.removeItem(settingType)
 							
@@ -696,64 +763,149 @@ class AdjustmentView extends VerticalLayout{
 				//------------------------------adding new materialtype to existing material------------------------------------
 				
 				materialComboBox.plusButton.addClickListener(new Button.ClickListener() {
-						@Override
-						public void buttonClick(ClickEvent mtButtonEvent) {
-							//if (equipmentTextField.textField.getValue() != "") 
-							//{
-								//ExtendedText materialtypesTextField = new ExtendedText(null, true, true, true)
-									ExtendedComboBoxwithCheck materialTypeComboBox = new ExtendedComboBoxwithCheck(currentMaterial, MaterialType.list()*.name, true, true, false)
-									materialTypeComboBox.comboBox.setNullSelectionAllowed(false)
-									materialTypeComboBox.comboBox.setImmediate(true)
-									materialTypeComboBox.comboBox.setInputPrompt("Kies een materialtype")
-									
-									Item materialTypeItem = equipmentsContainer.addItem(materialTypeComboBox)
-									materialTypeItem.getItemProperty("Apparaat").setValue(materialTypeComboBox)
-									equipmentsContainer.setParent(materialTypeComboBox, currentMaterial)
-									equipmentTreeTable.setCollapsed(equipmentTextField, false)
-									equipmentTreeTable.setChildrenAllowed(materialTypeComboBox, false)
+					@Override
+					public void buttonClick(ClickEvent mtButtonEvent) {
+						//if (equipmentTextField.textField.getValue() != "") 
+						//{
+							//ExtendedText materialtypesTextField = new ExtendedText(null, true, true, true)
+							//MaterialType currentMaterialType = MaterialType.findByName(material.key)
+								ExtendedComboBoxwithCheck materialTypeComboBox = new ExtendedComboBoxwithCheck(currentMaterial, MaterialType.list()*.name, true, true, false)
+								materialTypeComboBox.comboBox.setNullSelectionAllowed(false)
+								materialTypeComboBox.comboBox.setImmediate(true)
+								materialTypeComboBox.comboBox.setInputPrompt("Kies een materialtype")
+								
+								Item materialTypeItem = equipmentsContainer.addItem(materialTypeComboBox)
+								materialTypeItem.getItemProperty("Apparaat").setValue(materialTypeComboBox)
+								equipmentsContainer.setParent(materialTypeComboBox, currentMaterial)
+								equipmentTreeTable.setCollapsed(equipmentTextField, false)
+								equipmentTreeTable.setChildrenAllowed(materialTypeComboBox, false)
 
-									materialTypeComboBox.saveButton.addClickListener(new Button.ClickListener() {
-										@Override
-										public void buttonClick(ClickEvent materialTypedeleteEvent) {
-											
-											if (materialTypeComboBox.comboBox.getValue() != null) 
+								materialTypeComboBox.saveButton.addClickListener(new Button.ClickListener() {
+									@Override
+									public void buttonClick(ClickEvent materialTypedeleteEvent) {
+										
+										if (materialTypeComboBox.comboBox.getValue() != null) 
+										{
+											MaterialType.withTransaction 
 											{
-												MaterialType.withTransaction 
-												{
-													MaterialType newMaterialType = new MaterialType(name: materialTypeComboBox.comboBox.getValue(), material: Material.findByName(materialComboBox.comboBox.getValue()))
+												//MaterialType newMaterialType = new MaterialType(name: materialTypeComboBox.comboBox.getValue(), material: Material.findByName(materialComboBox.comboBox.getValue()))
+												def newMaterialType
 												
-													print existingEquipment
-													existingEquipment.addToMaterialTypes(newMaterialType)
-													if(existingEquipment.save(failOnError: true)){
-														
-														materialTypeComboBox.object = newMaterialType
-													}
-													Notification.show("works.")
-												}	
-											}
-											else{
 
-												Notification.show("Kies eerst een type.")
-											}
+												newMaterialType = MaterialType.findByName(materialTypeComboBox.comboBox.getValue())
+												print existingEquipment
+												print existingMaterial
+												print "haahahahhaah"
+												existingEquipment.addToMaterialTypes(newMaterialType)
+												existingMaterial.addToMaterialTypes(newMaterialType)
+												if(existingEquipment.save(failOnError: true)){
+													
+													currentMaterialType = newMaterialType
+												}
+												Notification.show("new materialtype in existing material")
+											}	
 										}
-									})	
-											
-							
-							//}
-							//else{
+										else{
 
-							//	Notification.show("Kies eerst een apparaat.")
+											Notification.show("Kies eerst een type.")
+										}
+									}
+								})	
+										
+						
+						//}
+						//else{
+
+						//	Notification.show("Kies eerst een apparaat.")
+						//}
+					}
+				})	
+				//--------------remove material and materialtype(child)----------------------------------------
+				// HIER WAS IK BEZIG OM CHILD IN LIST TE VINDEN
+				materialComboBox.removeButton.addClickListener(new Button.ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent equipmentdeleteEvent) {
+						
+						/*def childrenToDelete = []
+						for (child in equipmentsContainer.getChildren(materialComboBox)) {
+							childrenToDelete.add(child)
+							print "child: "+child
+						}
+						//for(secondchild in equipmentsContainer.getChildren(materialsButton)){
+						//childrenToDelete.add(secondchild)
+						//}
+						//for(thirdchild in equipmentsContainer.getChildren(materialComboBox)){
+						//childrenToDelete.add(thirdchild)
+						//}
+						for (child in childrenToDelete) {
+							equipmentsContainer.removeItem(child)
+							equipmentTreeTable.removeItem(child)
+							//for (secondchild in childrenToDelete) {
+								//print "wwwwwww " +secondchild
+								//equipmentsContainer.removeItem(secondchild)
+
+								//for (thirdchild in childrenToDelete) {
+								//	print "vvvvvvv " +thirdchild
+								//	equipmentsContainer.removeItem(thirdchild)
+								//}
+								print "fjfjfjf "+child
+							}*/
+						def childrenToDelete = []
+						for(secondchild in equipmentsContainer.getChildren(currentMaterial.name)){
+						childrenToDelete.add(secondchild)
+						print "llllllk "+secondchild
+						}		
+						//print currentMaterial.materialTypes.list()*.name
+						print currentMaterial.name
+						print MaterialType.findByName(currentMaterial.name)
+						print materialComboBox.children
+						print MaterialType.findByName(materialComboBox.comboBox.getValue())
+
+						for (materialType in material){
+							MaterialType.withTransaction 
+							{
+							MaterialType currentMaterialType = MaterialType.findByName(materialType.name)
+							print "gdfkdfgkdfgfd:: "+ currentMaterialType
+							print "gfgfgfd: "+materialType
+							equipmentsContainer.removeItem(materialType)
+							}
+
+
+						}
+						//print (currentMaterial.name).children
+						for (child in materialComboBox.children) {
+
+							equipmentsContainer.removeItem(child)
+							childrenToDelete.add(child)
+							//for (secondChild in child.children) {
+							//	settingsContainer.removeItem(secondChild)
 							//}
 						}
-					})	
+						for (child in childrenToDelete) {
+							child.children.clear()
+						}
+						materialComboBox.children.clear()
+
+							
+							//child.delete(flush: true)
+							
+						
+						
+						equipmentsContainer.removeItem(currentMaterial)
+						equipmentTreeTable.removeItem(currentMaterial)
+
+						//Material.findByName(materialComboBox.comboBox.getValue()).delete(flush: true)
+
+					}
+				})	
 
 				//---------------------------------placing existing materialtype in existing material---------------------------------
-				for(materialType in Material.findByName(material.key).materialTypes)
+				for(materialType in equipment.materialTypes)
 
 				{
 					//MaterialType currentMaterialType = MaterialType.findByName(materialType.name)
 					ExtendedComboBoxwithCheck materialTypeComboBox = new ExtendedComboBoxwithCheck(materialType, 
-						MaterialType.list()*.name, true, true, false)
+					MaterialType.list()*.name, true, true, false)
 					materialTypeComboBox.comboBox.setNullSelectionAllowed(false)
 					materialTypeComboBox.comboBox.setImmediate(true)
 					materialTypeComboBox.comboBox.setValue(materialType.name)
@@ -788,6 +940,7 @@ class AdjustmentView extends VerticalLayout{
 				equipmentItem.getItemProperty("Apparaat").setValue(equipmentTextField)
 				equipmentsContainer.setParent(equipmentTextField, rootAddEquipmentButton)
 				equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
+
 
 				
 
@@ -842,7 +995,23 @@ class AdjustmentView extends VerticalLayout{
 
 										//-----------------------------add new materialtype to nw material------------------------------
 										
-
+											def removeChildren = {
+												def childrenToDelete = []
+												print "first step"
+												print materialComboBox.children
+												for (child in materialComboBox.children) {
+													print "fdffdsfdfdfdsfd"
+													equipmentsContainer.removeItem(child)
+													childrenToDelete.add(child)
+													for (secondChild in child.children) {
+														equipmentsContainer.removeItem(secondChild)
+													}
+												}
+												for (child in childrenToDelete) {
+													child.children.clear()
+												}
+												materialComboBox.children.clear()
+											}
 
 										//-----------------------add new materialtype------------------------------------
 										materialComboBox.plusButton.addClickListener(new Button.ClickListener() {
@@ -861,6 +1030,8 @@ class AdjustmentView extends VerticalLayout{
 												equipmentsContainer.setParent(materialTypeComboBox, materialComboBox)
 												equipmentTreeTable.setCollapsed(equipmentTextField, false)
 												equipmentTreeTable.setChildrenAllowed(materialTypeComboBox, false)
+
+											
 													
 												//----------------------------save new materialtype-----------------------------
 												materialTypeComboBox.saveButton.addClickListener(new Button.ClickListener() {
@@ -871,8 +1042,10 @@ class AdjustmentView extends VerticalLayout{
 														{
 															MaterialType.withTransaction 
 															{
-																MaterialType newMaterial = new MaterialType(name: materialTypeComboBox.comboBox.getValue(), material: Material.findByName(materialComboBox.comboBox.getValue()))
-														
+																//MaterialType newMaterial = new MaterialType(name: materialTypeComboBox.comboBox.getValue(), material: Material.findByName(materialComboBox.comboBox.getValue()))
+																def newMaterial
+
+																newMaterial = MaterialType.findByName(materialTypeComboBox.comboBox.getValue())
 																equipment.addToMaterialTypes(newMaterial)
 																if(equipment.save(failOnError: true)){
 																	
@@ -919,26 +1092,69 @@ class AdjustmentView extends VerticalLayout{
 													}
 												})			
 												
-												//}
-												//else{
-
-												//	Notification.show("Kies eerst een apparaat.")
-												//}
-											materialComboBox.removeButton.addClickListener(new Button.ClickListener() {
-											@Override
-											public void buttonClick(ClickEvent materialTypedeleteEvent) {
-												equipmentsContainer.removeItem(materialComboBox)
-												equipmentTreeTable.removeItem(materialComboBox)
-												equipmentsContainer.removeItem(materialTypeComboBox)
-												equipmentTreeTable.removeItem(materialTypeComboBox)
 												
-											}
-										})
+												/*materialComboBox.removeButton.addClickListener(new Button.ClickListener() {
+												@Override
+												public void buttonClick(ClickEvent materialTypedeleteEvent) {
+													print "hihihihihihih"
+													/*def childrenToDelete = []
+													for (child in equipmentsContainer.getChildren(materialComboBox.object)) {
+														childrenToDelete.add(child)
+													}
+													
+													for (child in childrenToDelete) {
+														equipmentsContainer.removeItem(child)
+														equipmentTreeTable.removeItem(child)
+
+														print "1 "child.textField.getValue()
+														print "2 "child
+														//MaterialType.findByName(child.textField.getValue()).delete(flush: true)
+														//child.delete(flush: true)
+														
+													}
+
+
+													removeChildren()
+													equipmentsContainer.removeItem(materialComboBox)
+													equipmentTreeTable.removeItem(materialComboBox)*/
+													
+													
+												}
+											})
+										
 											}
 										})				
 										
 										//------------------------------delete material and child---------------------------
-									
+										
+										materialComboBox.removeButton.addClickListener(new Button.ClickListener() {
+											@Override
+											public void buttonClick(ClickEvent materialTypedeleteEvent) {
+												print "hihihihihihih"
+												/*def childrenToDelete = []
+												for (child in equipmentsContainer.getChildren(materialComboBox.object)) {
+													childrenToDelete.add(child)
+												}
+												
+												for (child in childrenToDelete) {
+													equipmentsContainer.removeItem(child)
+													equipmentTreeTable.removeItem(child)
+
+													print "1 "child.textField.getValue()
+													print "2 "child
+													//MaterialType.findByName(child.textField.getValue()).delete(flush: true)
+													//child.delete(flush: true)
+													
+												}*/
+
+
+												removeChildren()
+												equipmentsContainer.removeItem(materialComboBox)
+												equipmentTreeTable.removeItem(materialComboBox)
+												
+												
+											}
+										})	
 										//}
 										//else{
 

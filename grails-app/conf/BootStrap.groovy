@@ -16,7 +16,7 @@ class BootStrap {
 
 				new User(username: "admin", password: "12345", enabled: true).save()
 
-				Material glas = new Material(name: "Glas").save(failOnError: true)
+				/*Material glas = new Material(name: "Glas").save(failOnError: true)
 				Material leer = new Material(name: "Leer").save(failOnError: true)
 				Material hout = new Material(name: "Hout").save(failOnError: true)
 				Material karton = new Material(name: "Karton").save(failOnError: true)
@@ -101,7 +101,7 @@ class BootStrap {
 				.save()
 
 				checkin.addToCheckouts(checkout1)
-				checkin.addToCheckouts(checkout2)
+				checkin.addToCheckouts(checkout2)*/
 			}
 		}
 	}
