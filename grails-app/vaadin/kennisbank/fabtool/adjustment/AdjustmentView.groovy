@@ -1116,11 +1116,11 @@ class AdjustmentView extends VerticalLayout{
 
 													removeChildren()
 													equipmentsContainer.removeItem(materialComboBox)
-													equipmentTreeTable.removeItem(materialComboBox)*/
+													equipmentTreeTable.removeItem(materialComboBox)
 													
 													
 												}
-											})
+											})*/
 										
 											}
 										})				
