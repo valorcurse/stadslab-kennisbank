@@ -3,11 +3,12 @@ package kennisbank.equipment
 class Equipment implements Serializable {
 
 	String name
-	Set materialTypes, settingTypes
+	// Set materialTypes, settingTypes
 
 	static hasMany = [settingTypes: SettingType, materialTypes: MaterialType]
 
 	static constraints = {
+		materialTypes nullable: true
 	}
 
 	static mapping = {

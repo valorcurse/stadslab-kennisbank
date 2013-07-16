@@ -3,17 +3,23 @@ package kennisbank.equipment
 class MaterialType implements Serializable {
 
 	String name
-	Setting setting
-	// Material material
 
 	static belongsTo = [material: Material]
 
 	static constraints = {
-		setting nullable: true
 	}
 
 	static mapping = {
 		material lazy: false
+	}
+
+	def beforeDelete() {
+		Equipment.withTransaction {
+			for (equipment in Equipment.list()) {
+				def type = MaterialType.findByName(this.name)
+				equipment.removeFromMaterialTypes(type)
+			}
+		}
 	}
 
 }

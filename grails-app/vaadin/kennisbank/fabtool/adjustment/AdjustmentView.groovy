@@ -105,6 +105,7 @@ class AdjustmentView extends VerticalLayout{
 		treesLayout.addComponent(materialTreeTable)
 		materialTreeTable.setWidth("350px")
 		materialTreeTable.setPageLength(0)
+		materialTreeTable.setImmediate(true)
 
 		HierarchicalContainer materialsContainer = new HierarchicalContainer()
 		materialsContainer.addContainerProperty("Materiaal", Component.class, "")
@@ -147,6 +148,7 @@ class AdjustmentView extends VerticalLayout{
 										materialTypeTextField.object.save()
 									}
 								}
+								Notification.show(materialTextField.object.name + " is opgeslagen")
 							}
 						}
 					}
@@ -159,6 +161,7 @@ class AdjustmentView extends VerticalLayout{
 						materialTreeTable.removeItem(materialTypeTextField)
 						if (materialTypeTextField.object) {
 							materialTypeTextField.object.delete()
+							Notification.show(materialTextField.textField.getValue() + " is verwijderd")
 						}
 					}
 				})
@@ -170,7 +173,7 @@ class AdjustmentView extends VerticalLayout{
 					if (materialTextField.textField.getValue() != "") {
 						Material.withTransaction {
 							new Material(name: materialTextField.textField.getValue()).save(failOnError: true)
-							Notification.show(materialTextField.textField.getValue() + " is toegevoegd")
+							Notification.show(materialTextField.textField.getValue() + " is opgeslagen")
 						}	
 					}
 					else {
@@ -207,6 +210,7 @@ class AdjustmentView extends VerticalLayout{
 												materialTypeTextField.object.save()
 											}
 										}
+										Notification.show(materialTextField.object.name + " is opgeslagen")
 									}
 								}
 							}
@@ -232,12 +236,13 @@ class AdjustmentView extends VerticalLayout{
 						materialTreeTable.removeItem(child)
 					}
 					
-					materialsContainer.removeItem(materialTextField)
-					materialTreeTable.removeItem(materialTextField)
-
 					if (materialTextField.object) {
 						materialTextField.object.delete()
+						Notification.show(materialTextField.textField.getValue() + " is verwijderd")
 					}
+
+					materialsContainer.removeItem(materialTextField)
+					materialTreeTable.removeItem(materialTextField)
 				}
 			})
 		
@@ -275,7 +280,7 @@ class AdjustmentView extends VerticalLayout{
 							Material.withTransaction {
 								Material newMaterial = new Material(name: materialTextField.textField.getValue()).save(failOnError: true)
 								materialTextField.object = newMaterial
-								Notification.show(materialTextField.textField.getValue() + " is toegevoegd")
+								Notification.show(materialTextField.textField.getValue() + " is opgeslagen")
 							}	
 						}
 						else {
@@ -313,6 +318,7 @@ class AdjustmentView extends VerticalLayout{
 													materialTypeTextField.object.save()
 												}
 											}
+											Notification.show(materialTypeTextField.object.name + " is opgeslagen")
 										}
 									}
 								}
@@ -336,12 +342,15 @@ class AdjustmentView extends VerticalLayout{
 							materialTreeTable.removeItem(child)
 						}
 						
-						materialsContainer.removeItem(materialTextField.object)
-						materialTreeTable.removeItem(materialTextField.object)
-
 						if (materialTextField.object) {
 							materialTextField.object.delete()
+							Notification.show(materialTextField.textField.getValue() + " is verwijderd")
 						}
+
+						materialsContainer.removeItem(materialTextField)
+						materialTreeTable.removeItem(materialTextField)
+
+						
 					}
 				})
 			}
@@ -552,11 +561,6 @@ class AdjustmentView extends VerticalLayout{
 				materialsButton.button.addClickListener(new Button.ClickListener() {
 					@Override
 					public void buttonClick(ClickEvent materialevent) {
-						//if (equipmentTextField.textField.getValue() != "") 
-						//{
-							//ExtendedText materialtypesTextField = new ExtendedText(null, true, true, true)
-						 
-
 						ExtendedComboBoxwithCheck materialComboBox = new ExtendedComboBoxwithCheck(null, Material.list()*.name, false, true,true)
 						materialComboBox.comboBox.setNullSelectionAllowed(false)
 						materialComboBox.comboBox.setImmediate(true)
@@ -571,9 +575,6 @@ class AdjustmentView extends VerticalLayout{
 						materialComboBox.plusButton.addClickListener(new Button.ClickListener() {
 							@Override
 							public void buttonClick(ClickEvent materialTypeButtonEvent) {
-								//if (equipmentTextField.textField.getValue() != "") 
-								//{
-									//ExtendedText materialtypesTextField = new ExtendedText(null, true, true, true)
 								ExtendedComboBoxwithCheck materialTypeComboBox = new ExtendedComboBoxwithCheck(null, MaterialType.list()*.name, true, true, false)
 								materialTypeComboBox.comboBox.setNullSelectionAllowed(false)
 								materialTypeComboBox.comboBox.setImmediate(true)

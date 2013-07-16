@@ -11,10 +11,12 @@ class Material implements Serializable {
 
 	static mapping = {
 		materialTypes lazy: false
+		// materialTypes cascade: "all-delete-orphan" 
 	}
 
 	def beforeDelete() {
-    	MaterialType.withNewSession { materialTypes*.delete() } 
+		// print "Deleting all MaterialTypes"
+    	// Material.withNewSession { materialTypes*.delete() }
 	}
 
 }
