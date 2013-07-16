@@ -100,7 +100,7 @@ class AdjustmentView extends VerticalLayout{
 		treesLayout.setMargin(true)
 		treesLayout.setSpacing(true)
 
-
+		//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Material table>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 		TreeTable materialTreeTable = new TreeTable()
 		treesLayout.addComponent(materialTreeTable)
 		materialTreeTable.setWidth("350px")
@@ -117,12 +117,14 @@ class AdjustmentView extends VerticalLayout{
 		rootItem.getItemProperty("Materiaal").setValue(rootAddMaterialButton)
 		materialTreeTable.setCollapsed(rootAddMaterialButton, false)
 
+		//---------------------existing material-------------------------------------------------
 		for (material in Material.list()) {
 			ExtendedText materialTextField = new ExtendedText(material, true, true, true)
 			Item materialItem = materialsContainer.addItem(materialTextField)
 			materialItem.getItemProperty("Materiaal").setValue(materialTextField)
 			materialsContainer.setParent(materialTextField, rootAddMaterialButton)	
 
+			//--------------------existing materialtype-------------------------------------------
 			for (materialType in material.materialTypes) {
 				ExtendedText materialTypeTextField = new ExtendedText(materialType, true, true, false)
 				Item materialTypeItem = materialsContainer.addItem(materialTypeTextField)
@@ -167,6 +169,7 @@ class AdjustmentView extends VerticalLayout{
 				})
 			}
 
+			//-----------------------------replace materialname--------------------------------
 			materialTextField.saveButton.addClickListener(new Button.ClickListener() {
 				@Override
 				public void buttonClick(ClickEvent equipmentButtonEvent) {
@@ -223,7 +226,7 @@ class AdjustmentView extends VerticalLayout{
 			})
 
 		
-
+			//-----------------------remove material------------------------------------------
 			materialTextField.removeButton.addClickListener(new Button.ClickListener() {
 				@Override
 				public void buttonClick(ClickEvent equipmentButtonEvent) {
@@ -247,14 +250,12 @@ class AdjustmentView extends VerticalLayout{
 			})
 		
 		}
-
-		// Self added buttons
+		// ------------------------button to add new material and materialtypes-------------------------------
 		rootAddMaterialButton.button.addClickListener(new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
 
-				//def settingsList = settings
-				//Checkout checkout = checkout
+				
 				def materialComboBoxesToRemove = []
 				def materialSettingsToRemove = []
 
@@ -264,8 +265,7 @@ class AdjustmentView extends VerticalLayout{
 				materialTextField.textField.setImmediate(true)
 				materialTextField.textField.setInputPrompt("Maak een materiaal aan")
 
-				//TextField materialTextField = new TextField()
-				//materialTextField.setInputPrompt("Maak een materiaal aan")
+			
 
 				// Add the ComboBox to the table
 				Item equipmentItem = materialsContainer.addItem(materialTextField)
@@ -273,6 +273,8 @@ class AdjustmentView extends VerticalLayout{
 				materialsContainer.setParent(materialTextField, rootAddMaterialButton)
 				materialTreeTable.setCollapsed(rootAddMaterialButton, false)
 				
+
+				//------------------------save material------------------------------------
 				materialTextField.saveButton.addClickListener(new Button.ClickListener() {
 					@Override
 					public void buttonClick(ClickEvent equipmentButtonEvent) {
@@ -294,7 +296,7 @@ class AdjustmentView extends VerticalLayout{
 					@Override
 					public void buttonClick(ClickEvent equipmentButtonEvent) {
 						if (materialTextField.textField.getValue() != "") {
-							ExtendedText materialTypeTextField = new ExtendedText(null, true, true, true)
+							ExtendedText materialTypeTextField = new ExtendedText(null, true, true, false)
 							Item materialTItem = materialsContainer.addItem(materialTypeTextField)
 							materialTItem.getItemProperty("Materiaal").setValue(materialTypeTextField)
 							materialsContainer.setParent(materialTypeTextField, materialTextField)
@@ -329,17 +331,34 @@ class AdjustmentView extends VerticalLayout{
 						}
 					}
 				})
-
+				
+				//----------------------remove new material------------------------------
 				materialTextField.removeButton.addClickListener(new Button.ClickListener() {
 					@Override
 					public void buttonClick(ClickEvent equipmentButtonEvent) {
-						def childrenToDelete = []
-						for (child in materialsContainer.getChildren(materialTextField)) {
-							childrenToDelete.add(child)
-						}
-						for (child in childrenToDelete) {
-							materialsContainer.removeItem(child)
-							materialTreeTable.removeItem(child)
+						
+						if(materialTextField.textField.getValue() != "" && materialTextField.object != null){
+							print "giruhgier"
+							def childrenToDelete = []
+							for (child in materialsContainer.getChildren(materialTextField)) {
+								childrenToDelete.add(child)
+							}
+							
+							for (child in childrenToDelete) {
+								materialsContainer.removeItem(child)
+								materialTreeTable.removeItem(child)
+
+								print child.textField.getValue()
+								MaterialType.findByName(child.textField.getValue()).delete(flush: true)
+								//child.delete(flush: true)
+								
+							}
+							
+							materialsContainer.removeItem(materialTextField)
+							materialTreeTable.removeItem(materialTextField)
+
+							//Material.findByName(materialTextField.textField.getValue()).delete(flush: true)
+
 						}
 						
 						if (materialTextField.object) {
@@ -350,16 +369,15 @@ class AdjustmentView extends VerticalLayout{
 						materialsContainer.removeItem(materialTextField)
 						materialTreeTable.removeItem(materialTextField)
 
-						
 					}
 				})
 			}
 		})
 
-		// --------------------------------- Other table ---------------------------------
+		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Equipment table >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 		TreeTable equipmentTreeTable = new TreeTable()
-		treesLayout.addComponent(equipmentTreeTable) // Column 0, Row 3 to Column 1, Row 3
+		treesLayout.addComponent(equipmentTreeTable) 
 		equipmentTreeTable.setWidth("350px")
 		equipmentTreeTable.setPageLength(0)
 
@@ -372,69 +390,165 @@ class AdjustmentView extends VerticalLayout{
 		Item rootEquipmentItem = equipmentsContainer.addItem(rootAddEquipmentButton)
 		rootEquipmentItem.getItemProperty("Apparaat").setValue(rootAddEquipmentButton)
 		equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
-		
-		
+
 
 		//-----------------------------Existing Equipment-----------------------------------------------
 		for (equipment in Equipment.list()) {
 			ExtendedText equipmentTextField = new ExtendedText(equipment, true, true, false)
-			//Notification.show("hallo")
 			Item equipmentItem = equipmentsContainer.addItem(equipment)
 			equipmentItem.getItemProperty("Apparaat").setValue(equipmentTextField)
 			equipmentsContainer.setParent(equipment, rootAddEquipmentButton)	
 		
+			def existingEquipment
+			existingEquipment = Equipment.findByName(equipmentTextField.textField.getValue())
+
 			//-----------------------------button to add new materials/ tree for extisting materials--------------------
-			AddMaterialButton materialsButton
-			materialsButton = new AddMaterialButton("Materialen")
-			Item materialsButtonItem = equipmentsContainer.addItem(materialsButton)
-			materialsButtonItem.getItemProperty("Apparaat").setValue(materialsButton)
+			AddMaterialButton addMaterialsButton
+			addMaterialsButton = new AddMaterialButton("Materialen")
+			
+			Item addMaterialsButtonItem = equipmentsContainer.addItem(addMaterialsButton)
+			addMaterialsButtonItem.getItemProperty("Apparaat").setValue(addMaterialsButton)
 			equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
-			equipmentsContainer.setParent(materialsButton, equipment)	 
+			equipmentsContainer.setParent(addMaterialsButton, equipment)	 
 
 			//--------------------------------------add new material--------------------------------------------------------
-			materialsButton.button.addClickListener(new Button.ClickListener() {
+			addMaterialsButton.button.addClickListener(new Button.ClickListener() {
 				@Override
-				public void buttonClick(ClickEvent event) {
+				public void buttonClick(ClickEvent addMaterialEvent) {
 
-					ExtendedComboBoxwithCheck materialComboBox = new ExtendedComboBoxwithCheck(null, Material.list()*.name, true, true,true)
+					ExtendedComboBoxwithCheck materialComboBox = new ExtendedComboBoxwithCheck(null, Material.list()*.name, false, true, true)
 					materialComboBox.comboBox.setNullSelectionAllowed(false)
 					materialComboBox.comboBox.setImmediate(true)
 					materialComboBox.comboBox.setInputPrompt("Kies een material")
 					
 					Item materialItem = equipmentsContainer.addItem(materialComboBox)
 					materialItem.getItemProperty("Apparaat").setValue(materialComboBox)
-					equipmentsContainer.setParent(materialComboBox, materialsButton)
+					equipmentsContainer.setParent(materialComboBox, addMaterialsButton)
 					equipmentTreeTable.setCollapsed(equipmentTextField, false)
 
-					//-----------------------------add new materialtype to nw material------------------------------
+					def checkDisabled = { component, container ->
+						if (container.hasChildren(materialComboBox)) {
+							component.setEnabled(false)
+						}
+						else {
+							component.setEnabled(true)
+						}
+					}
+
+					def addMaterialType = {
+						ExtendedComboBoxwithCheck materialTypeComboBox = new ExtendedComboBoxwithCheck(null, materialComboBox.object.materialTypes*.name, true, true, false)
+						materialTypeComboBox.comboBox.setNullSelectionAllowed(false)
+						materialTypeComboBox.comboBox.setImmediate(true)
+						materialTypeComboBox.comboBox.setInputPrompt("Kies een materialtype")
+						
+						Item materialTypeItem = equipmentsContainer.addItem(materialTypeComboBox)
+						materialTypeItem.getItemProperty("Apparaat").setValue(materialTypeComboBox)
+						equipmentsContainer.setParent(materialTypeComboBox, materialComboBox)
+						equipmentTreeTable.setCollapsed(equipmentTextField, false)
+						equipmentTreeTable.setChildrenAllowed(materialTypeComboBox, false)
+
+						//--------------------------save new materialtype---------------------------------
+						materialTypeComboBox.saveButton.addClickListener(new Button.ClickListener() {
+							@Override
+							public void buttonClick(ClickEvent materialTypedeleteEvent) {
+								
+								if (materialTypeComboBox.comboBox.getValue() != null) {
+									MaterialType.withTransaction {
+										def newMaterialType
+										newMaterialType = MaterialType.findByName(materialTypeComboBox.comboBox.getValue())
+										existingEquipment.addToMaterialTypes(newMaterialType)
+										
+										if (existingEquipment.merge()) {
+											
+											materialTypeComboBox.object = newMaterialType
+										}
+										Notification.show("new materialtype in new material")
+									}	
+								} else {
+									Notification.show("Kies eerst een type.")
+								}
+							}
+						})	
+
+						//------------------------delete materialtype------------------------------------------
+						materialTypeComboBox.removeButton.addClickListener(new Button.ClickListener() {
+							@Override
+							public void buttonClick(ClickEvent materialTypedeleteEvent) {
+								
+								if (materialTypeComboBox.comboBox.getValue() != null && materialTypeComboBox.object != null) {
+									equipmentsContainer.removeItem(materialTypeComboBox)
+									equipmentTreeTable.removeItem(materialTypeComboBox)
+									MaterialType.withTransaction {
+										MaterialType type = MaterialType.findById(materialTypeComboBox.object.id)										
+										existingEquipment.removeFromMaterialTypes(type)
+									}
+								} else {
+									
+									equipmentsContainer.removeItem(materialTypeComboBox)
+									equipmentTreeTable.removeItem(materialTypeComboBox)
+								}
+								checkDisabled(materialComboBox.comboBox, equipmentsContainer)
+							}
+						})
+					}
+
+					def removeChildren = { component, treeTable ->
+						def childrenToDelete = []
+						def container = treeTable.getContainerDataSource()
+						for (child in container.getChildren(component)) {
+							container.removeItem(child)
+							childrenToDelete.add(child)
+						}
+						for (child in childrenToDelete) {
+							treeTable.removeItem(child)
+						}
+						treeTable.removeItem(component)
+					}
+
+					materialComboBox.comboBox.addValueChangeListener(new ValueChangeListener() {
+						@Override
+						public void valueChange(final ValueChangeEvent comboEvent) {
+							materialComboBox.object = Material.findByName(materialComboBox.comboBox.getValue())
+							addMaterialType()
+							checkDisabled(materialComboBox.comboBox, equipmentsContainer)
+						}
+					})
+
 					materialComboBox.plusButton.addClickListener(new Button.ClickListener() {
 						@Override
-						public void buttonClick(ClickEvent mtButtonEvent) {
-							//if (equipmentTextField.textField.getValue() != "") 
-							//{
-								//ExtendedText materialtypesTextField = new ExtendedText(null, true, true, true)
-									ExtendedComboBoxwithCheck materialTypeComboBox = new ExtendedComboBoxwithCheck(null, MaterialType.list()*.name, true, false,true)
-									materialTypeComboBox.comboBox.setNullSelectionAllowed(false)
-									materialTypeComboBox.comboBox.setImmediate(true)
-									materialTypeComboBox.comboBox.setInputPrompt("Kies een materialtype")
-									
-									Item materialTypeItem = equipmentsContainer.addItem(materialTypeComboBox)
-									materialTypeItem.getItemProperty("Apparaat").setValue(materialTypeComboBox)
-									equipmentsContainer.setParent(materialTypeComboBox, materialComboBox)
-									equipmentTreeTable.setCollapsed(equipmentTextField, false)
-
-											
-							
-							//}
-							//else{
-
-							//	Notification.show("Kies eerst een apparaat.")
-							//}
+						public void buttonClick(ClickEvent addMaterialTypeEvent) {
+							addMaterialType()
+							checkDisabled(materialComboBox.comboBox, equipmentsContainer)
 						}
-					})	
+					})
 
+					materialComboBox.removeButton.addClickListener(new Button.ClickListener() {
+						@Override
+						public void buttonClick(ClickEvent addMaterialTypeEvent) {
+							for (child in equipmentsContainer.getChildren(materialComboBox)) {
+								if (child.object) {
+									equipmentTextField.object.removeFromMaterialTypes(MaterialType.findById(child.object.id))
+								}
+							}
+							removeChildren(materialComboBox, equipmentTreeTable)
+						}
+					})
 				}
 			})
+			
+			//-------------------------Remove Equipment and children-----------------------------------------
+			equipmentTextField.removeButton.addClickListener(new Button.ClickListener() {
+				@Override
+				public void buttonClick(ClickEvent equipmentdeleteEvent) {
+					
+					equipmentsContainer.removeItem(equipmentTextField.object)
+					equipmentTreeTable.removeItem(equipmentTextField.object)
+
+					Equipment.findByName(equipmentTextField.textField.getValue()).delete(flush: true)
+
+				}
+			})	
+			
 			//-----------------------add new setting/tree for existig settings-----------------------------
 			AddMaterialButton settingsButton
 			settingsButton = new AddMaterialButton("Settings")
@@ -448,22 +562,92 @@ class AdjustmentView extends VerticalLayout{
 				@Override
 				public void buttonClick(ClickEvent event) {
 					
-					ExtendedText settingsTextField = new ExtendedText(null, true, false, true)
+					ExtendedText settingsTextField = new ExtendedText(null, true, true, false)
 					Item settingsItem = equipmentsContainer.addItem(settingsTextField)
 					settingsItem.getItemProperty("Apparaat").setValue(settingsTextField)
 					equipmentsContainer.setParent(settingsTextField, settingsButton)
+
+					//-----------------save new setting-------------------------------------------------
+					settingsTextField.saveButton.addClickListener(new Button.ClickListener() {
+						@Override
+						public void buttonClick(ClickEvent settingremoveEvent) {
+							
+							if (settingsTextField.textField.getValue() != "") 
+							{
+								SettingType.withTransaction 
+								{
+									
+									SettingType newSetting = new SettingType(name: settingsTextField.textField.getValue())//.save(failOnError: true)
+									existingEquipment.addToSettingTypes(newSetting)
+									if(existingEquipment.save(failOnError: true)){
+										settingsTextField.object = newSetting
+
+									}
+									Notification.show(settingsTextField.textField.getValue() + " is toegevoegd")
+								}	
+							}
+							else{
+
+								Notification.show("Kies eerst een setting.")
+							}
+						}
+					})
+
+					//-------------------------------delete new setting---------------------------------------
+					settingsTextField.removeButton.addClickListener(new Button.ClickListener() {
+						@Override
+						public void buttonClick(ClickEvent settingremoveEvent) {
+							
+							
+							if (settingsTextField.textField.getValue() != "" && settingsTextField.object != null)
+							{
+								
+								equipmentsContainer.removeItem(settingsTextField)
+								equipmentTreeTable.removeItem(settingsTextField)
+								SettingType.findByName(settingsTextField.textField.getValue()).delete(flush: true)
+
+							}
+							else{
+								
+								equipmentsContainer.removeItem(settingsTextField)
+								equipmentTreeTable.removeItem(settingsTextField)
+
+
+							}
+							//SettingType.removeItem(settingsTextField)
+							//MaterialType.findByName(materialTextField.textField.getValue()).delete(flush: true)
+						}
+					})
 				}
 			})
 		
 			//---------------------------placing existing settings-------------------------------------
 			for (settingType in equipment.settingTypes) {
-				
 
 				ExtendedText settingsTextField = new ExtendedText(settingType, true, true, false)
 				Item settingsTypeItem = equipmentsContainer.addItem(settingType)
 				settingsTypeItem.getItemProperty("Apparaat").setValue(settingsTextField)
 				equipmentsContainer.setParent(settingType, settingsButton)	
 				equipmentTreeTable.setChildrenAllowed(settingType, false)
+
+				//--------------------replace existing setting--------------------------------------
+				settingsTextField.saveButton.addClickListener(new Button.ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent settingremoveEvent) {
+					}
+				})
+
+				//-------------------------------remove existing setting-----------------------------------------
+				settingsTextField.removeButton.addClickListener(new Button.ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent settingremoveEvent) {
+						print settingsTextField.textField.getValue()
+						equipmentsContainer.removeItem(settingType)
+						equipmentTreeTable.removeItem(settingType)
+						
+						SettingType.findByName(settingsTextField.textField.getValue()).delete(flush: true)
+					}
+				})				
 
 			}
 
@@ -476,50 +660,18 @@ class AdjustmentView extends VerticalLayout{
 
 				Item materialItem = equipmentsContainer.addItem(currentMaterial)
 				materialItem.getItemProperty("Apparaat").setValue(materialComboBox)
-				equipmentsContainer.setParent(currentMaterial, materialsButton)	
+				equipmentsContainer.setParent(currentMaterial, addMaterialsButton)	
 				equipmentTreeTable.setCollapsed(equipment, false)
 
-				//------------------------------adding new materialtype to existing material------------------------------------
-				materialComboBox.plusButton.addClickListener(new Button.ClickListener() {
-						@Override
-						public void buttonClick(ClickEvent mtButtonEvent) {
-							//if (equipmentTextField.textField.getValue() != "") 
-							//{
-								//ExtendedText materialtypesTextField = new ExtendedText(null, true, true, true)
-									ExtendedComboBoxwithCheck materialTypeComboBox = new ExtendedComboBoxwithCheck(currentMaterial, MaterialType.list()*.name, true, true, false)
-									materialTypeComboBox.comboBox.setNullSelectionAllowed(false)
-									materialTypeComboBox.comboBox.setImmediate(true)
-									materialTypeComboBox.comboBox.setInputPrompt("Kies een materialtype")
-									
-									Item materialTypeItem = equipmentsContainer.addItem(materialTypeComboBox)
-									materialTypeItem.getItemProperty("Apparaat").setValue(materialTypeComboBox)
-									equipmentsContainer.setParent(materialTypeComboBox, currentMaterial)
-									equipmentTreeTable.setCollapsed(equipmentTextField, false)
-									equipmentTreeTable.setChildrenAllowed(materialTypeComboBox, false)
-
-
-											
-							
-							//}
-							//else{
-
-							//	Notification.show("Kies eerst een apparaat.")
-							//}
-						}
-					})	
-
 				//---------------------------------placing existing materialtype in existing material---------------------------------
-				for(materialType in Material.findByName(material.key).materialTypes)
-
-				{
-					//MaterialType currentMaterialType = MaterialType.findByName(materialType.name)
+				for (materialType in equipment.materialTypes.findAll { it.material.id == currentMaterial.id }) {
 					ExtendedComboBoxwithCheck materialTypeComboBox = new ExtendedComboBoxwithCheck(materialType, 
-						MaterialType.list()*.name, true, true, false)
+						currentMaterial.materialTypes*.name, true, true, false)
+
 					materialTypeComboBox.comboBox.setNullSelectionAllowed(false)
 					materialTypeComboBox.comboBox.setImmediate(true)
 					materialTypeComboBox.comboBox.setValue(materialType.name)
 
-					
 					Item materialTypeItem = equipmentsContainer.addItem(materialTypeComboBox)
 					materialTypeItem.getItemProperty("Apparaat").setValue(materialTypeComboBox)
 					equipmentsContainer.setParent(materialTypeComboBox, currentMaterial)
@@ -550,79 +702,339 @@ class AdjustmentView extends VerticalLayout{
 				equipmentsContainer.setParent(equipmentTextField, rootAddEquipmentButton)
 				equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
 
-
-				AddMaterialButton materialsButton
-				materialsButton = new AddMaterialButton("Materialen")
-				Item materialsButtonItem = equipmentsContainer.addItem(materialsButton)
-				materialsButtonItem.getItemProperty("Apparaat").setValue(materialsButton)
-				equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
-				equipmentsContainer.setParent(materialsButton, equipmentTextField)	
-
-				materialsButton.button.addClickListener(new Button.ClickListener() {
+				//---------------------------Equipmentbutton functions----------------------------------------------------
+				equipmentTextField.saveButton.addClickListener(new Button.ClickListener() {
 					@Override
-					public void buttonClick(ClickEvent materialevent) {
-						ExtendedComboBoxwithCheck materialComboBox = new ExtendedComboBoxwithCheck(null, Material.list()*.name, false, true,true)
-						materialComboBox.comboBox.setNullSelectionAllowed(false)
-						materialComboBox.comboBox.setImmediate(true)
-						materialComboBox.comboBox.setInputPrompt("Kies een material")
-						
-						Item materialItem = equipmentsContainer.addItem(materialComboBox)
-						materialItem.getItemProperty("Apparaat").setValue(materialComboBox)
-						equipmentsContainer.setParent(materialComboBox, materialsButton)
-						equipmentTreeTable.setCollapsed(equipmentTextField, false)
-
-						//-----------------------------add new materialtype to nw material------------------------------
-						materialComboBox.plusButton.addClickListener(new Button.ClickListener() {
-							@Override
-							public void buttonClick(ClickEvent materialTypeButtonEvent) {
-								ExtendedComboBoxwithCheck materialTypeComboBox = new ExtendedComboBoxwithCheck(null, MaterialType.list()*.name, true, true, false)
-								materialTypeComboBox.comboBox.setNullSelectionAllowed(false)
-								materialTypeComboBox.comboBox.setImmediate(true)
-								materialTypeComboBox.comboBox.setInputPrompt("Kies een materialtype")
+					public void buttonClick(ClickEvent settingsaveEvent) {
+						if (equipmentTextField.textField.getValue() != "") 
+						{
+							Equipment.withTransaction 
+							{
+								Equipment newEquipment = new Equipment(name: equipmentTextField.textField.getValue()).save(failOnError: true)
+																	
+								equipmentTextField.object = newEquipment
 								
-								Item materialTypeItem = equipmentsContainer.addItem(materialTypeComboBox)
-								materialTypeItem.getItemProperty("Apparaat").setValue(materialTypeComboBox)
-								equipmentsContainer.setParent(materialTypeComboBox, materialComboBox)
-								equipmentTreeTable.setCollapsed(equipmentTextField, false)
-								equipmentTreeTable.setChildrenAllowed(materialTypeComboBox, false)
+								//equipment.addToMaterialTypes(nee).save(failOnError: true)
+								Notification.show(equipmentTextField.textField.getValue() + " is toegevoegd")
+
+								//-----------------------add new material/tree for existig materials-----------------------------
+								def equipment
+
+								equipment = Equipment.findByName(equipmentTextField.textField.getValue())
+								
+
+								AddMaterialButton addMaterialsButton
+								addMaterialsButton = new AddMaterialButton("Materialen")
+								Item addMaterialsButtonItem = equipmentsContainer.addItem(addMaterialsButton)
+								addMaterialsButtonItem.getItemProperty("Apparaat").setValue(addMaterialsButton)
+								equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
+								equipmentsContainer.setParent(addMaterialsButton, equipmentTextField)	
+
+								addMaterialsButton.button.addClickListener(new Button.ClickListener() {
+									@Override
+									public void buttonClick(ClickEvent materialevent) {
+										//if (equipmentTextField.texzzztField.getValue() != "") 
+										//{
+											//ExtendedText materialtypesTextField = new ExtendedText(null, true, true, true)
+										 
+
+										ExtendedComboBoxwithCheck materialComboBox = new ExtendedComboBoxwithCheck(null, Material.list()*.name, false, true,true)
+										materialComboBox.comboBox.setNullSelectionAllowed(false)
+										materialComboBox.comboBox.setImmediate(true)
+										materialComboBox.comboBox.setInputPrompt("Kies een material")
+										
+										Item materialItem = equipmentsContainer.addItem(materialComboBox)
+										materialItem.getItemProperty("Apparaat").setValue(materialComboBox)
+										equipmentsContainer.setParent(materialComboBox, addMaterialsButton)
+										equipmentTreeTable.setCollapsed(equipmentTextField, false)
+
+										//-----------------------------add new materialtype to nw material------------------------------
+										
+											def removeChildren = {
+												def childrenToDelete = []
+												print "first step"
+												print materialComboBox.children
+												for (child in materialComboBox.children) {
+													print "fdffdsfdfdfdsfd"
+													equipmentsContainer.removeItem(child)
+													childrenToDelete.add(child)
+													for (secondChild in child.children) {
+														equipmentsContainer.removeItem(secondChild)
+													}
+												}
+												for (child in childrenToDelete) {
+													child.children.clear()
+												}
+												materialComboBox.children.clear()
+											}
+
+										//-----------------------add new materialtype------------------------------------
+										materialComboBox.plusButton.addClickListener(new Button.ClickListener() {
+											@Override
+											public void buttonClick(ClickEvent materialTypeButtonEvent) {
+												//if (equipmentTextField.textField.getValue() != "") 
+												//{
+													//ExtendedText materialtypesTextField = new ExtendedText(null, true, true, true)
+												ExtendedComboBoxwithCheck materialTypeComboBox = new ExtendedComboBoxwithCheck(null, MaterialType.list()*.name, true, true, false)
+												materialTypeComboBox.comboBox.setNullSelectionAllowed(false)
+												materialTypeComboBox.comboBox.setImmediate(true)
+												materialTypeComboBox.comboBox.setInputPrompt("Kies een materialtype")
 												
+												Item materialTypeItem = equipmentsContainer.addItem(materialTypeComboBox)
+												materialTypeItem.getItemProperty("Apparaat").setValue(materialTypeComboBox)
+												equipmentsContainer.setParent(materialTypeComboBox, materialComboBox)
+												equipmentTreeTable.setCollapsed(equipmentTextField, false)
+												equipmentTreeTable.setChildrenAllowed(materialTypeComboBox, false)
+
+											
+													
+												//----------------------------save new materialtype-----------------------------
+												materialTypeComboBox.saveButton.addClickListener(new Button.ClickListener() {
+													@Override
+													public void buttonClick(ClickEvent materialTypedeleteEvent) {
+														
+														if (materialTypeComboBox.comboBox.getValue() != null) 
+														{
+															MaterialType.withTransaction 
+															{
+																//MaterialType newMaterial = new MaterialType(name: materialTypeComboBox.comboBox.getValue(), material: Material.findByName(materialComboBox.comboBox.getValue()))
+																def newMaterial
+
+																newMaterial = MaterialType.findByName(materialTypeComboBox.comboBox.getValue())
+																equipment.addToMaterialTypes(newMaterial)
+																
+																if(equipment.merge()){
+																	
+																	materialTypeComboBox.object = newMaterial
+																}
+																Notification.show("works.")
+															}	
+														}
+														else{
+
+															Notification.show("Kies eerst een type.")
+														}
+													}
+												})	
+
+												//---------------------remove new materialtype---------------------------
+												materialTypeComboBox.removeButton.addClickListener(new Button.ClickListener() {
+													@Override
+													public void buttonClick(ClickEvent materialTypedeleteEvent) {
+														
+														if (materialTypeComboBox.comboBox.getValue() != null && materialTypeComboBox.object != null)
+														{
+															
+															equipmentsContainer.removeItem(materialTypeComboBox)
+															equipmentTreeTable.removeItem(materialTypeComboBox)
+															MaterialType.withTransaction 
+															{
+																print MaterialType.findByName(materialTypeComboBox.comboBox.getValue())
+																//MaterialType newMaterial = new MaterialType(name: materialTypeComboBox.comboBox.getValue(), material: Material.findByName(materialComboBox.comboBox.getValue()))
+																MaterialType mt = MaterialType.findByName(settingsTextField.textField.getValue())//.delete(flush: true)
+																equipment.removeFromMaterialTypes(mt)
+															}
+															//SettingType.findByName(settingsTextField.textField.getValue()).delete(flush: true)
+
+														}
+														else{
+															
+															equipmentsContainer.removeItem(materialTypeComboBox)
+															equipmentTreeTable.removeItem(materialTypeComboBox)
+
+
+														}
+
+													}
+												})			
+												
+												
+												/*materialComboBox.removeButton.addClickListener(new Button.ClickListener() {
+												@Override
+												public void buttonClick(ClickEvent materialTypedeleteEvent) {
+													print "hihihihihihih"
+													/*def childrenToDelete = []
+													for (child in equipmentsContainer.getChildren(materialComboBox.object)) {
+														childrenToDelete.add(child)
+													}
+													
+													for (child in childrenToDelete) {
+														equipmentsContainer.removeItem(child)
+														equipmentTreeTable.removeItem(child)
+
+														print "1 "child.textField.getValue()
+														print "2 "child
+														//MaterialType.findByName(child.textField.getValue()).delete(flush: true)
+														//child.delete(flush: true)
+														
+													}
+
+
+													removeChildren()
+													equipmentsContainer.removeItem(materialComboBox)
+													equipmentTreeTable.removeItem(materialComboBox)
+													
+													
+												}
+											})*/
+										
+											}
+										})				
+										
+										//------------------------------delete material and child---------------------------
+										
+										materialComboBox.removeButton.addClickListener(new Button.ClickListener() {
+											@Override
+											public void buttonClick(ClickEvent materialTypedeleteEvent) {
+												print "hihihihihihih"
+												/*def childrenToDelete = []
+												for (child in equipmentsContainer.getChildren(materialComboBox.object)) {
+													childrenToDelete.add(child)
+												}
+												
+												for (child in childrenToDelete) {
+													equipmentsContainer.removeItem(child)
+													equipmentTreeTable.removeItem(child)
+
+													print "1 "child.textField.getValue()
+													print "2 "child
+													//MaterialType.findByName(child.textField.getValue()).delete(flush: true)
+													//child.delete(flush: true)
+													
+												}*/
+
+
+												removeChildren()
+												equipmentsContainer.removeItem(materialComboBox)
+												equipmentTreeTable.removeItem(materialComboBox)
+												
+												
+											}
+										})	
+										//}
+										//else{
+
+										//	Notification.show("Kies eerst een apparaat.")
+										//}
+									}
+								})
+
 								
-								//}
-								//else{
+								AddMaterialButton settingsButton
+								settingsButton = new AddMaterialButton("Settings")
+								Item settingsButtonItem = equipmentsContainer.addItem(settingsButton)
+								settingsButtonItem.getItemProperty("Apparaat").setValue(settingsButton)
+								equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
+								equipmentsContainer.setParent(settingsButton, equipmentTextField)
 
-								//	Notification.show("Kies eerst een apparaat.")
-								//}
-							}
-						})				
-						
-						//}
-						//else{
+								//---------------------add new setting------------------------------------------------
+								settingsButton.button.addClickListener(new Button.ClickListener() {
+									@Override
+									public void buttonClick(ClickEvent settingsevent) {
+										
+										ExtendedText settingsTextField = new ExtendedText(null, true, true, false)
+										Item settingsItem = equipmentsContainer.addItem(settingsTextField)
+										settingsItem.getItemProperty("Apparaat").setValue(settingsTextField)
+										equipmentsContainer.setParent(settingsTextField, settingsButton)
+										equipmentTreeTable.setChildrenAllowed(settingsTextField, false)
 
-						//	Notification.show("Kies eerst een apparaat.")
-						//}
+										
+										//-----------------------------save new setting--------------------------------
+										settingsTextField.saveButton.addClickListener(new Button.ClickListener() {
+											@Override
+											public void buttonClick(ClickEvent settingremoveEvent) {
+												
+												if (settingsTextField.textField.getValue() != "") 
+												{
+													SettingType.withTransaction 
+													{
+														
+														SettingType newSetting = new SettingType(name: settingsTextField.textField.getValue())//.save(failOnError: true)
+														equipment.addToSettingTypes(newSetting)
+														if(equipment.save(failOnError: true)){
+															settingsTextField.object = newSetting
+
+														}
+														Notification.show(settingsTextField.textField.getValue() + " is toegevoegd")
+													}	
+												}
+												else{
+
+													Notification.show("Kies eerst een setting.")
+												}
+											}
+										})
+
+										//-------------------------remove new setting-------------------------------------
+										settingsTextField.removeButton.addClickListener(new Button.ClickListener() {
+											@Override
+											public void buttonClick(ClickEvent settingremoveEvent) {
+												
+												
+												if (settingsTextField.textField.getValue() != "" && settingsTextField.object != null)
+												{
+													
+													equipmentsContainer.removeItem(settingsTextField)
+													equipmentTreeTable.removeItem(settingsTextField)
+													SettingType.findByName(settingsTextField.textField.getValue()).delete(flush: true)
+
+												}
+												else{
+													
+													equipmentsContainer.removeItem(settingsTextField)
+													equipmentTreeTable.removeItem(settingsTextField)
+
+
+												}
+												//SettingType.removeItem(settingsTextField)
+												//MaterialType.findByName(materialTextField.textField.getValue()).delete(flush: true)
+											}
+										})
+									}
+								})
+								
+
+								//-------------remove equipment and die child buttons---------------------------------------
+								equipmentTextField.removeButton.addClickListener(new Button.ClickListener() {
+									@Override
+									public void buttonClick(ClickEvent equipmentremoveEvent) {
+										
+
+										if (equipmentTextField.textField.getValue() != "" && equipmentTextField.object != null)
+										{
+											Notification.show("verwijderen uit database.")
+											equipmentsContainer.removeItem(settingsButton)
+											equipmentTreeTable.removeItem(settingsButton)
+											equipmentsContainer.removeItem(addMaterialsButton)
+											equipmentTreeTable.removeItem(addMaterialsButton)
+											equipmentsContainer.removeItem(equipmentTextField)
+											equipmentTreeTable.removeItem(equipmentTextField)
+											Equipment.findByName(equipmentTextField.textField.getValue()).delete(flush: true)
+
+										}
+										else{
+											
+											Notification.show("verwijderen.")
+											equipmentsContainer.removeItem(equipmentTextField)
+											equipmentTreeTable.removeItem(equipmentTextField)
+
+
+										}
+									}
+								})
+
+
+								//---------
+							}	
+						}
+						else{
+
+							Notification.show("Kies eerst een apparaat.")
+						}
 					}
 				})
 
-
-				AddMaterialButton settingsButton
-				settingsButton = new AddMaterialButton("Settings")
-				Item settingsButtonItem = equipmentsContainer.addItem(settingsButton)
-				settingsButtonItem.getItemProperty("Apparaat").setValue(settingsButton)
-				equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
-				equipmentsContainer.setParent(settingsButton, equipmentTextField)
-
-				//---------------------add new setting------------------------------------------------
-				settingsButton.button.addClickListener(new Button.ClickListener() {
-					@Override
-					public void buttonClick(ClickEvent settingsevent) {
-						
-						ExtendedText settingsTextField = new ExtendedText(null, true, true, false)
-						Item settingsItem = equipmentsContainer.addItem(settingsTextField)
-						settingsItem.getItemProperty("Apparaat").setValue(settingsTextField)
-						equipmentsContainer.setParent(settingsTextField, settingsButton)
-						equipmentTreeTable.setChildrenAllowed(settingsTextField, false)
-					}
-				})
+				
 			}
 		})
 	 

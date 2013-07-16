@@ -104,6 +104,7 @@ class BootStrap {
 				checkin.addToCheckouts(checkout2)
 		// 	}
 		// }
+
 	}
 
 	def destroy = {
