@@ -7,6 +7,7 @@ class MaterialType implements Serializable {
 	static belongsTo = [material: Material]
 
 	static constraints = {
+		name unique: true
 	}
 
 	static mapping = {

@@ -9,6 +9,7 @@ class Equipment implements Serializable {
 
 	static constraints = {
 		materialTypes nullable: true
+		name unique: true
 	}
 
 	static mapping = {

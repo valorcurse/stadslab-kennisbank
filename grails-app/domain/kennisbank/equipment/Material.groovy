@@ -7,11 +7,11 @@ class Material implements Serializable {
 	static hasMany = [materialTypes: MaterialType]
 
 	static constraints = {
+		name unique: true
 	}
 
 	static mapping = {
 		materialTypes lazy: false
-		// materialTypes cascade: "all-delete-orphan" 
 	}
 
 	def beforeDelete() {

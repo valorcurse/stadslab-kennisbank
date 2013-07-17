@@ -9,9 +9,18 @@ import com.vaadin.ui.Label
 class AddMaterialButton extends HorizontalLayout {
 
 	Button button
+	Object object
+
+	AddMaterialButton(String caption, Object object) {
+		this.object = object
+		generateButton(caption)
+	}
 
 	AddMaterialButton(String caption) {
+		generateButton(caption)
+	}
 
+	private void generateButton(String caption) {
 		setSpacing(true)
 		setStyleName("addmaterialbutton")
 
@@ -24,4 +33,5 @@ class AddMaterialButton extends HorizontalLayout {
 		button.setIcon(new ThemeResource("plus.png"))
 		button.setStyleName(Reindeer.BUTTON_LINK)
 	}
+
 }
