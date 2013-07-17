@@ -399,8 +399,7 @@ class AdjustmentView extends VerticalLayout{
 			equipmentItem.getItemProperty("Apparaat").setValue(equipmentTextField)
 			equipmentsContainer.setParent(equipment, rootAddEquipmentButton)	
 		
-			def existingEquipment
-			existingEquipment = Equipment.findByName(equipmentTextField.textField.getValue())
+			def existingEquipment = Equipment.findByName(equipmentTextField.textField.getValue())
 
 			//-----------------------------button to add new materials/ tree for extisting materials--------------------
 			AddMaterialButton addMaterialsButton
@@ -410,6 +409,89 @@ class AdjustmentView extends VerticalLayout{
 			addMaterialsButtonItem.getItemProperty("Apparaat").setValue(addMaterialsButton)
 			equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
 			equipmentsContainer.setParent(addMaterialsButton, equipment)	 
+
+
+			def checkDisabled = { component, container ->
+				if (container.hasChildren(component)) {
+					component.comboBox.setEnabled(false)
+				}
+				else {
+					component.comboBox.setEnabled(true)
+				}
+			}
+
+			def addMaterialType = { parent, value->
+				ExtendedComboBoxwithCheck materialTypeComboBox = new ExtendedComboBoxwithCheck(value, parent.object.materialTypes*.name, true, true, false)
+				materialTypeComboBox.comboBox.setNullSelectionAllowed(false)
+				materialTypeComboBox.comboBox.setImmediate(true)
+				materialTypeComboBox.comboBox.setInputPrompt("Kies een materialtype")
+				
+				Item materialTypeItem = equipmentsContainer.addItem(materialTypeComboBox)
+				materialTypeItem.getItemProperty("Apparaat").setValue(materialTypeComboBox)
+				equipmentsContainer.setParent(materialTypeComboBox, parent)
+				equipmentTreeTable.setCollapsed(parent, false)
+				equipmentTreeTable.setChildrenAllowed(materialTypeComboBox, false)
+
+				//--------------------------save new materialtype---------------------------------
+				materialTypeComboBox.saveButton.addClickListener(new Button.ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent materialTypedeleteEvent) {
+						
+						if (materialTypeComboBox.comboBox.getValue() != null) {
+							MaterialType.withTransaction {
+								MaterialType newMaterialType = MaterialType.findByName(materialTypeComboBox.comboBox.getValue())
+								existingEquipment.addToMaterialTypes(newMaterialType)
+								existingEquipment = existingEquipment.merge()
+
+								if (existingEquipment.save()) {
+									materialTypeComboBox.object = newMaterialType
+								}
+								Notification.show(materialTypeComboBox.object.name + " is opgeslagen")
+							}
+						} else {
+							Notification.show("Kies eerst een type.")
+						}
+					}
+				})	
+
+				//------------------------delete materialtype------------------------------------------
+				materialTypeComboBox.removeButton.addClickListener(new Button.ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent materialTypedeleteEvent) {
+						
+						if (materialTypeComboBox.comboBox.getValue() != null && materialTypeComboBox.object != null) {
+							equipmentsContainer.removeItem(materialTypeComboBox)
+							equipmentTreeTable.removeItem(materialTypeComboBox)
+							
+							MaterialType.withTransaction {
+								MaterialType type = MaterialType.findById(materialTypeComboBox.object.id)
+								print type.name
+								existingEquipment.removeFromMaterialTypes(type)
+								existingEquipment = existingEquipment.merge()
+								print existingEquipment.materialTypes*.name
+							}
+
+						} else {
+							equipmentsContainer.removeItem(materialTypeComboBox)
+							equipmentTreeTable.removeItem(materialTypeComboBox)
+						}
+						checkDisabled(parent, equipmentsContainer)
+					}
+				})
+			}
+
+			def removeChildren = { component, treeTable ->
+				def childrenToDelete = []
+				def container = treeTable.getContainerDataSource()
+				for (child in container.getChildren(component)) {
+					container.removeItem(child)
+					childrenToDelete.add(child)
+				}
+				for (child in childrenToDelete) {
+					treeTable.removeItem(child)
+				}
+				treeTable.removeItem(component)
+			}
 
 			//--------------------------------------add new material--------------------------------------------------------
 			addMaterialsButton.button.addClickListener(new Button.ClickListener() {
@@ -426,99 +508,20 @@ class AdjustmentView extends VerticalLayout{
 					equipmentsContainer.setParent(materialComboBox, addMaterialsButton)
 					equipmentTreeTable.setCollapsed(equipmentTextField, false)
 
-					def checkDisabled = { component, container ->
-						if (container.hasChildren(materialComboBox)) {
-							component.setEnabled(false)
-						}
-						else {
-							component.setEnabled(true)
-						}
-					}
-
-					def addMaterialType = {
-						ExtendedComboBoxwithCheck materialTypeComboBox = new ExtendedComboBoxwithCheck(null, materialComboBox.object.materialTypes*.name, true, true, false)
-						materialTypeComboBox.comboBox.setNullSelectionAllowed(false)
-						materialTypeComboBox.comboBox.setImmediate(true)
-						materialTypeComboBox.comboBox.setInputPrompt("Kies een materialtype")
-						
-						Item materialTypeItem = equipmentsContainer.addItem(materialTypeComboBox)
-						materialTypeItem.getItemProperty("Apparaat").setValue(materialTypeComboBox)
-						equipmentsContainer.setParent(materialTypeComboBox, materialComboBox)
-						equipmentTreeTable.setCollapsed(equipmentTextField, false)
-						equipmentTreeTable.setChildrenAllowed(materialTypeComboBox, false)
-
-						//--------------------------save new materialtype---------------------------------
-						materialTypeComboBox.saveButton.addClickListener(new Button.ClickListener() {
-							@Override
-							public void buttonClick(ClickEvent materialTypedeleteEvent) {
-								
-								if (materialTypeComboBox.comboBox.getValue() != null) {
-									MaterialType.withTransaction {
-										def newMaterialType
-										newMaterialType = MaterialType.findByName(materialTypeComboBox.comboBox.getValue())
-										existingEquipment.addToMaterialTypes(newMaterialType)
-										
-										if (existingEquipment.merge()) {
-											
-											materialTypeComboBox.object = newMaterialType
-										}
-										Notification.show("new materialtype in new material")
-									}	
-								} else {
-									Notification.show("Kies eerst een type.")
-								}
-							}
-						})	
-
-						//------------------------delete materialtype------------------------------------------
-						materialTypeComboBox.removeButton.addClickListener(new Button.ClickListener() {
-							@Override
-							public void buttonClick(ClickEvent materialTypedeleteEvent) {
-								
-								if (materialTypeComboBox.comboBox.getValue() != null && materialTypeComboBox.object != null) {
-									equipmentsContainer.removeItem(materialTypeComboBox)
-									equipmentTreeTable.removeItem(materialTypeComboBox)
-									MaterialType.withTransaction {
-										MaterialType type = MaterialType.findById(materialTypeComboBox.object.id)										
-										existingEquipment.removeFromMaterialTypes(type)
-									}
-								} else {
-									
-									equipmentsContainer.removeItem(materialTypeComboBox)
-									equipmentTreeTable.removeItem(materialTypeComboBox)
-								}
-								checkDisabled(materialComboBox.comboBox, equipmentsContainer)
-							}
-						})
-					}
-
-					def removeChildren = { component, treeTable ->
-						def childrenToDelete = []
-						def container = treeTable.getContainerDataSource()
-						for (child in container.getChildren(component)) {
-							container.removeItem(child)
-							childrenToDelete.add(child)
-						}
-						for (child in childrenToDelete) {
-							treeTable.removeItem(child)
-						}
-						treeTable.removeItem(component)
-					}
-
 					materialComboBox.comboBox.addValueChangeListener(new ValueChangeListener() {
 						@Override
 						public void valueChange(final ValueChangeEvent comboEvent) {
 							materialComboBox.object = Material.findByName(materialComboBox.comboBox.getValue())
-							addMaterialType()
-							checkDisabled(materialComboBox.comboBox, equipmentsContainer)
+							addMaterialType(materialComboBox, null)
+							checkDisabled(materialComboBox, equipmentsContainer)
 						}
 					})
 
 					materialComboBox.plusButton.addClickListener(new Button.ClickListener() {
 						@Override
 						public void buttonClick(ClickEvent addMaterialTypeEvent) {
-							addMaterialType()
-							checkDisabled(materialComboBox.comboBox, equipmentsContainer)
+							addMaterialType(materialComboBox, null)
+							checkDisabled(materialComboBox, equipmentsContainer)
 						}
 					})
 
@@ -658,27 +661,59 @@ class AdjustmentView extends VerticalLayout{
 				materialComboBox.comboBox.setValue(material.key)
 				materialComboBox.comboBox.setNullSelectionAllowed(false)
 
-				Item materialItem = equipmentsContainer.addItem(currentMaterial)
+				Item materialItem = equipmentsContainer.addItem(materialComboBox)
 				materialItem.getItemProperty("Apparaat").setValue(materialComboBox)
-				equipmentsContainer.setParent(currentMaterial, addMaterialsButton)	
+				equipmentsContainer.setParent(materialComboBox, addMaterialsButton)	
 				equipmentTreeTable.setCollapsed(equipment, false)
+
+				materialComboBox.comboBox.addValueChangeListener(new ValueChangeListener() {
+					@Override
+					public void valueChange(final ValueChangeEvent comboEvent) {
+						materialComboBox.object = Material.findByName(materialComboBox.comboBox.getValue())
+						addMaterialType(materialComboBox, null)
+						checkDisabled(materialComboBox, equipmentsContainer)
+					}
+				})
+
+				materialComboBox.plusButton.addClickListener(new Button.ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent addMaterialTypeEvent) {
+						addMaterialType(materialComboBox, null)
+						checkDisabled(materialComboBox, equipmentsContainer)
+					}
+				})
+
+				materialComboBox.removeButton.addClickListener(new Button.ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent addMaterialTypeEvent) {
+						for (child in equipmentsContainer.getChildren(materialComboBox)) {
+							if (child.object) {
+								equipmentTextField.object.removeFromMaterialTypes(MaterialType.findById(child.object.id))
+							}
+						}
+						removeChildren(materialComboBox, equipmentTreeTable)
+					}
+				})
 
 				//---------------------------------placing existing materialtype in existing material---------------------------------
 				for (materialType in equipment.materialTypes.findAll { it.material.id == currentMaterial.id }) {
-					ExtendedComboBoxwithCheck materialTypeComboBox = new ExtendedComboBoxwithCheck(materialType, 
-						currentMaterial.materialTypes*.name, true, true, false)
+					addMaterialType(materialComboBox, materialType)
+					// ExtendedComboBoxwithCheck materialTypeComboBox = new ExtendedComboBoxwithCheck(materialType, 
+					// 	currentMaterial.materialTypes*.name, true, true, false)
 
-					materialTypeComboBox.comboBox.setNullSelectionAllowed(false)
-					materialTypeComboBox.comboBox.setImmediate(true)
-					materialTypeComboBox.comboBox.setValue(materialType.name)
+					// materialTypeComboBox.comboBox.setNullSelectionAllowed(false)
+					// materialTypeComboBox.comboBox.setImmediate(true)
+					// materialTypeComboBox.comboBox.setValue(materialType.name)
 
-					Item materialTypeItem = equipmentsContainer.addItem(materialTypeComboBox)
-					materialTypeItem.getItemProperty("Apparaat").setValue(materialTypeComboBox)
-					equipmentsContainer.setParent(materialTypeComboBox, currentMaterial)
-					equipmentTreeTable.setCollapsed(equipmentTextField, false)
-					equipmentTreeTable.setChildrenAllowed(materialTypeComboBox, false)
+					// Item materialTypeItem = equipmentsContainer.addItem(materialTypeComboBox)
+					// materialTypeItem.getItemProperty("Apparaat").setValue(materialTypeComboBox)
+					// equipmentsContainer.setParent(materialTypeComboBox, materialComboBox)
+					// equipmentTreeTable.setCollapsed(equipmentTextField, false)
+					// equipmentTreeTable.setChildrenAllowed(materialTypeComboBox, false)
 
 				}
+
+				checkDisabled(materialComboBox, equipmentsContainer)
 			}
 		}
 

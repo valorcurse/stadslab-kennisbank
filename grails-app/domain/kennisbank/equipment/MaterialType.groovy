@@ -16,7 +16,7 @@ class MaterialType implements Serializable {
 	def beforeDelete() {
 		Equipment.withTransaction {
 			for (equipment in Equipment.list()) {
-				def type = MaterialType.findByName(this.name)
+				def type = MaterialType.findById(this.id)
 				equipment.removeFromMaterialTypes(type)
 			}
 		}
