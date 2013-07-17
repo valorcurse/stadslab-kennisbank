@@ -399,8 +399,6 @@ class AdjustmentView extends VerticalLayout{
 			equipmentItem.getItemProperty("Apparaat").setValue(equipmentTextField)
 			equipmentsContainer.setParent(equipment, rootAddEquipmentButton)	
 		
-			def existingEquipment = Equipment.findByName(equipmentTextField.textField.getValue())
-
 			//-----------------------------button to add new materials/ tree for extisting materials--------------------
 			AddMaterialButton addMaterialsButton
 			addMaterialsButton = new AddMaterialButton("Materialen")
@@ -440,10 +438,11 @@ class AdjustmentView extends VerticalLayout{
 						if (materialTypeComboBox.comboBox.getValue() != null) {
 							MaterialType.withTransaction {
 								MaterialType newMaterialType = MaterialType.findByName(materialTypeComboBox.comboBox.getValue())
-								existingEquipment.addToMaterialTypes(newMaterialType)
-								existingEquipment = existingEquipment.merge()
 
-								if (existingEquipment.save()) {
+								equipment.addToMaterialTypes(newMaterialType)
+								equipment = equipment.merge()
+								print equipment
+								if (equipment.save()) {
 									materialTypeComboBox.object = newMaterialType
 								}
 								Notification.show(materialTypeComboBox.object.name + " is opgeslagen")
@@ -464,12 +463,11 @@ class AdjustmentView extends VerticalLayout{
 							equipmentTreeTable.removeItem(materialTypeComboBox)
 							
 							MaterialType.withTransaction {
-								MaterialType type = MaterialType.findById(materialTypeComboBox.object.id)
-								print type.name
-								existingEquipment.removeFromMaterialTypes(type)
-								existingEquipment = existingEquipment.merge()
-								print existingEquipment.materialTypes*.name
+								def currentEquipment = Equipment.findById(equipment.id)
+								currentEquipment.removeFromMaterialTypes(MaterialType.findById(materialTypeComboBox.object.id))
+								currentEquipment.save()
 							}
+
 
 						} else {
 							equipmentsContainer.removeItem(materialTypeComboBox)
@@ -581,8 +579,8 @@ class AdjustmentView extends VerticalLayout{
 								{
 									
 									SettingType newSetting = new SettingType(name: settingsTextField.textField.getValue())//.save(failOnError: true)
-									existingEquipment.addToSettingTypes(newSetting)
-									if(existingEquipment.save(failOnError: true)){
+									equipment.addToSettingTypes(newSetting)
+									if(equipment.save(failOnError: true)){
 										settingsTextField.object = newSetting
 
 									}
