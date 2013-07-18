@@ -363,10 +363,10 @@ class AdjustmentView extends VerticalLayout{
 			def childrenToDelete = []
 			def container = treeTable.getContainerDataSource()
 			for (child in container.getChildren(component)) {
-				container.removeItem(child)
 				childrenToDelete.add(child)
 			}
 			for (child in childrenToDelete) {
+				container.removeItem(child)
 				treeTable.removeItem(child)
 			}
 			treeTable.removeItem(component)
