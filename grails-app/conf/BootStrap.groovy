@@ -10,8 +10,8 @@ class BootStrap {
 
 	def init = { servletContext ->
 
-		// environments {
-  //           development {
+		environments {
+            development {
 				String rootPath = ApplicationHolder.application.parentContext.getResource("").file.absolutePath
 
 				new User(username: "admin", password: "12345", enabled: true).save()
@@ -102,8 +102,8 @@ class BootStrap {
 
 				checkin.addToCheckouts(checkout1)
 				checkin.addToCheckouts(checkout2)
-		// 	}
-		// }
+			}
+		}
 
 	}
 
