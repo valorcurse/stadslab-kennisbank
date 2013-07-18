@@ -451,10 +451,10 @@ class AdjustmentView extends VerticalLayout{
 					if (materialTypeComboBox.comboBox.getValue() != null) {
 						MaterialType.withTransaction {
 							MaterialType newMaterialType = MaterialType.findByName(materialTypeComboBox.comboBox.getValue())
-
-							equipment.addToMaterialTypes(newMaterialType)
-							equipment = equipment.merge()
-							if (equipment.save()) {
+							def currentEquipment = Equipment.findById(equipment.id)
+							currentEquipment.addToMaterialTypes(newMaterialType)
+							currentEquipment = currentEquipment.merge()
+							if (currentEquipment.save(flush: true)) {
 								materialTypeComboBox.object = newMaterialType
 							}
 							Notification.show(materialTypeComboBox.object.name + " is opgeslagen")
