@@ -424,8 +424,6 @@ class AdjustmentView extends VerticalLayout{
 						
 						equipmentsContainer.removeItem(settingsTextField)
 						equipmentTreeTable.removeItem(settingsTextField)
-
-
 					}
 				}
 			})
@@ -528,7 +526,11 @@ class AdjustmentView extends VerticalLayout{
 				public void buttonClick(ClickEvent addMaterialTypeEvent) {
 					for (child in equipmentsContainer.getChildren(materialComboBox)) {
 						if (child.object) {
-							equipment.removeFromMaterialTypes(MaterialType.findById(child.object.id))
+							Equipment.withTransaction {
+								Equipment currentEquipment = Equipment.findById(equipment.id)
+								currentEquipment.removeFromMaterialTypes(MaterialType.findById(child.object.id))
+								currentEquipment.save()
+							}
 						}
 					}
 					removeChildren(materialComboBox, equipmentTreeTable)
@@ -628,7 +630,11 @@ class AdjustmentView extends VerticalLayout{
 					public void buttonClick(ClickEvent addMaterialTypeEvent) {
 						for (child in equipmentsContainer.getChildren(materialComboBox)) {
 							if (child.object) {
-								equipmentTextField.object.removeFromMaterialTypes(MaterialType.findById(child.object.id))
+								Equipment.withTransaction {
+									Equipment currentEquipment = Equipment.findById(equipmentTextField.object.id)
+									currentEquipment.removeFromMaterialTypes(MaterialType.findById(child.object.id))
+									currentEquipment.save()
+								}
 							}
 						}
 						removeChildren(materialComboBox, equipmentTreeTable)
