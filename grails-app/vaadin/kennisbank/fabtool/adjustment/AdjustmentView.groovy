@@ -364,7 +364,14 @@ class AdjustmentView extends VerticalLayout{
 			def container = treeTable.getContainerDataSource()
 			for (child in container.getChildren(component)) {
 				childrenToDelete.add(child)
+				for (secondChild in treeTable.getChildren(child)) {
+					for (thirdChild in treeTable.getChildren(secondChild)) {
+						childrenToDelete.add(thirdChild)
+					}
+					childrenToDelete.add(secondChild)
+				}
 			}
+
 			for (child in childrenToDelete) {
 				container.removeItem(child)
 				treeTable.removeItem(child)
@@ -420,8 +427,7 @@ class AdjustmentView extends VerticalLayout{
 						equipmentsContainer.removeItem(settingsTextField)
 						equipmentTreeTable.removeItem(settingsTextField)
 						SettingType.findByName(settingsTextField.textField.getValue()).delete(flush: true)
-					} else{
-						
+					} else {
 						equipmentsContainer.removeItem(settingsTextField)
 						equipmentTreeTable.removeItem(settingsTextField)
 					}
@@ -566,7 +572,7 @@ class AdjustmentView extends VerticalLayout{
 			equipmentTextField.removeButton.addClickListener(new Button.ClickListener() {
 				@Override
 				public void buttonClick(ClickEvent equipmentdeleteEvent) {
-					
+					print "removed"
 					equipmentsContainer.removeItem(equipmentTextField.object)
 					equipmentTreeTable.removeItem(equipmentTextField.object)
 
@@ -677,74 +683,82 @@ class AdjustmentView extends VerticalLayout{
 						if (equipmentTextField.textField.getValue() != "") {
 							Equipment.withTransaction {
 								Equipment newEquipment = new Equipment(name: equipmentTextField.textField.getValue())
-							}
-							if (newEquipment.save(failOnError: true)) { 
-								equipmentTextField.object = newEquipment
-								Notification.show(equipmentTextField.textField.getValue() + " is toegevoegd")
-								equipmentTreeTable.setCollapsed(equipmentTextField, false)
-							}
-							else {
-								Notification.show("Saving equipment \"" + equipmentTextField.textField.getValue() + "\" failed", 
-									Notification.TYPE_ERROR_MESSAGE)
-							}
-
-							AddMaterialButton addMaterialsButton = new AddMaterialButton("Materialen", newEquipment)
-							Item addMaterialsButtonItem = equipmentsContainer.addItem(addMaterialsButton)
-							addMaterialsButtonItem.getItemProperty("Apparaat").setValue(addMaterialsButton)
-							equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
-							equipmentsContainer.setParent(addMaterialsButton, equipmentTextField)	
-
-							addMaterialsButton.button.addClickListener(new Button.ClickListener() {
-								@Override
-								public void buttonClick(ClickEvent materialevent) {
-									addMaterial(addMaterialsButton, newEquipment, null)
+								if (newEquipment.save(failOnError: true)) { 
+									equipmentTextField.object = newEquipment
+									Notification.show(equipmentTextField.textField.getValue() + " is toegevoegd")
+									equipmentTreeTable.setCollapsed(equipmentTextField, false)
+									equipmentTextField.object = newEquipment
 								}
-							})
-
-							
-							AddMaterialButton addSettingsButton = new AddMaterialButton("Settings", newEquipment)
-							Item settingsButtonItem = equipmentsContainer.addItem(addSettingsButton)
-							settingsButtonItem.getItemProperty("Apparaat").setValue(addSettingsButton)
-							equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
-							equipmentsContainer.setParent(addSettingsButton, equipmentTextField)
-
-							// ---------------------------------- Add new setting ----------------------------------
-							addSettingsButton.button.addClickListener(new Button.ClickListener() {
-								@Override
-								public void buttonClick(ClickEvent settingsevent) {
-									addSetting(addSettingsButton, newEquipment, null)
+								else {
+									Notification.show("Saving equipment \"" + equipmentTextField.textField.getValue() + "\" failed", 
+										Notification.TYPE_ERROR_MESSAGE)
 								}
-							})
-							
 
-							// ---------------------------------- Remove equipment ----------------------------------
-							equipmentTextField.removeButton.addClickListener(new Button.ClickListener() {
-								@Override
-								public void buttonClick(ClickEvent equipmentremoveEvent) {
-									if (equipmentTextField.textField.getValue() != "" && equipmentTextField.object != null) {
-										equipmentsContainer.removeItem(addSettingsButton)
-										equipmentTreeTable.removeItem(addSettingsButton)
+								AddMaterialButton addMaterialsButton = new AddMaterialButton("Materialen", newEquipment)
+								Item addMaterialsButtonItem = equipmentsContainer.addItem(addMaterialsButton)
+								addMaterialsButtonItem.getItemProperty("Apparaat").setValue(addMaterialsButton)
+								equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
+								equipmentsContainer.setParent(addMaterialsButton, equipmentTextField)	
 
-										equipmentsContainer.removeItem(addMaterialsButton)
-										equipmentTreeTable.removeItem(addMaterialsButton)
-										
-										equipmentsContainer.removeItem(equipmentTextField)
-										equipmentTreeTable.removeItem(equipmentTextField)
-										
-										if (Equipment.findByName(equipmentTextField.textField.getValue()).delete(flush: true)) {
-											Notification.show("Apparaat is verwijderd")
-										}
-
-									} else {
-										Notification.show("verwijderen.")
-										equipmentsContainer.removeItem(equipmentTextField)
-										equipmentTreeTable.removeItem(equipmentTextField)
+								addMaterialsButton.button.addClickListener(new Button.ClickListener() {
+									@Override
+									public void buttonClick(ClickEvent materialevent) {
+										addMaterial(addMaterialsButton, newEquipment, null)
 									}
-								}
-							})
+								})
+
+								
+								AddMaterialButton addSettingsButton = new AddMaterialButton("Settings", newEquipment)
+								Item settingsButtonItem = equipmentsContainer.addItem(addSettingsButton)
+								settingsButtonItem.getItemProperty("Apparaat").setValue(addSettingsButton)
+								equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
+								equipmentsContainer.setParent(addSettingsButton, equipmentTextField)
+
+								// ---------------------------------- Add new setting ----------------------------------
+								addSettingsButton.button.addClickListener(new Button.ClickListener() {
+									@Override
+									public void buttonClick(ClickEvent settingsevent) {
+										addSetting(addSettingsButton, newEquipment, null)
+									}
+								})
+							}
 						} else {
 							Notification.show("Kies eerst een apparaat.")
 						}
+					}
+				})
+
+				// ---------------------------------- Remove equipment ----------------------------------
+				equipmentTextField.removeButton.addClickListener(new Button.ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent equipmentremoveEvent) {
+
+							Equipment.findById(equipmentTextField.object.id).delete()
+								removeChildren(equipmentTextField, equipmentTreeTable)
+							// } else {
+							// 	Notification.show("Apparaat verwijderen niet gelukt.", Notification.TYPE_ERROR_MESSAGE)
+							// }
+
+
+						// if (equipmentTextField.textField.getValue() != "" && equipmentTextField.object != null) {
+						// 	equipmentsContainer.removeItem(addSettingsButton)
+						// 	equipmentTreeTable.removeItem(addSettingsButton)
+
+						// 	equipmentsContainer.removeItem(addMaterialsButton)
+						// 	equipmentTreeTable.removeItem(addMaterialsButton)
+							
+						// 	equipmentsContainer.removeItem(equipmentTextField)
+						// 	equipmentTreeTable.removeItem(equipmentTextField)
+							
+						// 	if (Equipment.findByName(equipmentTextField.textField.getValue()).delete(flush: true)) {
+						// 		Notification.show("Apparaat is verwijderd")
+						// 	}
+
+						// } else {
+						// 	Notification.show("verwijderen.")
+						// 	equipmentsContainer.removeItem(equipmentTextField)
+						// 	equipmentTreeTable.removeItem(equipmentTextField)
+						// }
 					}
 				})
 			}
