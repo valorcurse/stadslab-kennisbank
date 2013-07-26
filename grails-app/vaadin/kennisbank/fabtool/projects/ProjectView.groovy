@@ -133,10 +133,12 @@ class ProjectView extends VerticalLayout {
 		settingsTreeTable.setColumnExpandRatio("Apparatuur", 0.6)
 		settingsTreeTable.setColumnExpandRatio("Materiaal", 0.4)
 
+		// Group all settings by equipment
 		for (equipment in checkout.settings.groupBy { it.equipment }) {
 			Item equipmentItem = settingsContainer.addItem(equipment.key)
 			equipmentItem.getItemProperty("Apparatuur").setValue(new Label("<b>" + equipment.key.name + "</b>", ContentMode.HTML))
 
+			// Group again by materialType
 			for (materialType in equipment.getValue().groupBy { it.materialType }) {
 				// Check if equipment uses materials
 				if (materialType.key) {

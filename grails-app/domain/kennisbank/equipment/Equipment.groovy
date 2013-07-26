@@ -3,7 +3,7 @@ package kennisbank.equipment
 class Equipment implements Serializable {
 
 	String name
-	// Set materialTypes, settingTypes
+	Boolean hidden = true
 
 	static hasMany = [settingTypes: SettingType, materialTypes: MaterialType]
 

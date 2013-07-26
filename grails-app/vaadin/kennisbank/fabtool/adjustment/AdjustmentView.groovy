@@ -34,6 +34,8 @@ import com.vaadin.shared.ui.label.ContentMode
 import org.springframework.context.MessageSource
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
 import kennisbank.equipment.*
 import kennisbank.*
 import kennisbank.utils.*
@@ -111,7 +113,13 @@ class AdjustmentView extends VerticalLayout{
 		materialTreeTable.setContainerDataSource(materialsContainer)
 
 		def addMaterialTypeTextField = { parent, value ->
-			ExtendedText materialTypeTextField = new ExtendedText(value, true, true, false)
+
+			Boolean materialTypeIsUsed = false
+			Setting.withTransaction {
+				materialTypeIsUsed = Setting.findWhere(materialType: value) != null ? true : false
+			}
+
+			ExtendedText materialTypeTextField = new ExtendedText(value, true, !materialTypeIsUsed, false)
 			Item materialTItem = materialsContainer.addItem(materialTypeTextField)
 			materialTItem.getItemProperty("Materiaal").setValue(materialTypeTextField)
 			materialsContainer.setParent(materialTypeTextField, parent)
@@ -139,7 +147,6 @@ class AdjustmentView extends VerticalLayout{
 							if (materialTypeTextField.textField.getValue() != materialTypeTextField.object.name) {
 								Material.withTransaction {
 									MaterialType currentMaterialType = MaterialType.findById(materialTypeTextField.object.id)
-									print materialTypeTextField.textField.getValue()
 									currentMaterialType.name = materialTypeTextField.textField.getValue()
 									currentMaterialType = currentMaterialType.merge()
 									currentMaterialType.save()
@@ -154,27 +161,44 @@ class AdjustmentView extends VerticalLayout{
 					}
 				}
 			})
-
-			materialTypeTextField.removeButton.addClickListener(new Button.ClickListener() {
-				@Override
-				public void buttonClick(ClickEvent equipmendButtonEvent) {
-					if (materialTypeTextField.object) {
-						
-						MaterialType currentMaterialType = MaterialType.findByName(materialTypeTextField.textField.getValue())
-						
-						if (currentMaterialType.delete()) {
-							Notification.show(materialTypeTextField.textField.getValue() + " is verwijderd")
+			
+			if (!materialTypeIsUsed) {
+				materialTypeTextField.removeButton.addClickListener(new Button.ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent equipmendButtonEvent) {
+						if (materialTypeTextField.object) {
+							
+							try {
+								MaterialType currentMaterialType = MaterialType.findByName(materialTypeTextField.textField.getValue())
+								
+								if (currentMaterialType.delete()) {
+									Notification.show(materialTypeTextField.textField.getValue() + " is verwijderd")
+									materialsContainer.removeItem(materialTypeTextField)
+									materialTreeTable.removeItem(materialTypeTextField)
+								}
+							} catch(Exception e) {
+								Notification.show("Materiaal soort wordt ergens gebruikt. Kan niet worden verwijderd.")
+							}
 						}
 					}
-
-					materialsContainer.removeItem(materialTypeTextField)
-					materialTreeTable.removeItem(materialTypeTextField)
-				}
-			})
+				})
+			}
 		}
 
 		def addMaterialTextField = { parent, value ->
-			ExtendedText materialTextField = new ExtendedText(value, true, true, true)
+
+			Boolean materialIsUsed = false
+			Setting.withTransaction {
+				Setting.list().each {
+					if (it.materialType.id in value.materialTypes*.id) {
+						materialIsUsed = true
+						return
+					}
+				}
+			}
+
+
+			ExtendedText materialTextField = new ExtendedText(value, true, !materialIsUsed, true)
 			Item materialItem = materialsContainer.addItem(materialTextField)
 			materialItem.getItemProperty("Materiaal").setValue(materialTextField)
 			materialsContainer.setParent(materialTextField, parent)	
@@ -206,29 +230,34 @@ class AdjustmentView extends VerticalLayout{
 				}
 			})
 
-		
-			//-----------------------remove material------------------------------------------
-			materialTextField.removeButton.addClickListener(new Button.ClickListener() {
-				@Override
-				public void buttonClick(ClickEvent equipmentButtonEvent) {
-					def childrenToDelete = []
-					for (child in materialsContainer.getChildren(materialTextField)) {
-						childrenToDelete.add(child)
-					}
-					for (child in childrenToDelete) {
-						materialsContainer.removeItem(child)
-						materialTreeTable.removeItem(child)
-					}
-					
-					if (materialTextField.object) {
-						materialTextField.object.delete()
-						Notification.show(materialTextField.textField.getValue() + " is verwijderd")
-					}
+			if (!materialIsUsed) {
+				//-----------------------remove material------------------------------------------
+				materialTextField.removeButton.addClickListener(new Button.ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent equipmentButtonEvent) {
+						def childrenToDelete = []
+						for (child in materialsContainer.getChildren(materialTextField)) {
+							childrenToDelete.add(child)
+						}
+						for (child in childrenToDelete) {
+							materialsContainer.removeItem(child)
+							materialTreeTable.removeItem(child)
+						}
+						
+						if (materialTextField.object) {
+							try {
+								materialTextField.object.delete()
+								Notification.show(materialTextField.textField.getValue() + " is verwijderd")
+							} catch(Exception e) {
+								Notification.show("Materiaal wordt ergens gebruikt. Kan niet worden verwijderd.")
+							}
+						}
 
-					materialsContainer.removeItem(materialTextField)
-					materialTreeTable.removeItem(materialTextField)
-				}
-			})
+						materialsContainer.removeItem(materialTextField)
+						materialTreeTable.removeItem(materialTextField)
+					}
+				})
+			}
 
 			return materialTextField
 		}
@@ -308,10 +337,14 @@ class AdjustmentView extends VerticalLayout{
 							}
 							
 							for (child in childrenToDelete) {
+								try {
+								MaterialType.findByName(child.textField.getValue()).delete(flush: true)
 								materialsContainer.removeItem(child)
 								materialTreeTable.removeItem(child)
 
-								MaterialType.findByName(child.textField.getValue()).delete(flush: true)
+								} catch(Exception e) {
+									Notification.show("Materiaal soort wordt ergens gebruikt. Kan niet worden verwijderd.")
+								}
 							}
 							
 							materialsContainer.removeItem(materialTextField)
@@ -376,11 +409,18 @@ class AdjustmentView extends VerticalLayout{
 				container.removeItem(child)
 				treeTable.removeItem(child)
 			}
+			container.removeItem(component)
 			treeTable.removeItem(component)
 		}
 
 		def addSetting = { parent, equipment, value ->
-			ExtendedText settingsTextField = new ExtendedText(value, true, true, false)
+
+			Boolean settingTypeIsUsed = false
+			Setting.withTransaction {
+				settingTypeIsUsed = Setting.findWhere(settingType: value) != null
+			}
+
+			ExtendedText settingsTextField = new ExtendedText(value, true, !settingTypeIsUsed, false)
 
 			Item settingsItem = equipmentsContainer.addItem(settingsTextField)
 			settingsItem.getItemProperty("Apparaat").setValue(settingsTextField)
@@ -417,25 +457,32 @@ class AdjustmentView extends VerticalLayout{
 				}
 			})
 
-			//-------------------------remove new setting-------------------------------------
-			settingsTextField.removeButton.addClickListener(new Button.ClickListener() {
-				@Override
-				public void buttonClick(ClickEvent settingremoveEvent) {
-					
-					
-					if (settingsTextField.textField.getValue() != "" && settingsTextField.object != null) {
-						equipmentsContainer.removeItem(settingsTextField)
-						equipmentTreeTable.removeItem(settingsTextField)
-						SettingType.findByName(settingsTextField.textField.getValue()).delete(flush: true)
-					} else {
-						equipmentsContainer.removeItem(settingsTextField)
-						equipmentTreeTable.removeItem(settingsTextField)
+			if (!settingTypeIsUsed) {
+				//-------------------------remove new setting-------------------------------------
+				settingsTextField.removeButton.addClickListener(new Button.ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent settingremoveEvent) {
+						
+						
+						if (settingsTextField.textField.getValue() != "" && settingsTextField.object != null) {
+							try {
+								equipmentsContainer.removeItem(settingsTextField)
+								equipmentTreeTable.removeItem(settingsTextField)
+								SettingType.findByName(settingsTextField.textField.getValue()).delete(flush: true)
+							} catch(Exception e) {
+								Notification.show("Instelling wordt ergens gebruikt. Kan niet worden verwijderd.")
+							}
+						} else {
+							equipmentsContainer.removeItem(settingsTextField)
+							equipmentTreeTable.removeItem(settingsTextField)
+						}
 					}
-				}
-			})
+				})
+			}
 		}
 
 		def addMaterialType = { parent, equipment, value ->
+
 			ExtendedComboBoxwithCheck materialTypeComboBox = new ExtendedComboBoxwithCheck(value, parent.object.materialTypes*.name, true, true, false)
 			materialTypeComboBox.comboBox.setNullSelectionAllowed(false)
 			materialTypeComboBox.comboBox.setImmediate(true)
@@ -475,15 +522,14 @@ class AdjustmentView extends VerticalLayout{
 				public void buttonClick(ClickEvent materialTypedeleteEvent) {
 					
 					if (materialTypeComboBox.comboBox.getValue() != null && materialTypeComboBox.object != null) {
-						equipmentsContainer.removeItem(materialTypeComboBox)
-						equipmentTreeTable.removeItem(materialTypeComboBox)
-						
 						MaterialType.withTransaction {
 							def currentEquipment = Equipment.findById(equipment.id)
 							currentEquipment.removeFromMaterialTypes(MaterialType.findById(materialTypeComboBox.object.id))
 							currentEquipment.save()
 						}
 
+						equipmentsContainer.removeItem(materialTypeComboBox)
+						equipmentTreeTable.removeItem(materialTypeComboBox)
 
 					} else {
 						equipmentsContainer.removeItem(materialTypeComboBox)
@@ -546,18 +592,90 @@ class AdjustmentView extends VerticalLayout{
 
 		// ------------------------------------------------- Existing Equipment -------------------------------------------------
 		for (equipment in Equipment.list()) {
-			ExtendedText equipmentTextField = new ExtendedText(equipment, true, true, false)
-			Item equipmentItem = equipmentsContainer.addItem(equipment)
+
+			Boolean equipmentIsUsed = false
+			Setting.withTransaction {
+				equipmentIsUsed = Setting.findWhere(equipment: equipment) != null
+			}
+
+			ExtendedText equipmentTextField = new ExtendedText(equipment, true, !equipmentIsUsed, false)
+			Item equipmentItem = equipmentsContainer.addItem(equipmentTextField)
 			equipmentItem.getItemProperty("Apparaat").setValue(equipmentTextField)
-			equipmentsContainer.setParent(equipment, rootAddEquipmentButton)	
+			equipmentsContainer.setParent(equipmentTextField, rootAddEquipmentButton)	
 		
+			equipmentTextField.saveButton.addClickListener(new Button.ClickListener() {
+				@Override
+				public void buttonClick(ClickEvent settingsaveEvent) {
+					if (equipmentTextField.textField.getValue() != "") {
+						Equipment.withTransaction {
+							Equipment newEquipment = new Equipment(name: equipmentTextField.textField.getValue())
+							if (newEquipment.save(failOnError: true)) { 
+								equipmentTextField.object = newEquipment
+								Notification.show(equipmentTextField.textField.getValue() + " is toegevoegd")
+								equipmentTreeTable.setCollapsed(equipmentTextField, false)
+								equipmentTextField.object = newEquipment
+							}
+							else {
+								Notification.show("Saving equipment \"" + equipmentTextField.textField.getValue() + "\" failed", 
+									Notification.TYPE_ERROR_MESSAGE)
+							}
+
+							AddMaterialButton addMaterialsButton = new AddMaterialButton("Materialen", newEquipment)
+							Item addMaterialsButtonItem = equipmentsContainer.addItem(addMaterialsButton)
+							addMaterialsButtonItem.getItemProperty("Apparaat").setValue(addMaterialsButton)
+							equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
+							equipmentsContainer.setParent(addMaterialsButton, equipmentTextField)	
+
+							addMaterialsButton.button.addClickListener(new Button.ClickListener() {
+								@Override
+								public void buttonClick(ClickEvent materialevent) {
+									addMaterial(addMaterialsButton, newEquipment, null)
+								}
+							})
+
+							
+							AddMaterialButton addSettingsButton = new AddMaterialButton("Settings", newEquipment)
+							Item settingsButtonItem = equipmentsContainer.addItem(addSettingsButton)
+							settingsButtonItem.getItemProperty("Apparaat").setValue(addSettingsButton)
+							equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
+							equipmentsContainer.setParent(addSettingsButton, equipmentTextField)
+
+							// ---------------------------------- Add new setting ----------------------------------
+							addSettingsButton.button.addClickListener(new Button.ClickListener() {
+								@Override
+								public void buttonClick(ClickEvent settingsevent) {
+									addSetting(addSettingsButton, newEquipment, null)
+								}
+							})
+						}
+					} else {
+						Notification.show("Kies eerst een apparaat.")
+					}
+				}
+			})
+			
+			if (!equipmentIsUsed) {
+				//-------------------------Remove Equipment and children-----------------------------------------
+				equipmentTextField.removeButton.addClickListener(new Button.ClickListener() {
+					@Override
+					public void buttonClick(ClickEvent equipmentdeleteEvent) {
+						try {
+							Equipment.findById(equipmentTextField.object.id).delete()
+							removeChildren(equipmentTextField, equipmentTreeTable)
+							Notification.show("Apparaat is verwijderd")
+						} catch(Exception e) {
+							Notification.show("Materiaal soort wordt ergens gebruikt. Kan niet worden verwijderd.")
+						}
+					}
+				})	
+			}
 			// -------------------------------------------------  Add new materials -------------------------------------------------
 			AddMaterialButton addMaterialsButton = new AddMaterialButton("Materialen", equipment)
 			
 			Item addMaterialsButtonItem = equipmentsContainer.addItem(addMaterialsButton)
 			addMaterialsButtonItem.getItemProperty("Apparaat").setValue(addMaterialsButton)
 			equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
-			equipmentsContainer.setParent(addMaterialsButton, equipment)	 
+			equipmentsContainer.setParent(addMaterialsButton, equipmentTextField)	 
 
 
 			//-------------------------------------- Add new material --------------------------------------------------------
@@ -568,27 +686,12 @@ class AdjustmentView extends VerticalLayout{
 				}
 			})
 			
-			//-------------------------Remove Equipment and children-----------------------------------------
-			equipmentTextField.removeButton.addClickListener(new Button.ClickListener() {
-				@Override
-				public void buttonClick(ClickEvent equipmentdeleteEvent) {
-					print "removed"
-					equipmentsContainer.removeItem(equipmentTextField.object)
-					equipmentTreeTable.removeItem(equipmentTextField.object)
-
-					if (Equipment.findByName(equipmentTextField.textField.getValue()).delete(flush: true)) {
-						Notification.show("Apparaat is verwijderd")
-					}
-
-				}
-			})	
-			
 			// ---------------------------------- Add new setting ------------------------------------------------
 			AddMaterialButton addSettingsButton = new AddMaterialButton("Settings", equipment)
 			Item settingsButtonItem = equipmentsContainer.addItem(addSettingsButton)
 			settingsButtonItem.getItemProperty("Apparaat").setValue(addSettingsButton)
 			equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
-			equipmentsContainer.setParent(addSettingsButton, equipment)
+			equipmentsContainer.setParent(addSettingsButton, equipmentTextField)
 
 			addSettingsButton.button.addClickListener(new Button.ClickListener() {
 				@Override
@@ -612,7 +715,7 @@ class AdjustmentView extends VerticalLayout{
 				Item materialItem = equipmentsContainer.addItem(materialComboBox)
 				materialItem.getItemProperty("Apparaat").setValue(materialComboBox)
 				equipmentsContainer.setParent(materialComboBox, addMaterialsButton)	
-				equipmentTreeTable.setCollapsed(equipment, false)
+				equipmentTreeTable.setCollapsed(equipmentTextField, false)
 
 				materialComboBox.comboBox.addValueChangeListener(new ValueChangeListener() {
 					@Override
@@ -732,33 +835,12 @@ class AdjustmentView extends VerticalLayout{
 				equipmentTextField.removeButton.addClickListener(new Button.ClickListener() {
 					@Override
 					public void buttonClick(ClickEvent equipmentremoveEvent) {
-
+						try {
 							Equipment.findById(equipmentTextField.object.id).delete()
-								removeChildren(equipmentTextField, equipmentTreeTable)
-							// } else {
-							// 	Notification.show("Apparaat verwijderen niet gelukt.", Notification.TYPE_ERROR_MESSAGE)
-							// }
-
-
-						// if (equipmentTextField.textField.getValue() != "" && equipmentTextField.object != null) {
-						// 	equipmentsContainer.removeItem(addSettingsButton)
-						// 	equipmentTreeTable.removeItem(addSettingsButton)
-
-						// 	equipmentsContainer.removeItem(addMaterialsButton)
-						// 	equipmentTreeTable.removeItem(addMaterialsButton)
-							
-						// 	equipmentsContainer.removeItem(equipmentTextField)
-						// 	equipmentTreeTable.removeItem(equipmentTextField)
-							
-						// 	if (Equipment.findByName(equipmentTextField.textField.getValue()).delete(flush: true)) {
-						// 		Notification.show("Apparaat is verwijderd")
-						// 	}
-
-						// } else {
-						// 	Notification.show("verwijderen.")
-						// 	equipmentsContainer.removeItem(equipmentTextField)
-						// 	equipmentTreeTable.removeItem(equipmentTextField)
-						// }
+							removeChildren(equipmentTextField, equipmentTreeTable)
+						} catch(Exception e) {
+							Notification.show("Apparaat wordt ergens gebruikt. Kan niet worden verwijderd.")
+						}
 					}
 				})
 			}
