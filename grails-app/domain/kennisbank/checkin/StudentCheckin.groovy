@@ -13,6 +13,11 @@ class StudentCheckin extends Checkin implements Serializable {
 			course, 
 			teacher
 
+	Object[] getInfo() {
+		return [studentNumber, firstName, lastName, email,	institute, study, 
+					course, teacher,  equipment*.name.toString(), dateCreated.toString()]
+	}
+
 	static hasMany = [equipment: Equipment, checkouts: Checkout]
 
 	static constraints = {

@@ -31,21 +31,13 @@ import static java.util.Calendar.*
  * @author Nilson Xavier da Luz
  */
 
-class Administration extends VerticalLayout{
+class Administration extends VerticalLayout {
 	
 	/**
 	 * Fragment used to bookmark this page.
 	 */	
 	String uriFragment
 		
-	/**
-	 * Table where all the checked-in data is placed
-	 */	
-	Table checkedInTable
-
-	PopupDateField startDate
-	PopupDateField endDate
-
 	def calendar = new GregorianCalendar()
 	def dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
 	def dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
@@ -56,10 +48,6 @@ class Administration extends VerticalLayout{
 	 */		
 	Administration() {
 
-
-		//Main layout
-		VerticalLayout view = new VerticalLayout()
-
 		uriFragment = "#!/"
 		UI.getCurrent().getPage().getCurrent().setLocation(uriFragment)
 
@@ -67,34 +55,52 @@ class Administration extends VerticalLayout{
 		setSizeFull()
 
 		Panel panel = new Panel()
+		addComponent(panel)
 		panel.setPrimaryStyleName("island-panel")
 		
-		// ------------------------------------------------------- Title -------------------------------------------------------		
+		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Title >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>		
 
-		VerticalLayout layout = new VerticalLayout()
-		layout.setSpacing(true)
-		layout.setMargin(true)
-		layout.setSizeFull()
+		VerticalLayout mainLayout = new VerticalLayout()
+		mainLayout.setSpacing(true)
+		mainLayout.setMargin(true)
+		mainLayout.setSizeFull()
 
-		panel.setContent(layout)
+		panel.setContent(mainLayout)
 
-		Label titleLabel = new Label("<h1><b>Administration</b></h1>", ContentMode.HTML)
-		layout.addComponent(titleLabel)
-		layout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
+		Label titleLabel = new Label("<h1><b>Administratien</b></h1>", ContentMode.HTML)
+		mainLayout.addComponent(titleLabel)
+		mainLayout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
 		titleLabel.setWidth("100%")
 		
-		// ------------------------------------------------------- Time Buttons -------------------------------------------------------		
+		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Student Check-ins >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>		
+		
+		def studentFields = ["Studentnummer", "Voornaam", "Achternaam", "Email", "Instituut", "Opleiding", "Vak", "Docent", "Apparaten", "Datum"]
+		mainLayout.addComponent(generateCheckinsPanel("Student check-ins", StudentCheckin.list(), studentFields))
 
-		Panel buttonsPanel = new Panel()
-		layout.addComponent(buttonsPanel)
-		buttonsPanel.setPrimaryStyleName("embedded-panel")
-		buttonsPanel.addStyleName(Runo.PANEL_LIGHT)
+		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Company & Others Check-ins >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>		
+		
+		def companyFields = ["Bedrijfnaam", "Contact persoon", "Email", "Aantal medewerkers", "Omschrijving", "Datum"]
+		mainLayout.addComponent(generateCheckinsPanel("Bedrijf check-ins", CompanyCheckin.list(), companyFields))
+	}
 
-		HorizontalLayout bottonLayout = new HorizontalLayout()
-		buttonsPanel.setContent(bottonLayout)
+	private Panel generateCheckinsPanel(caption, checkins, fields) {
+		Panel checkinsPanel = new Panel(caption)
+		checkinsPanel.setPrimaryStyleName("embedded-panel")
+		checkinsPanel.addStyleName(Runo.PANEL_LIGHT)
+
+		VerticalLayout checkInsLayout = new VerticalLayout()
+		checkinsPanel.setContent(checkInsLayout)
+		checkInsLayout.setMargin(true)
+		checkInsLayout.setSpacing(true)
+
+		PopupDateField startDate
+		PopupDateField endDate
+		Table checkInsTable
+
+		HorizontalLayout timeButtonsLayout = new HorizontalLayout()
 	
 		NativeButton allButton = new NativeButton("All")
-		bottonLayout.addComponent(allButton)
+		timeButtonsLayout.addComponent(allButton)
 		allButton.setWidth("100px")
 		allButton.addClickListener(new Button.ClickListener() {
 			public void buttonClick(ClickEvent event) {
@@ -104,7 +110,7 @@ class Administration extends VerticalLayout{
 		})
 
 		NativeButton todayButton = new NativeButton("Vandaag")
-		bottonLayout.addComponent(todayButton)
+		timeButtonsLayout.addComponent(todayButton)
 		todayButton.setWidth("100px")
 		todayButton.addClickListener(new Button.ClickListener() {
 			public void buttonClick(ClickEvent event) {
@@ -114,18 +120,17 @@ class Administration extends VerticalLayout{
 		})
 
 		NativeButton weekButton = new NativeButton("Week")
-		bottonLayout.addComponent(weekButton)
+		timeButtonsLayout.addComponent(weekButton)
 		weekButton.setWidth("100px")
 		weekButton.addClickListener(new Button.ClickListener() {
 			public void buttonClick(ClickEvent event) {
-				print dayOfWeek
 				startDate.setValue(new Date() - (dayOfWeek - 1))
 				endDate.setValue(new Date())
 			}
 		})
 
 		NativeButton monthButton = new NativeButton("Maand")
-		bottonLayout.addComponent(monthButton)
+		timeButtonsLayout.addComponent(monthButton)
 		monthButton.setWidth("100px")
 		monthButton.addClickListener(new Button.ClickListener() {
 			public void buttonClick(ClickEvent event) {
@@ -135,7 +140,7 @@ class Administration extends VerticalLayout{
 		})
 
 		NativeButton yearButton = new NativeButton("Jaar")
-		bottonLayout.addComponent(yearButton)
+		timeButtonsLayout.addComponent(yearButton)
 		yearButton.setWidth("100px")
 		yearButton.addClickListener(new Button.ClickListener() {
 			public void buttonClick(ClickEvent event) {
@@ -144,21 +149,10 @@ class Administration extends VerticalLayout{
 			}
 		})
 
-		// ------------------------------------------------------- Date Picker -------------------------------------------------------		
-		
-		Panel checkedInPanel = new Panel("Student check-ins")
-		layout.addComponent(checkedInPanel)
-		layout.setComponentAlignment(checkedInPanel, Alignment.TOP_CENTER)
-		checkedInPanel.setPrimaryStyleName("embedded-panel")
-		checkedInPanel.addStyleName(Runo.PANEL_LIGHT)
+		checkInsLayout.addComponent(timeButtonsLayout)
 
-		VerticalLayout checkedInLayout = new VerticalLayout()
-		checkedInPanel.setContent(checkedInLayout)
-		checkedInLayout.setMargin(true)
-		checkedInLayout.setSpacing(true)
-		
 		HorizontalLayout dateLayout = new HorizontalLayout()
-		checkedInLayout.addComponent(dateLayout)
+		checkInsLayout.addComponent(dateLayout)
 		dateLayout.setSpacing(true)
 
 		startDate = new PopupDateField("Begin datum")
@@ -172,6 +166,24 @@ class Administration extends VerticalLayout{
 		endDate.setDateFormat('dd/MM/yy')
 		endDate.setImmediate(true);
 		
+		def refreshTable = {
+			if (startDate.getValue() && endDate.getValue()) {
+				checkInsTable.removeAllItems()
+
+				for (Checkin checkin in checkins) {
+					if (checkin.dateCreated.clearTime() >= startDate?.getValue().clearTime() && checkin.dateCreated.clearTime() <= endDate?.getValue().clearTime()) {
+						checkInsTable.addItem(checkin.getInfo(), new Integer(checkInsTable.size()+1))
+					}
+				}
+			} else {
+				checkInsTable.removeAllItems()
+
+				for (Checkin checkin in checkins) {
+					checkInsTable.addItem(checkin.getInfo(), new Integer(checkInsTable.size()+1))
+				}
+			}	
+		}
+
 		startDate.addValueChangeListener(new ValueChangeListener() {
 			@Override
 			public void valueChange(final ValueChangeEvent event) {
@@ -186,65 +198,20 @@ class Administration extends VerticalLayout{
 			}
 		})
 
-
 		// ------------------------------------------------------- Table -------------------------------------------------------		
 		
-		checkedInTable = new Table()
-		checkedInLayout.addComponent(checkedInTable)
-		checkedInTable.setHeight("350px")
-		checkedInTable.setWidth("100%")
+		checkInsTable = new Table()
+		checkInsLayout.addComponent(checkInsTable)
+		checkInsTable.setHeight("350px")
+		checkInsTable.setWidth("100%")
 
-		checkedInTable.addContainerProperty("Studentnummer", String.class, null)
-		checkedInTable.addContainerProperty("Voornaam", String.class, null)
-		checkedInTable.addContainerProperty("Achternaam", String.class, null)
-		checkedInTable.addContainerProperty("Email", String.class, null)
-		checkedInTable.addContainerProperty("Instituut", String.class, null)
-		checkedInTable.addContainerProperty("Opleiding", String.class, null)
-		checkedInTable.addContainerProperty("Vak", String.class, null)
-		checkedInTable.addContainerProperty("Docent", String.class, null)
-		checkedInTable.addContainerProperty("Apparaten", String.class, null)
-		checkedInTable.addContainerProperty("Datum", String.class, null)
-
-		for (StudentCheckin check in StudentCheckin.list()) {
-		
-			def newItem = [check.studentNumber, check.firstName, check.lastName, check.email,
-				check.institute, check.study, check.course, check.teacher,  check.equipment*.name.toString(), 
-				check.dateCreated.toString()] as Object[]
-
-			checkedInTable.addItem(newItem, new Integer(checkedInTable.size()+1))
+		fields.each {	
+			checkInsTable.addContainerProperty(it, String.class, null)
 		}
 
-		addComponent(panel)
-	}
+		refreshTable()
 
-	private void refreshTable() {
-		if (startDate.getValue() && endDate.getValue()) {
-		
-			checkedInTable.removeAllItems()
-
-			for (StudentCheckin checkin in StudentCheckin.list()) {
-				
-				if (checkin.dateCreated.clearTime() >= startDate?.getValue().clearTime() && checkin.dateCreated.clearTime() <= endDate?.getValue().clearTime()) {
-					def newItem = [checkin.studentNumber, checkin.firstName, checkin.lastName, checkin.email,
-						checkin.institute, checkin.study, checkin.course, checkin.teacher,  checkin.equipment*.name.toString(), 
-						checkin.dateCreated.toString()] as Object[]
-					
-					checkedInTable.addItem(newItem, new Integer(checkedInTable.size()+1))
-				}
-			}
-		}
-		else {
-			checkedInTable.removeAllItems()
-
-			for (StudentCheckin checkin in StudentCheckin.list()) {
-				
-				def newItem = [checkin.studentNumber, checkin.firstName, checkin.lastName, checkin.email,
-					checkin.institute, checkin.study, checkin.course, checkin.teacher,  checkin.equipment*.name.toString(), 
-					checkin.dateCreated.toString()] as Object[]
-					
-				checkedInTable.addItem(newItem, new Integer(checkedInTable.size()+1))
-			}
-		}	
+		return checkinsPanel
 	}
 }
 
