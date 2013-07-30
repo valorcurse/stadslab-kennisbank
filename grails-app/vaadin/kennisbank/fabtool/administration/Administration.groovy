@@ -67,7 +67,7 @@ class Administration extends VerticalLayout {
 
 		panel.setContent(mainLayout)
 
-		Label titleLabel = new Label("<h1><b>Administratien</b></h1>", ContentMode.HTML)
+		Label titleLabel = new Label("<h1><b>Administratie</b></h1>", ContentMode.HTML)
 		mainLayout.addComponent(titleLabel)
 		mainLayout.setComponentAlignment(titleLabel, Alignment.TOP_CENTER)
 		titleLabel.setWidth("100%")
