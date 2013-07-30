@@ -165,7 +165,7 @@ class CheckoutWindow extends Window {
 				
 				} else {
 
-		// ------------------------------------------------------- Constraints -------------------------------------------------------		
+					// ------------------------------------------------------- Constraints -------------------------------------------------------		
 
 					MessageSource messageSource = ApplicationHolder.application.mainContext.getBean('messageSource')
 
@@ -430,7 +430,6 @@ class CheckoutForm extends Panel {
 						if (equipment.settingTypes) {
 							equipment.settingTypes.each {
 								def newSetting = new Setting(equipment: equipment, settingType: it)
-								print newSetting
 								checkout.addToSettings(newSetting)
 								equipmentUsedSettings.add(newSetting)
 							}
@@ -529,7 +528,7 @@ class CheckoutForm extends Panel {
 				def material = Material.findByName(comboEvent.getProperty().getValue())
 
 				// ComboBox to choose the type of the material
-				ComboBox materialTypeComboBox = new ComboBox(null, material.materialTypes*.name)
+				ComboBox materialTypeComboBox = new ComboBox(null, equipment.materialTypes*.name)
 				materialTypeComboBox.setNullSelectionAllowed(false)
 				materialTypeComboBox.setImmediate(true)
 				materialTypeComboBox.setInputPrompt("Kies een materiaal type")
@@ -548,7 +547,6 @@ class CheckoutForm extends Panel {
 
 						equipmentUsedSettings.each { 
 							it.materialType = MaterialType.findByName(materialType) 
-							print it.materialType
 						}
 
 						if (!settingsTreeTable.hasChildren(materialComboBox)) {

@@ -95,7 +95,7 @@ class MainView extends Panel implements View {
 				Component c = (Component) i.next();
 				Tab tab = topTabs.getTab(c);
 				
-				if (!tab.getCaption().equals("Home")) {
+				if (tab.isClosable()) {
 					tabsToRemove.add(tab)
 				}
 			}
@@ -103,8 +103,8 @@ class MainView extends Panel implements View {
 			tabsToRemove.each {
 				topTabs.removeTab(it)
 			}
-		}
-		catch (SecurityException e) {
+
+		} catch (SecurityException e) {
 			print "something happened: " + e
 		}
 	}
@@ -356,13 +356,11 @@ class MainView extends Panel implements View {
 	}
 
 	public void enter(ViewChangeEvent event) {
-		// print "enter: " + event.getParameters()
-		if(event.getParameters() != null) {
+		if (event.getParameters() != null) {
 
 			// Check if a tab is already open
 			for (int t = 1; t < topTabs.getComponentCount(); t++) {
 				if (topTabs.getTab(t).getComponent().uriFragment.replace("#!/", "").equals(event.getParameters())) {
-					topTabs.setSelectedTab(topTabs.getTab(t))
 					return
 				}
 			}
@@ -371,26 +369,24 @@ class MainView extends Panel implements View {
 			
 			switch(urlParameters[0]) {
 				case "project":
-					if (urlParameters[0] == "project") {
-						if (urlParameters.size() == 2) {
-							Checkout currentCheckout = Checkout.findByTitle(urlParameters[1].replace("-", " "))
+					if (urlParameters.size() == 2) {
+						Checkout currentCheckout = Checkout.findByTitle(urlParameters[1].replace("-", " "))
 
-							if (currentCheckout != null) {
-								Checkout.withTransaction {
-									ProjectView projectTab = new ProjectView(currentCheckout)
-									Tab tab = topTabs.addTab(projectTab, "Project: " + currentCheckout.title.replace(" ", "-"))
-									tab.setClosable(true)
-									topTabs.setSelectedTab(tab)
-								}
+						if (currentCheckout != null) {
+							Checkout.withTransaction {
+								ProjectView projectTab = new ProjectView(currentCheckout)
+								Tab tab = topTabs.addTab(projectTab, "Project: " + currentCheckout.title.replace(" ", "-"))
+								tab.setClosable(true)
+								topTabs.setSelectedTab(tab)
 							}
 						}
-						else {
-							ProjectsOverview projectTab = new ProjectsOverview()
-							Tab tab = topTabs.addTab(projectTab, "Projecten")
-							tab.setClosable(true)
-							topTabs.setSelectedTab(tab)
-						}
-					}		
+					}
+					else {
+						ProjectsOverview projectTab = new ProjectsOverview()
+						Tab tab = topTabs.addTab(projectTab, "Projecten")
+						tab.setClosable(true)
+						topTabs.setSelectedTab(tab)
+					}
 				break
 			}
 		}
