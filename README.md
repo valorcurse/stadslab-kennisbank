@@ -13,6 +13,7 @@ what equipment they will be using, and *Check out* before leaving, this consisti
 their project, along with the settings used with the equipment, a short description of the project and a photo.
 
 This application is a first prototype, not thoroughly tested or used yet, and will be further developed by other students.
+It's as of now completly translated in dutch.
 
 ###Database:
   
