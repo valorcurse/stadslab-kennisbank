@@ -25,7 +25,7 @@ It's as of now completly translated in dutch.
 
 Check configuration on DataSource.groovy to match your system's.
 
-###Checkouts:
+###Projects (checkouts):
 
     Checkouts are saved in /var/stadslab/checkouts.
     Make sure the directory exists and has the right permissions.
