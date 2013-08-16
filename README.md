@@ -20,7 +20,7 @@ Checkouts:
 
 Demo:
 
-	A demo website is running [here](http://145.24.222.154:8080/).
+	A demo website is running [here](http://145.24.222.154/).
 	The checkins/checkouts can be found [here](http://145.24.222.154:8080/checkinout).
 	
 	Admin account:
