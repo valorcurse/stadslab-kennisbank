@@ -15,6 +15,8 @@ their project, along with the settings used with the equipment, a short descript
 This application is a first prototype, not thoroughly tested or used yet, and will be further developed by other students.
 It's as of now completly translated in dutch.
 
+This application is licensed under the GPLv2 license.
+
 ###Database:
   
 	- Type: MySQL
