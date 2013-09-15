@@ -76,6 +76,7 @@ class CheckInOutView extends UI {
 		updateCheckinList =	 {
 			container.removeAllItems()
 			
+			// TODO: Add method to domain objects which return the display name
 			// Change the text displayed in the name column depending on the type of checkin
 			for (def checkin : Checkin.list()) {
 				if (!checkin.closed) {

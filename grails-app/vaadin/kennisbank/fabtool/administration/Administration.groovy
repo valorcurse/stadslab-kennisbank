@@ -83,6 +83,14 @@ class Administration extends VerticalLayout {
 		mainLayout.addComponent(generateCheckinsPanel("Bedrijf check-ins", CompanyCheckin.list(), companyFields))
 	}
 
+	/**
+	 * Generates a table with all the specified checkins
+	 * 
+	 * @param caption - The title to be displayed above the table
+	 * @param checkins - A list with all the checkins to be displayed
+	 * @param fields - A strings list with the name of each field. The correct number of fields must be in the list or the table won't display anything.
+	 */
+	// TODO: Check if number of fields is equal to number of data from checkins
 	private Panel generateCheckinsPanel(caption, checkins, fields) {
 		Panel checkinsPanel = new Panel(caption)
 		checkinsPanel.setPrimaryStyleName("embedded-panel")

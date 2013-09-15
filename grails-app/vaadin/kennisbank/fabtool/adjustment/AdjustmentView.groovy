@@ -101,6 +101,8 @@ class AdjustmentView extends VerticalLayout{
 		treesLayout.setMargin(true)
 		treesLayout.setSpacing(true)
 
+
+		// TODO: Move TreeTables into own files to lessen the clutter in this file
 		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Material table >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 		TreeTable materialTreeTable = new TreeTable()
 		treesLayout.addComponent(materialTreeTable)
@@ -112,6 +114,7 @@ class AdjustmentView extends VerticalLayout{
 		materialsContainer.addContainerProperty("Materiaal", Component.class, "")
 		materialTreeTable.setContainerDataSource(materialsContainer)
 
+		// Adds a TextField to the materialTreeTable where a MaterialType can be added
 		def addMaterialTypeTextField = { parent, value ->
 
 			Boolean materialTypeIsUsed = false
@@ -183,6 +186,7 @@ class AdjustmentView extends VerticalLayout{
 			})
 		}
 
+		// Adds a TextField to the materialTreeTable where a Material can be added
 		def addMaterialTextField = { parent, value ->
 
 			Boolean materialIsUsed = false
@@ -265,11 +269,11 @@ class AdjustmentView extends VerticalLayout{
 		rootItem.getItemProperty("Materiaal").setValue(rootAddMaterialButton)
 		materialTreeTable.setCollapsed(rootAddMaterialButton, false)
 
-		// ------------------------------------------ Existing materials -------------------------------------------------
+		// Existing materials 
 		for (material in Material.list()) {
 			ExtendedText materialTextField = addMaterialTextField(rootAddMaterialButton, material)		
 
-			// ------------------------------------------- Existing materialtype -------------------------------------------
+			// Existing materialtype 
 			for (materialType in material.materialTypes) {
 				addMaterialTypeTextField(materialTextField, materialType)
 			}
@@ -376,6 +380,7 @@ class AdjustmentView extends VerticalLayout{
 		rootEquipmentItem.getItemProperty("Apparaat").setValue(rootAddEquipmentButton)
 		equipmentTreeTable.setCollapsed(rootAddEquipmentButton, false)
 
+		// Disables material's ComboBox if a MaterialType has been chosen and enable it if all MaterialTypes have been removed
 		def checkDisabled = { component, container ->
 				if (container.hasChildren(component)) {
 					component.comboBox.setEnabled(false)
@@ -385,6 +390,8 @@ class AdjustmentView extends VerticalLayout{
 				}
 		}
 
+		// TODO: Remove all children dynamically, it now only checks for three levels of children which is kinda dirty
+		// Remove all the children of a specific component in the TreeTable
 		def removeChildren = { component, treeTable ->
 			def childrenToDelete = []
 			def container = treeTable.getContainerDataSource()
@@ -406,6 +413,7 @@ class AdjustmentView extends VerticalLayout{
 			treeTable.removeItem(component)
 		}
 
+		// Adds a TextField to the TreeTable where a setting can be added
 		def addSetting = { parent, equipment, value ->
 
 			Boolean settingTypeIsUsed = false
@@ -474,6 +482,7 @@ class AdjustmentView extends VerticalLayout{
 			}
 		}
 
+		// Adds a ComboBox where a MaterialType can be chosen from
 		def addMaterialType = { parent, equipment, value ->
 
 			ExtendedComboBoxwithCheck materialTypeComboBox = new ExtendedComboBoxwithCheck(value, parent.object.materialTypes*.name, true, true, false)
@@ -532,7 +541,8 @@ class AdjustmentView extends VerticalLayout{
 				}
 			})
 		}
-
+		
+		// Adds a ComboBox where a Material can be chosen from
 		def addMaterial = { parent, equipment, value ->
 			ExtendedComboBoxwithCheck materialComboBox = new ExtendedComboBoxwithCheck(value, Material.list()*.name, false, true, true)
 			materialComboBox.comboBox.setNullSelectionAllowed(false)

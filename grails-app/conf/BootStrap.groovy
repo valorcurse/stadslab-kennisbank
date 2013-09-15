@@ -10,11 +10,11 @@ class BootStrap {
 
 	def init = { servletContext ->
 
+		new User(username: "admin", password: "12345", enabled: true).save()
+
 		environments {
             development {
 				String rootPath = ApplicationHolder.application.parentContext.getResource("").file.absolutePath
-
-				new User(username: "admin", password: "12345", enabled: true).save()
 
 				Material glas = new Material(name: "Glas").save(failOnError: true)
 				Material leer = new Material(name: "Leer").save(failOnError: true)

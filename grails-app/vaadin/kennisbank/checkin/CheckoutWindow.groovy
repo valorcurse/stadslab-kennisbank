@@ -86,7 +86,7 @@ class CheckoutWindow extends Window {
 	/**
 	 * Generates the layout content for this window.
 	 * 
-	 * @param checkin
+	 *
 	 */
 	private Layout GenerateLayout() {
 		VerticalLayout layout = new VerticalLayout()
@@ -99,12 +99,12 @@ class CheckoutWindow extends Window {
 		Button newProject = new Button("Nieuw project")
 		layout.addComponent(newProject)
 
-		TabSheet tabSheet = new TabSheet()
-		layout.addComponent(tabSheet)
-		tabSheet.addStyleName(Reindeer.TABSHEET_MINIMAL)
-		tabSheet.setSizeFull()
+		TabSheet projectsTabSheet = new TabSheet()
+		layout.addComponent(projectsTabSheet)
+		projectsTabSheet.addStyleName(Reindeer.TABSHEET_MINIMAL)
+		projectsTabSheet.setSizeFull()
 
-		tabSheet.setCloseHandler(new TabSheet.CloseHandler() {
+		projectsTabSheet.setCloseHandler(new TabSheet.CloseHandler() {
 			public void onTabClose(TabSheet tabsheet, Component tabContent) {
 				checkoutForms.remove(tabContent)
 				tabsheet.removeComponent(tabContent)
@@ -113,7 +113,7 @@ class CheckoutWindow extends Window {
 		
 		CheckoutForm defaultCheckoutForm = new CheckoutForm(checkin)
 		checkoutForms.add(defaultCheckoutForm)
-		Tab defaultTab = tabSheet.addTab(defaultCheckoutForm, "Project")
+		Tab defaultTab = projectsTabSheet.addTab(defaultCheckoutForm, "Project")
 		defaultCheckoutForm.tab = defaultTab
 
 		newProject.addClickListener(new Button.ClickListener() {
@@ -121,7 +121,7 @@ class CheckoutWindow extends Window {
 			public void buttonClick(ClickEvent event) {
 				CheckoutForm checkoutForm = new CheckoutForm(checkin)
 				checkoutForms.add(checkoutForm)
-				Tab tab = tabSheet.addTab(checkoutForm, "Project")
+				Tab tab = projectsTabSheet.addTab(checkoutForm, "Project")
 				tab.setClosable(true)
 				checkoutForm.tab = tab
 			}
@@ -152,10 +152,12 @@ class CheckoutWindow extends Window {
 				Checkout checkout = form.checkout
 				checkouts.add(checkout)
 
+				// Components where errors can be displayed
 				def errorComponents = [form.titleTextField, form.pictureUpload, form.filesUpload, 
 										form.descriptionTextArea, form.rootAddMaterialButton.button,
 										form.tab]
 
+				// Remove displayed errors if any
 				for (component in errorComponents) {
 					component.setComponentError(null)
 				}
