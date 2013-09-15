@@ -22,7 +22,7 @@ This application is licensed under the GPLv2 license.
 ###Frameworks
 This project has been developed using the following frameworks:
 
-####Grails
+####[Grails](http://grails.org/)
     Grails is an Open Source, full stack, web application framework for the JVM. It takes advantage of the Groovy 
     programming language and convention over configuration to provide a productive and stream-lined development 
     experience.
@@ -32,14 +32,15 @@ The Grails version used is __2.2.3__. I recommend using [GVM](http://gvmtool.net
 Linux/Mac OSX or following [this](http://www.grailsexample.net/installing-a-grails-development-environment-on-windows/)
 tutorial for Windows.
 
-####Vaadin
-    <cite>Vaadin is a Java web application framework. It is designed for creating rich and interactive applications 
+####[Vaadin](https://vaadin.com)
+    Vaadin is a Java web application framework. It is designed for creating rich and interactive applications 
     that run in the browser, without any plugins. A server-driven architecture together with reusable component 
     model is used to simplify programming of applications and for better web application security. No HTML, XML or 
-    JavaScript necessary and all Java libraries and tools are at your disposal.</cite>
+    JavaScript necessary and all Java libraries and tools are at your disposal.
 
 Although it's mainly developed for Java, using the [Vaadin 7 Plugin](http://grails.org/plugin/vaadin) for Grails it's
-possible to develop using Groovy.
+possible to develop using Groovy. This project uses Vaadin __7.0__. The plugin is already installed and is automatically 
+downloaded when the project is run.
 
 ###Database:
   
