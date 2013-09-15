@@ -44,6 +44,16 @@ Make sure the directory exists and has the right permissions.
 ######Change the following line at domain/checkin/Checkout.groovy to change the directory where checkouts are saved:
     def rootDir = new File("/var/stadslab/checkouts/" + title)
 
+##Documentation
+To generate JavaDoc-style documentation of the project run the following command:
+#
+    grails doc
+    
+To generate a UML diagram of all the domain class run the following command:
+#
+    grails create-domain-uml
+
+I tried documenting, commenting and writing as much clean code as possible, but due to lack of time this was not possible everywhere.
 
 ##Demo:
 A demo website is running [here](http://145.24.222.154:8080/).  
