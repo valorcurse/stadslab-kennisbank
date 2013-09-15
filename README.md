@@ -19,6 +19,28 @@ This application is licensed under the GPLv2 license.
 
 ##Configuration
 
+###Frameworks
+This project has been developed using the following frameworks:
+
+####Grails
+    Grails is an Open Source, full stack, web application framework for the JVM. It takes advantage of the Groovy 
+    programming language and convention over configuration to provide a productive and stream-lined development 
+    experience.
+
+
+The Grails version used is __2.2.3__. I recommend using [GVM](http://gvmtool.net/) to install grails if developing on
+Linux/Mac OSX or following [this](http://www.grailsexample.net/installing-a-grails-development-environment-on-windows/)
+tutorial for Windows.
+
+####Vaadin
+    <cite>Vaadin is a Java web application framework. It is designed for creating rich and interactive applications 
+    that run in the browser, without any plugins. A server-driven architecture together with reusable component 
+    model is used to simplify programming of applications and for better web application security. No HTML, XML or 
+    JavaScript necessary and all Java libraries and tools are at your disposal.</cite>
+
+Although it's mainly developed for Java, using the [Vaadin 7 Plugin](http://grails.org/plugin/vaadin) for Grails it's
+possible to develop using Groovy.
+
 ###Database:
   
 	- Type: MySQL
