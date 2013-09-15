@@ -17,28 +17,34 @@ It's as of now completly translated in dutch.
 
 This application is licensed under the GPLv2 license.
 
+##Configuration
+
 ###Database:
   
 	- Type: MySQL
-    		- Name: Kennisbank, Kennisbank_test
+    		- Name: Kennisbank (production), Kennisbank_test (development/test)
 			- Username: root
 			- Password: 123456
 			- Port: 3307
+The configuration above is the default now being used. You can change them at conf/DataSource.groovy.
 
-Check configuration on DataSource.groovy to match your system's.
+###Fabtool account:
+    Default: 
+        Username: admin
+        Password: 12345
+
+Currently the account used to login to the FabTool is created in conf/BootStrap.groovy.
+######Change the following values to choose your own credentials:
+    new User(username: "admin", password: "12345", enabled: true).save()
 
 ###Projects (checkouts):
 
-    Checkouts are saved in /var/stadslab/checkouts.
-    Make sure the directory exists and has the right permissions.
+Checkouts are saved in /var/stadslab/checkouts.
+Make sure the directory exists and has the right permissions.
+######Change the following line at domain/checkin/Checkout.groovy to change the directory where checkouts are saved:
+    def rootDir = new File("/var/stadslab/checkouts/" + title)
 
 
-###Demo:
+##Demo:
 A demo website is running [here](http://145.24.222.154:8080/).  
 The checkins/checkouts can be found [here](http://145.24.222.154:8080/checkinout).
-	
-  
-#####Admin account:
-
-    Username: admin
-    Password: 12345
