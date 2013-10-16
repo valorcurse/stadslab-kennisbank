@@ -330,11 +330,12 @@ class ProjectsOverview extends VerticalLayout {
 		for (checkout in checkouts) {
 			ProjectLink newLink = new ProjectLink(checkout)
 			projectsLayout.addComponent(newLink)
+
 			newLink.addLayoutClickListener(new LayoutClickListener() {
 				@Override
 				public void layoutClick(LayoutClickEvent event) {
 					TabSheet tabs = UI.getCurrent().mainView.topTabs
-					Tab tab = tabs.addTab(new ProjectView(checkout), "Project: " + 	checkout.title)
+					Tab tab = tabs.addTab(new ProjectView(newLink.checkout), "Project: " + 	checkout.title)
 					tab.setClosable(true)
 					tabs.setSelectedTab(tab)
 				}

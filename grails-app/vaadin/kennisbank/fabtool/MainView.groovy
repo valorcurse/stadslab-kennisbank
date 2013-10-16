@@ -370,6 +370,7 @@ class MainView extends Panel implements View {
 			switch(urlParameters[0]) {
 				case "project":
 					if (urlParameters.size() == 2) {
+						print urlParameters[1]
 						Checkout currentCheckout = Checkout.findByTitle(urlParameters[1].replace("-", " "))
 
 						if (currentCheckout != null) {
