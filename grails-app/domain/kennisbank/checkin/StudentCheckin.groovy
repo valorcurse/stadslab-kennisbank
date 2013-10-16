@@ -18,7 +18,7 @@ class StudentCheckin extends Checkin implements Serializable {
 					course, teacher,  equipment*.name.toString(), dateCreated.toString()]
 	}
 
-	static hasMany = [equipment: Equipment, checkouts: Checkout]
+	static hasMany = [equipment: Equipment]
 
 	static constraints = {
 		studentNumber size: 7..7, matches: "[0-9]+", blank: false

@@ -14,7 +14,7 @@ class CompanyCheckin extends Checkin implements Serializable {
 		return [companyName, contactPerson, email, numberOfWorkers, projectDescription, dateCreated.toString()]
 	}
 
-	static hasMany = [checkouts: Checkout]
+	//static hasMany = [checkouts: Checkout]
 
 	static mapping = {
 		projectDescription type: "text"

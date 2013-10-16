@@ -203,13 +203,13 @@ class CheckoutWindow extends Window {
 			}
 		}
 
-		for (checkout in checkouts) {
-			if (checkout.id) {
-				checkin.addToCheckouts(checkout)
-			} else {
-				return false
-			}
-		}
+		//for (checkout in checkouts) {
+		//	if (checkout.id) {
+		//		checkin.addToCheckouts(checkout)
+		//	} else {
+		//		return false
+		//	}
+		//}
 		return true
 	}
 }

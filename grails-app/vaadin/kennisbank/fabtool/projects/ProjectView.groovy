@@ -22,6 +22,7 @@ import com.vaadin.data.Item
 import com.vaadin.shared.ui.label.ContentMode
 import com.vaadin.shared.ui.label.ContentMode
 import com.vaadin.event.ShortcutAction.KeyCode
+import org.hibernate.engine.Status
 
 import kennisbank.checkin.*
 import kennisbank.fabtool.*
@@ -66,7 +67,7 @@ class ProjectView extends VerticalLayout {
 		setComponentAlignment(viewPanel, Alignment.TOP_CENTER)
 		viewPanel.setSizeUndefined()
 
-		GridLayout gridLayout = new GridLayout(2, 5)
+		GridLayout gridLayout = new GridLayout(2, 6)
 		viewPanel.setContent(gridLayout)
 		gridLayout.setSpacing(true)
 		gridLayout.setMargin(true)
@@ -184,6 +185,34 @@ class ProjectView extends VerticalLayout {
 		gridLayout.addComponent(madeByLabel, 0, 4, 1, 4) // Column 1, Row 1
 		gridLayout.setComponentAlignment(madeByLabel, Alignment.TOP_CENTER)
 		madeByLabel.setWidth("-1")
+
+		if (MyUI.security.isSignedIn()) {
+			HorizontalLayout adminLayout = new HorizontalLayout()
+			gridLayout.addComponent(adminLayout, 0, 5, 1, 5) // Column 0, Row 3 to Column 1, Row 3
+			adminLayout.setMargin(true)
+			adminLayout.setSpacing(true)
+			adminLayout.setWidth("100%")
+
+			NativeButton deleteProjectButton = new NativeButton("Verwijderen")
+			adminLayout.addComponent(deleteProjectButton)
+			adminLayout.setComponentAlignment(deleteProjectButton, Alignment.MIDDLE_RIGHT)
+			deleteProjectButton.setStyleName("button")
+
+			deleteProjectButton.addClickListener(new Button.ClickListener() {
+				public void buttonClick(ClickEvent event) {
+					try {
+
+						checkout.delete(flush: true)
+
+						if (Checkout.findById(checkout.id) == null) {
+							Notification.show("Project is verwijderd. Sluit deze tab.")
+						}
+					} catch (Exception e) {
+						print e
+					}
+				}
+			})
+		}
 
 	}
 }

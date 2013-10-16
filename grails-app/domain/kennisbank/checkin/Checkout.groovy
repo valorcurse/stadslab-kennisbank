@@ -8,9 +8,10 @@ class Checkout implements Serializable {
 	String title
 	String description
 	String picturePath
-	
+	Checkin checkin
+
 	static hasMany = [files: AttachedFile, settings: Setting]
-	static hasOne = [checkin: Checkin]
+	// static hasOne = [checkin: Checkin]
 
 
 	static constraints = {

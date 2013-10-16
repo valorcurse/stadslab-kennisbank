@@ -3,6 +3,7 @@ package kennisbank.auth
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication
 
 class SecurityService implements Serializable {
@@ -14,8 +15,14 @@ class SecurityService implements Serializable {
 
     void signIn(String username, String password) {
         try {
-            def authentication = new UsernamePasswordAuthenticationToken(username, password)
-            SCH.context.authentication = authenticationManager.authenticate(authentication)
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, password)
+            //User details = new User(username);
+            //authentication.setDetails(details);
+
+            Authentication auth = authenticationManager.authenticate(authentication);
+
+            SCH.getContext().setAuthentication(auth);
+            // SCH.context.authentication = authenticationManager.authenticate(authentication)
         } catch (BadCredentialsException e) {
             throw new SecurityException("Invalid username/password")
         }
@@ -30,7 +37,14 @@ class SecurityService implements Serializable {
         return auth.getName(); //get logged in username
     }
 
-    boolean isSignedIn(){
-        return springSecurityService.isLoggedIn()
+    boolean isSignedIn() {
+        Authentication auth = SCH.getContext().getAuthentication()
+
+        if (auth != null && !auth.getName().equals("anonymousUser")) {
+            return true
+        }
+        else { 
+            return false
+        }
     }
 }

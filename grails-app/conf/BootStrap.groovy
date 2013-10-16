@@ -75,6 +75,21 @@ class BootStrap {
 				Checkout checkout2 = new Checkout(title: "Ubuntu laptop", 
 					picturePath: rootPath + "/samples/ubuntu.jpg", description: description, checkin: checkin)
 				
+				Checkout checkout3 = new Checkout(title: "Ubuntu laptop 2", 
+					picturePath: rootPath + "/samples/ubuntu.jpg", description: description, checkin: checkin)
+
+				Checkout checkout4 = new Checkout(title: "Ubuntu laptop 3", 
+					picturePath: rootPath + "/samples/ubuntu.jpg", description: description, checkin: checkin)
+
+				Checkout checkout5 = new Checkout(title: "Ubuntu laptop 4", 
+					picturePath: rootPath + "/samples/ubuntu.jpg", description: description, checkin: checkin)
+
+				Checkout checkout6 = new Checkout(title: "Ubuntu laptop 5", 
+					picturePath: rootPath + "/samples/ubuntu.jpg", description: description, checkin: checkin)
+
+				Checkout checkout7 = new Checkout(title: "Ubuntu laptop 6", 
+					picturePath: rootPath + "/samples/ubuntu.jpg", description: description, checkin: checkin)
+
 
 				def checkout1Settings = [
 				new Setting(value: "4", settingType: passes, materialType: duplex, equipment: printer, checkout: checkout1),	
@@ -100,8 +115,44 @@ class BootStrap {
 				.addToFiles(file)
 				.save()
 
-				checkin.addToCheckouts(checkout1)
-				checkin.addToCheckouts(checkout2)
+				checkout3.addToSettings(checkout2Settings[0])
+				.addToSettings(checkout2Settings[1])
+				.addToSettings(checkout2Settings[2])
+				.addToFiles(file)
+				.save()
+
+				checkout4.addToSettings(checkout2Settings[0])
+				.addToSettings(checkout2Settings[1])
+				.addToSettings(checkout2Settings[2])
+				.addToFiles(file)
+				.save()
+
+				checkout5.addToSettings(checkout2Settings[0])
+				.addToSettings(checkout2Settings[1])
+				.addToSettings(checkout2Settings[2])
+				.addToFiles(file)
+				.save()
+
+				checkout6.addToSettings(checkout2Settings[0])
+				.addToSettings(checkout2Settings[1])
+				.addToSettings(checkout2Settings[2])
+				.addToFiles(file)
+				.save()
+
+				checkout7.addToSettings(checkout2Settings[0])
+				.addToSettings(checkout2Settings[1])
+				.addToSettings(checkout2Settings[2])
+				.addToFiles(file)
+				.save()
+
+
+				//checkin.addToCheckouts(checkout1)
+				//checkin.addToCheckouts(checkout2)
+				//checkin.addToCheckouts(checkout3)
+				//checkin.addToCheckouts(checkout4)
+				//checkin.addToCheckouts(checkout5)
+				//checkin.addToCheckouts(checkout6)
+				//checkin.addToCheckouts(checkout7)
 			}
 		}
 

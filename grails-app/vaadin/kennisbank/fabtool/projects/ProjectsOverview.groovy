@@ -310,10 +310,12 @@ class ProjectsOverview extends VerticalLayout {
 
 		projectsLayout = new GridLayout()
 		contentLayout.addComponent(projectsLayout)
-		projectsLayout.setColumns(5)
+		projectsLayout.setColumns(4)
 		projectsLayout.setMargin(true)
 		projectsLayout.setSpacing(true)
 		projectsLayout.setSizeUndefined()
+
+		print projectsLayout.getWidth()
 
 		updateProjectsList(Checkout.list())
 

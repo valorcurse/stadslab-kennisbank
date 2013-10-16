@@ -20,6 +20,11 @@ import com.vaadin.server.Page
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import kennisbank.auth.*
 
+import com.vaadin.grails.*
+import java.lang.SecurityException
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
+
 /**
  * Class where all other components and views are drawn upon.
  *
@@ -29,7 +34,7 @@ import kennisbank.auth.*
 @Theme("HRO")
 @PreserveOnRefresh
 // TODO - Error is thrown when changing title
-// @Title("Kennisbank")
+@Title("Kennisbank")
 class MyUI extends UI {
 
 	/**
@@ -45,6 +50,9 @@ class MyUI extends UI {
 	/**
 	* Initializes the UI.
 	*/
+
+	private static SecurityService security = (SecurityService) Grails.get(SecurityService)
+
 	@Override
 	public void init(VaadinRequest request) {
 

@@ -10,7 +10,6 @@
 	.v-nativebutton {
 		padding-left: 9px;
 		padding-right: 9px;
-		padding-bottom: 3px;
 		
 		border: 1px solid #AEAEAE;
 		border-bottom-color: #959595;
@@ -405,6 +404,7 @@
 		.description {
 			border: 1px solid lightgrey;
 		}
-
+	
+		@include styled-nativebutton;
 	}
 }	

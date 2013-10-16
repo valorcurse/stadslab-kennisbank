@@ -14,11 +14,6 @@ import com.vaadin.navigator.View
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent
 import com.vaadin.shared.ui.label.ContentMode
 
-import com.vaadin.grails.*
-import java.lang.SecurityException
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.context.SecurityContextHolder
-
 import kennisbank.auth.*
 import kennisbank.fabtool.administration.Administration
 import kennisbank.fabtool.home.*
@@ -44,7 +39,7 @@ class MainView extends Panel implements View {
 	/**
 	 * Service used to authenticate logins.
 	 */
-	private SecurityService security = (SecurityService) Grails.get(SecurityService)
+	// private SecurityService security = (SecurityService) Grails.get(SecurityService)
 
 	/**
 	 * Components which are only displayed to authorized users.
@@ -69,7 +64,7 @@ class MainView extends Panel implements View {
 	 */
 	private Boolean login(String username, String password) {
 		try {
-			security.signIn(username, password)
+			MyUI.security.signIn(username, password)
 			revealHiddenComponents()
 			loginPanel.setVisible(false)
 			loggedinPanel.setVisible(true)
@@ -86,7 +81,7 @@ class MainView extends Panel implements View {
 	 */
 	private void logout() {
 		try {
-			security.signOut()
+			MyUI.security.signOut()
 			
 			def tabsToRemove = []
 
@@ -234,7 +229,7 @@ class MainView extends Panel implements View {
 		loggedinPanel.setContent(loggedinPanelLayout)
 		loggedinPanel.setWidth("100%")
 		
-		Label welcome = new Label("Welkom <b>" + security.getCurrentUsername() + "</b>, je bent ingelogd.", ContentMode.HTML)
+		Label welcome = new Label("Welkom <b>" + MyUI.security.getCurrentUsername() + "</b>, je bent ingelogd.", ContentMode.HTML)
 		loggedinPanelLayout.addComponent(welcome)
 		loggedinPanelLayout.setComponentAlignment(welcome, Alignment.MIDDLE_CENTER)
 		welcome.addStyleName("welcome-label")
